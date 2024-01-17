@@ -1,7 +1,7 @@
 <template>
   <div class="settings-view">
     <van-cell-group title="设置">
-      <van-cell title="信源设置" to="/settings/informationSource" size="large" is-link />
+      <van-cell title="信源设置" to="/settings/lavsource" size="large" is-link />
     </van-cell-group>
   </div>
 </template>
