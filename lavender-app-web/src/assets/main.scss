@@ -1,0 +1,67 @@
+#app * {
+  user-select: none;
+}
+
+:root {
+  --van-doc-background: #eff2f5;
+}
+
+//noinspection CssUnknownTarget
+@font-face {
+  font-family: 'Custom Kunstler';
+  src: url('/font/kunstler.ttf');
+}
+
+.van-doc-demo-block__title {
+  margin: 0;
+  padding: 16px;
+  color: #969799;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.van-cell__right-icon:before {
+  font-size: var(--van-cell-icon-size) !important;
+}
+
+.icon-container {
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.nplayer {
+  .quality-controller {
+    position: relative;
+    padding: 0 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .quality-item {
+    padding: 5px 20px;
+    font-weight: normal;
+  }
+
+  .quality-item:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .quality-item-active {
+    color: #007aff;
+  }
+}
+
+.top-layer-settings-view {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--van-doc-background);
+
+  .settings-view-content {
+    margin-bottom: 10px;
+  }
+}
