@@ -19,7 +19,7 @@ class ProxyController(
         @PathVariable path: String,
         request: HttpServletRequest,
         response: HttpServletResponse
-    ): String = onRequest(path, null, request, response)
+    ): String? = onRequest(path, request.queryString, request, response)
 
     @RequestMapping("/{*path}", produces = [ MediaType.APPLICATION_JSON_VALUE ])
     fun onRequest(
@@ -27,13 +27,13 @@ class ProxyController(
         @RequestBody body: String?,
         request: HttpServletRequest,
         response: HttpServletResponse
-    ): String {
+    ): String? {
         val url = "${mainProperties.proxyPassUrlPrefix}$path"
-        return when(request.method.lowercase()) {
-            "get" -> HttpUtil.createGet(url).run {
+        val remoteResponse = when(request.method.lowercase()) {
+            "get" -> HttpUtil.createGet("$url?$body").run {
                 header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 header(HttpHeaders.ACCEPT_CHARSET, "UTF-8")
-                execute().body()
+                execute()
             }
             "post", "put", "patch", "delete" -> {
                 HttpUtil.createRequest(Method.valueOf(request.method.uppercase()), url).run {
@@ -41,11 +41,15 @@ class ProxyController(
                     header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     header(HttpHeaders.ACCEPT_CHARSET, "UTF-8")
                     body(body)
-                    execute().body()
+                    execute()
                 }
             }
-            "options" -> "{}"
+            "options" -> null
             else -> throw Exception("Unknown request method: ${request.method}")
         }
+        remoteResponse?.let {
+            response.status = it.status
+        }
+        return remoteResponse?.body()
     }
 }

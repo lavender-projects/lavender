@@ -1,3 +1,5 @@
+.env.localDev
+
 # Logs
 logs
 *.log
