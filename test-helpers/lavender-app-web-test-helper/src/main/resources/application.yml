@@ -1,2 +1,6 @@
 server:
   port: 8081
+
+lavender:
+  test-helper:
+    proxy-pass-url-prefix: http://localhost:8080
