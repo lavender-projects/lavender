@@ -218,7 +218,7 @@ class WebActivity : AppCompatActivity() {
 
     //返回true表示有监听器的预定义行为被触发
     private suspend fun dispatchEventToListenersInWebView(listenerName: String): Boolean {
-        val script = "window.androidEventListeners.executeListeners('$listenerName')"
+        val script = "window.androidEventListenerUtils.invokeListeners('$listenerName')"
         var result: String? = null
         webView.evaluateJavascript(script) {
             result = it

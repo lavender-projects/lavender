@@ -1,15 +1,14 @@
 //noinspection JSUnusedGlobalSymbols
-const androidEventListeners = {
-  //监听器方法若返回true，表示监听器的预定义行为被触发
-  onBackButtonPressedListeners: initListenerGroups(),
-  onActivityPauseListeners: initListenerGroups(),
-  onActivityResumeListeners: initListenerGroups(),
+export const androidEventListenerUtils = {
+  initListenerGroups: () => ({
+    videoPlayingView: {}
+  }),
   //仅在main.js中调用一次
   exposeToGlobal() {
-    window.androidEventListeners = this
+    window.androidEventListenerUtils = this
   },
-  executeListeners(name) {
-    let listeners = this[name]
+  invokeListeners(name) {
+    let listeners = androidEventListeners[name]
     if(listeners == null) return
     let result = false
     Object.values(listeners).forEach(listenerGroup => {
@@ -23,10 +22,11 @@ const androidEventListeners = {
   }
 }
 
-function initListenerGroups() {
-  return {
-    videoPlayingView: {}
-  }
+const androidEventListeners = {
+  //监听器方法若返回true，表示监听器的预定义行为被触发
+  onBackButtonPressedListeners: androidEventListenerUtils.initListenerGroups(),
+  onActivityPauseListeners: androidEventListenerUtils.initListenerGroups(),
+  onActivityResumeListeners: androidEventListenerUtils.initListenerGroups()
 }
 
 export default androidEventListeners

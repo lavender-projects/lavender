@@ -8,7 +8,9 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'vant/lib/index.css'
-import androidEventListeners from '@/utils/androidEventListeners'
+import { androidEventListenerUtils } from '@/utils/androidEventListeners'
+
+androidEventListenerUtils.exposeToGlobal()
 
 const app = createApp(App)
 
@@ -17,5 +19,3 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
-
-androidEventListeners.exposeToGlobal()
