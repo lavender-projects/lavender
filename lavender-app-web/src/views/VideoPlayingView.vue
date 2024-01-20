@@ -127,7 +127,6 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import BackIcon from '@/components/icon/BackIcon.vue'
 import ScrollBlock from '@/components/common/ScrollBlock.vue'
-import androidInterfaces from '@/utils/androidInterfaces'
 import videoApi from '@/api/video'
 import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
@@ -142,6 +141,7 @@ import CustomVideoPlayer from '@/components/video/CustomVideoPlayer.vue'
 import androidEventListeners from '@/utils/androidEventListeners'
 import VideoInfoList from '@/components/video/VideoInfoList.vue'
 import PlayIcon from '@/components/icon/PlayIcon.vue'
+import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
 
 const props = defineProps({
   videoId: String
@@ -337,7 +337,7 @@ async function beforeDescriptionBlockExpandChange() {
 }
 
 function onBackIconClick() {
-  androidInterfaces.basicJsInterface.finishCurrentWebActivity()
+  basicJsInterface.finishCurrentWebActivity()
 }
 
 function onTitleArrowClick() {

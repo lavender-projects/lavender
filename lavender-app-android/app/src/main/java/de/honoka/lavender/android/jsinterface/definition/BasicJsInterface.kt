@@ -1,20 +1,12 @@
-package de.honoka.lavender.android.util
+package de.honoka.lavender.android.jsinterface.definition
 
 import android.content.Intent
 import android.webkit.JavascriptInterface
 import de.honoka.lavender.android.ui.WebActivity
+import de.honoka.lavender.android.util.ServerVariables
+import java.util.UUID
 
-object JavaScriptInterfaces {
-
-    fun newAll(webActivity: WebActivity) = arrayOf(
-        BasicJsInterface(webActivity),
-        VideoPlayingViewJsInterface(webActivity)
-    )
-}
-
-class BasicJsInterface(
-    private val webActivity: WebActivity
-) {
+class BasicJsInterface(private val webActivity: WebActivity) {
 
     @JavascriptInterface
     fun openNewWebActivity(path: String) {
@@ -29,14 +21,7 @@ class BasicJsInterface(
     fun finishCurrentWebActivity() {
         webActivity.finish()
     }
-}
-
-class VideoPlayingViewJsInterface(
-    private val webActivity: WebActivity
-) {
 
     @JavascriptInterface
-    fun simulateClickBeforeVideoPlay() {
-        webActivity.simulateClick(webActivity.webView.width / 2f, 0f)
-    }
+    fun getUuid(): String = UUID.randomUUID().toString()
 }

@@ -40,7 +40,7 @@ import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import AuthorIcon from '@/components/icon/AuthorIcon.vue'
 import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
 import { reactive } from 'vue'
-import androidInterfaces from '@/utils/androidInterfaces'
+import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
 
 const props = defineProps({
   videoInfoList: Array
@@ -51,7 +51,7 @@ const componentParams = reactive({
 })
 
 function onVideoItemClick(item) {
-  androidInterfaces.basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${item.videoId}`)
+  basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${item.videoId}`)
 }
 </script>
 

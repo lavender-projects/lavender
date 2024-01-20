@@ -16,9 +16,9 @@ import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import Player, { EVENT, Popover } from 'nplayer'
 import Danmaku from '@nplayer/danmaku'
 import videoApi from '@/api/video'
-import androidInterfaces from '@/utils/androidInterfaces'
 import codeUtils from '@/utils/code'
 import BackIcon from '@/components/icon/BackIcon.vue'
+import videoPlayingViewJsInterface from '@/utils/androidJsInterfaces/definition/videoPlayingViewJsInterface'
 
 const props = defineProps({
   videoId: String,
@@ -336,7 +336,7 @@ async function playVideo() {
 
 function resumeVideo() {
   videoDom.play().catch(async () => {
-    androidInterfaces.videoPlayingViewJsInterface.simulateClickBeforeVideoPlay()
+    videoPlayingViewJsInterface.simulateClickBeforeVideoPlay()
     await codeUtils.sleep(20)
     videoDom.play()
   })

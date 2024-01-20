@@ -35,11 +35,11 @@
 
 <script setup>
 import { showToast } from 'vant'
-import androidInterfaces from '@/utils/androidInterfaces'
 import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
 import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import AuthorIcon from '@/components/icon/AuthorIcon.vue'
 import OperationsIcon from '@/components/icon/OperationsIcon.vue'
+import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
 
 const props = defineProps({
   coverImg: String,
@@ -52,7 +52,7 @@ const props = defineProps({
 })
 
 function onVideoCardClick() {
-  androidInterfaces.basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${props.videoId}`)
+  basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${props.videoId}`)
 }
 
 function onOperationClick() {

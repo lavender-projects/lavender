@@ -19,7 +19,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
-import de.honoka.lavender.android.util.JavaScriptInterfaces
+import de.honoka.lavender.android.jsinterface.JavaScriptInterfaces
 import de.honoka.lavender.android.util.ServerVariables
 import de.honoka.lavender.android.util.WebServer
 import de.honoka.lavender.android.util.launchCoroutineOnUiThread
@@ -77,6 +77,8 @@ class WebActivity : AppCompatActivity() {
             webView.visibility = View.VISIBLE
         }
     }
+
+    private lateinit var javaScriptInterfaces: JavaScriptInterfaces
 
     private var fullScreenView: View? = null
 
@@ -154,7 +156,6 @@ class WebActivity : AppCompatActivity() {
         setContentView(R.layout.activity_web)
         initActivityParams()
         initWebView()
-        registerJsInterface()
     }
 
     override fun onPause() {
@@ -179,7 +180,8 @@ class WebActivity : AppCompatActivity() {
     }
 
     private fun initWebView() {
-        webView = findViewById<WebView>(R.id.web_view).apply {
+        webView = findViewById(R.id.web_view)
+        webView.run {
             webViewClient = this@WebActivity.webViewClient
             webChromeClient = this@WebActivity.webChromeClient
             settings.run {
@@ -188,16 +190,15 @@ class WebActivity : AppCompatActivity() {
             }
             isVerticalScrollBarEnabled = false
             scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
+            javaScriptInterfaces = JavaScriptInterfaces(this@WebActivity)
             loadUrl(this@WebActivity.url)
         }
         onBackPressedDispatcher.addCallback(onBackPressedCallback)
         orientationEventListener.enable()
     }
 
-    private fun registerJsInterface() {
-        JavaScriptInterfaces.newAll(this).forEach {
-            webView.addJavascriptInterface(it, "android_${it.javaClass.simpleName}")
-        }
+    fun evaluateJavascript(script: String, callback: (String) -> Unit = {}) = runOnUiThread {
+        webView.evaluateJavascript(script, callback)
     }
 
     private fun setFullScreen(fullScreen: Boolean) {

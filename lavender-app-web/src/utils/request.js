@@ -1,14 +1,8 @@
-//noinspection JSUnresolvedReference
-
 import axios from 'axios'
 import messageUtils from './message'
-import androidInterfaces from '@/utils/androidInterfaces'
-
-let baseURL = androidInterfaces.innerDataServerJsInterface.getUrlPrefix()
-if(baseURL == null) baseURL = import.meta.env.VITE_API_BASE_URL
 
 const request = axios.create({
-  baseURL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 5000
 })
 
