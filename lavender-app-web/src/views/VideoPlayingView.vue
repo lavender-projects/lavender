@@ -141,7 +141,7 @@ import CustomVideoPlayer from '@/components/video/CustomVideoPlayer.vue'
 import androidEventListeners from '@/utils/androidEventListeners'
 import VideoInfoList from '@/components/video/VideoInfoList.vue'
 import PlayIcon from '@/components/icon/PlayIcon.vue'
-import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
+import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 
 const props = defineProps({
   videoId: String

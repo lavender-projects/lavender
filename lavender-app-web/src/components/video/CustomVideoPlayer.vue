@@ -18,7 +18,7 @@ import Danmaku from '@nplayer/danmaku'
 import videoApi from '@/api/video'
 import codeUtils from '@/utils/code'
 import BackIcon from '@/components/icon/BackIcon.vue'
-import videoPlayingViewJsInterface from '@/utils/androidJsInterfaces/definition/videoPlayingViewJsInterface'
+import videoPlayingViewJsInterface from '@/androidJsInterfaces/videoPlayingViewJsInterface'
 
 const props = defineProps({
   videoId: String,

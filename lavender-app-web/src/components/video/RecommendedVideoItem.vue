@@ -39,7 +39,7 @@ import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
 import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import AuthorIcon from '@/components/icon/AuthorIcon.vue'
 import OperationsIcon from '@/components/icon/OperationsIcon.vue'
-import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
+import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 
 const props = defineProps({
   coverImg: String,

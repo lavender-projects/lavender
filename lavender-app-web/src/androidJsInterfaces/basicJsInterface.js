@@ -1,4 +1,3 @@
-import codeUtils from '@/utils/code'
 import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
 
 const basicJsInterface = jsInterfaceUtils.getJsInterfaceStub('BasicJsInterface', {
@@ -9,8 +8,7 @@ const basicJsInterface = jsInterfaceUtils.getJsInterfaceStub('BasicJsInterface',
   finishCurrentWebActivity: () => {
     jsInterfaceUtils.jsInterfaceWarning()
     history.back()
-  },
-  getUuid: () => codeUtils.randomUUID()
+  }
 })
 
 export default basicJsInterface

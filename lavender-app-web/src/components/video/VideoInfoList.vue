@@ -40,7 +40,7 @@ import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import AuthorIcon from '@/components/icon/AuthorIcon.vue'
 import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
 import { reactive } from 'vue'
-import basicJsInterface from '@/utils/androidJsInterfaces/definition/basicJsInterface'
+import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 
 const props = defineProps({
   videoInfoList: Array

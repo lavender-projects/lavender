@@ -1,7 +1,7 @@
 import jsInterfaceAsyncSupportUtils from '@/utils/androidJsInterfaces/asyncSupport'
 
 export const jsInterfaceUtils = {
-  emptyImplementation: () => () => this.jsInterfaceWarning(),
+  emptyImplementation: () => () => jsInterfaceUtils.jsInterfaceWarning(),
   jsInterfaceWarning() {
     console.warn('You are calling a Android JavaScript Interface function directly in browser!')
   },
