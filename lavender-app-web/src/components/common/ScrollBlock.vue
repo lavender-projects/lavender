@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll-block" ref="scrollBarDom">
+  <div class="scroll-block" ref="scrollBlockDom">
     <el-scrollbar :always="true">
       <slot></slot>
     </el-scrollbar>
@@ -10,20 +10,19 @@
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
-  thumbWidth: String,
+  thumbWidth: {
+    type: String,
+    default: '3px'
+  },
   scrollable: {
     type: Boolean,
     default: true
   }
 })
 
-const defaultValues = {
-  thumbWidth: '3px'
-}
-
 const emits = defineEmits([ 'scroll', 'scrollEnd' ])
 
-const scrollBarDom = ref()
+const scrollBlockDom = ref()
 
 const scrollTop = ref(0)
 
@@ -31,19 +30,19 @@ const scrollTop = ref(0)
  * 真正设置了CSS的overflow属性的DOM
  */
 const contentWrapperDom = computed(() => {
-  if(scrollBarDom.value == null) return null
-  return scrollBarDom.value.querySelector('.el-scrollbar__wrap')
+  if(scrollBlockDom.value == null) return null
+  return scrollBlockDom.value.querySelector('.el-scrollbar__wrap')
 })
 
 const contentDom = computed(() => {
-  if(scrollBarDom.value == null) return null
-  return scrollBarDom.value.querySelector('.el-scrollbar__view')
+  if(scrollBlockDom.value == null) return null
+  return scrollBlockDom.value.querySelector('.el-scrollbar__view')
 })
 
 let hideScrollBarTask
 
 onMounted(() => {
-  let verticalBar = scrollBarDom.value.querySelector('.el-scrollbar__bar.is-vertical')
+  let verticalBar = scrollBlockDom.value.querySelector('.el-scrollbar__bar.is-vertical')
   let verticalThumb = verticalBar.querySelector('.el-scrollbar__thumb')
   setVerticalThumbFiller(verticalThumb)
   setVerticalThumbWidth(verticalBar, verticalThumb)
@@ -61,7 +60,7 @@ function setVerticalThumbFiller(thumb) {
 }
 
 function setVerticalThumbWidth(bar, thumb) {
-  let thumbWidth = props.thumbWidth ?? defaultValues.thumbWidth
+  let thumbWidth = props.thumbWidth
   bar.style.width = thumbWidth
   thumb.style.width = thumbWidth
 }

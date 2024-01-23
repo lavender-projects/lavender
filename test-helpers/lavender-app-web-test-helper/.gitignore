@@ -1,3 +1,5 @@
+/src/main/resources/config/application-localDev.yml
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

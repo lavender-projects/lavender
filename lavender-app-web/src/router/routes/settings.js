@@ -1,10 +1,7 @@
-import LavsourceSettingsView from '@/views/settings/LavsourceSettingsView.vue'
+import lavsourceSettingsRoutes from '@/router/routes/settings/lavsource'
 
 const settingsRoutes = [
-  {
-    path: '/settings/lavsource',
-    component: LavsourceSettingsView
-  }
+  ...lavsourceSettingsRoutes
 ]
 
 export default settingsRoutes

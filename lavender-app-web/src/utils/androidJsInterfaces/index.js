@@ -5,11 +5,11 @@ export const jsInterfaceUtils = {
   jsInterfaceWarning() {
     console.warn('You are calling a Android JavaScript Interface function directly in browser!')
   },
-  getJsInterfaceStub(jsInterfaceName, methodsDefinitions) {
+  getJsInterfaceStub(jsInterfaceName, methodDefinitions) {
     let jsInterface = window[`android_${jsInterfaceName}`]
     let stub = {}
-    Object.keys(methodsDefinitions).forEach(it => {
-      let definition = methodsDefinitions[it]
+    Object.keys(methodDefinitions).forEach(it => {
+      let definition = methodDefinitions[it]
       if(definition instanceof Function) {
         stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : definition
         return

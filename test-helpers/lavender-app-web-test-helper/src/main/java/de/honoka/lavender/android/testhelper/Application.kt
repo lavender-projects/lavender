@@ -18,7 +18,11 @@ class MainConfig
 @ConfigurationProperties("lavender.test-helper")
 data class MainProperties(
 
-    var proxyPassUrlPrefix: String? = null
+    var serverPort: Int? = null,
+
+    var proxyPassUrlPrefix: String? = null,
+
+    var remoteAccessHostName: String? = null
 )
 
 fun main(args: Array<String>) {
