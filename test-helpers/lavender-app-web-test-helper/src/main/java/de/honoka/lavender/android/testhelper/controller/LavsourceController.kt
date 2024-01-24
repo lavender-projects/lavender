@@ -13,11 +13,27 @@ class LavsourceController(
     private val mainProperties: MainProperties
 ) {
 
-    @GetMapping("/lavsourceListCanBeAdded")
-    fun lavsourceListCanBeAdded(): ApiResponse<*> = ApiResponse.success(listOf(
+    @GetMapping("/localLavsourceListCanBeAdded")
+    fun localLavsourceListCanBeAdded(): ApiResponse<*> = ApiResponse.success(listOf(
         LavsourceInfo().apply {
+            id = 1
+            type = "local"
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
+            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+        },
+        LavsourceInfo().apply {
+            id = 2
+            type = "local"
+            name = "test1"
+            packageName = "test1"
+            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+        },
+        LavsourceInfo().apply {
+            id = 3
+            type = "local"
+            name = "test2"
+            packageName = "test2"
             imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         }
     ))

@@ -1,5 +1,6 @@
 import LavsourceSettingsView from '@/views/settings/lavsource/LavsourceSettingsView.vue'
-import LavsourceAddView from '@/views/settings/lavsource/LavsourceAddView.vue'
+import LavsourceAddLocalView from '@/views/settings/lavsource/LavsourceAddLocalView.vue'
+import LavsourceAddNetworkView from '@/views/settings/lavsource/LavsourceAddNetworkView.vue'
 
 const lavsourceSettingsRoutes = [
   {
@@ -7,8 +8,12 @@ const lavsourceSettingsRoutes = [
     component: LavsourceSettingsView
   },
   {
-    path: '/settings/lavsource/add',
-    component: LavsourceAddView
+    path: '/settings/lavsource/addLocal',
+    component: LavsourceAddLocalView
+  },
+  {
+    path: '/settings/lavsource/addNetwork',
+    component: LavsourceAddNetworkView
   }
 ]
 

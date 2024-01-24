@@ -1,14 +1,15 @@
 <template>
-  <top-layer-settings-view title="添加信源">
+  <top-layer-settings-view title="添加本地信源">
     <van-cell-group inset title="可添加信源">
-      <van-list class="lavsource-list"
-                v-model:loading="componentParams.lavsourceList.loading"
-                :finished="componentParams.lavsourceList.loadFinished"
-                :finished-text="componentParams.lavsourceList.loadFinishedText"
-                @load="loadLavsourceList">
-        <van-cell v-for="item in lavsourceList" size="large" is-link>
+      <van-list class="local-lavsource-list"
+                v-model:loading="componentParams.localLavsourceList.loading"
+                :finished="componentParams.localLavsourceList.loadFinished"
+                :finished-text="componentParams.localLavsourceList.loadFinishedText"
+                @load="loadLocalLavsourceList">
+        <van-cell v-for="item in localLavsourceList" :key="item.id" size="large" is-link>
           <template #title>
             <div class="item-title">
+              <!--suppress JSUnresolvedReference -->
               <img :src="item.imgUrl" alt="" />
               <div class="item-info">
                 <div class="item-name">{{ item.name }}</div>
@@ -28,35 +29,36 @@ import { reactive, ref } from 'vue'
 import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
 
 const componentParams = reactive({
-  lavsourceList: {
+  localLavsourceList: {
     loading: false,
     loadFinished: false,
     loadFinishedText: ''
   }
 })
 
-const lavsourceList = ref([] ?? [
+const localLavsourceList = ref([]) ?? [
   {
+    id: 0,
     name: '',
     packageName: '',
     imgUrl: ''
   }
-])
+]
 
-function loadLavsourceList() {
-  lavsourceJsInterface.getLavsourceListCanBeAdded().then(res => {
-    lavsourceList.value = res.data
+function loadLocalLavsourceList() {
+  lavsourceJsInterface.getLocalLavsourceListCanBeAdded().then(res => {
+    localLavsourceList.value = res.data
   }).catch(() => {
-    componentParams.lavsourceList.loadFinishedText = '加载失败'
+    componentParams.localLavsourceList.loadFinishedText = '加载失败'
   }).finally(() => {
-    componentParams.lavsourceList.loading = false
-    componentParams.lavsourceList.loadFinished = true
+    componentParams.localLavsourceList.loading = false
+    componentParams.localLavsourceList.loadFinished = true
   })
 }
 </script>
 
 <style scoped lang="scss">
-.lavsource-list {
+.local-lavsource-list {
   background-color: var(--van-doc-background);
 
   .item-title {
@@ -84,7 +86,7 @@ function loadLavsourceList() {
   }
 }
 
-::v-deep(.lavsource-list) {
+::v-deep(.local-lavsource-list) {
   .van-cell {
     align-items: center;
   }

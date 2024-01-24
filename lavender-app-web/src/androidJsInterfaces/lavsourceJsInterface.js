@@ -2,10 +2,10 @@ import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
 import request from '@/utils/request'
 
 const methodDefinitions = {
-  getLavsourceListCanBeAdded: {
+  getLocalLavsourceListCanBeAdded: {
     isAsync: true,
     fallback: () => request({
-      url: '/lavsource/lavsourceListCanBeAdded',
+      url: '/lavsource/localLavsourceListCanBeAdded',
       method: 'get'
     })
   }
