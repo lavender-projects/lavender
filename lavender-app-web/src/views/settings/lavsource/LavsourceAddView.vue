@@ -82,12 +82,14 @@ function loadLavsourceList() {
       }
     }
   }
+}
 
-  ::v-deep(.van-cell) {
+::v-deep(.lavsource-list) {
+  .van-cell {
     align-items: center;
   }
 
-  ::v-deep(.van-list__loading, .van-list__finished-text) {
+  .van-list__loading, .van-list__finished-text {
     line-height: unset;
   }
 }
