@@ -33,6 +33,10 @@ function back() {
 
   ::v-deep(.scroll-block) {
     height: calc(100vh - var(--van-nav-bar-height));
+
+    .van-cell--clickable:active {
+      background-color: var(--van-gray-1);
+    }
   }
 }
 </style>

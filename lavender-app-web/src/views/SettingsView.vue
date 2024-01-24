@@ -20,5 +20,11 @@ import ScrollBlock from '@/components/common/ScrollBlock.vue'
   .content {
     margin-bottom: 10px;
   }
+
+  ::v-deep(.content) {
+    .van-cell--clickable:active {
+      background-color: var(--van-gray-1);
+    }
+  }
 }
 </style>
