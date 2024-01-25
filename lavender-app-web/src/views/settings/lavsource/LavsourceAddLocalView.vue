@@ -6,7 +6,8 @@
                 :finished="componentParams.localLavsourceList.loadFinished"
                 :finished-text="componentParams.localLavsourceList.loadFinishedText"
                 @load="loadLocalLavsourceList">
-        <van-cell v-for="item in localLavsourceList" :key="item.id" size="large" is-link>
+        <van-cell v-for="(item, index) in localLavsourceList" :key="item.id"
+                  size="large" is-link @click="addLocalLavsource(item, index)">
           <template #title>
             <div class="item-title">
               <!--suppress JSUnresolvedReference -->
@@ -27,12 +28,14 @@
 import TopLayerSettingsView from '@/components/common/TopLayerSettingsView.vue'
 import { reactive, ref } from 'vue'
 import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
+import codeUtils from '@/utils/code'
 
 const componentParams = reactive({
   localLavsourceList: {
     loading: false,
     loadFinished: false,
-    loadFinishedText: ''
+    loadFinishedText: '',
+    loadFailed: false
   }
 })
 
@@ -46,13 +49,37 @@ const localLavsourceList = ref([]) ?? [
 ]
 
 function loadLocalLavsourceList() {
+  componentParams.localLavsourceList.loadFailed = false
   lavsourceJsInterface.getLocalLavsourceListCanBeAdded().then(res => {
     localLavsourceList.value = res.data
   }).catch(() => {
-    componentParams.localLavsourceList.loadFinishedText = '加载失败'
+    componentParams.localLavsourceList.loadFailed = true
   }).finally(() => {
     componentParams.localLavsourceList.loading = false
     componentParams.localLavsourceList.loadFinished = true
+    updateLocalLavsourceListLoadFinishedText()
+  })
+}
+
+function updateLocalLavsourceListLoadFinishedText() {
+  let text
+  if(componentParams.localLavsourceList.loadFailed) {
+    text = '加载失败'
+  } else if(localLavsourceList.value.length <= 0) {
+    text = '暂无信源'
+  }
+  componentParams.localLavsourceList.loadFinishedText = text
+}
+
+function addLocalLavsource(item, index) {
+  codeUtils.showConfirmDialog({
+    title: '添加本地信源',
+    message: `确认添加本地信源“${item.name}”吗？`,
+    onConfirm: async () => {
+      await lavsourceJsInterface.addLocalLavsource(item)
+      localLavsourceList.value.splice(index, 1)
+      updateLocalLavsourceListLoadFinishedText()
+    }
   })
 }
 </script>

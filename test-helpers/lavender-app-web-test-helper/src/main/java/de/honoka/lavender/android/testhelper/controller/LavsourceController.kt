@@ -4,6 +4,8 @@ import de.honoka.lavender.android.testhelper.MainProperties
 import de.honoka.lavender.android.testhelper.data.LavsourceInfo
 import de.honoka.sdk.util.framework.web.ApiResponse
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -37,4 +39,7 @@ class LavsourceController(
             imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         }
     ))
+
+    @PostMapping("/addLocalLavsource")
+    fun addLocalLavsource(@RequestBody lavsourceInfo: LavsourceInfo): ApiResponse<*> = ApiResponse.success(null)
 }

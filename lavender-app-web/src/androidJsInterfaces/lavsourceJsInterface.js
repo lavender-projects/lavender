@@ -8,6 +8,14 @@ const methodDefinitions = {
       url: '/lavsource/localLavsourceListCanBeAdded',
       method: 'get'
     })
+  },
+  addLocalLavsource: {
+    isAsync: true,
+    fallback: data => request({
+      url: '/lavsource/addLocalLavsource',
+      method: 'post',
+      data
+    })
   }
 }
 
