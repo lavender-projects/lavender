@@ -1,23 +1,26 @@
 <template>
-  <div class="lavsource-list" ref="rootDom">
-    <van-list v-model:loading="componentParams.lavsourceList.loading"
-              :finished="componentParams.lavsourceList.loadFinished"
-              :finished-text="componentParams.lavsourceList.loadFinishedText"
-              @load="loadLavsourceList">
-      <van-cell v-for="(item, index) in lavsourceList" :key="item.id"
-                size="large" is-link @click="emits('itemClick', item, index)">
-        <template #title>
-          <div class="item-title">
-            <!--suppress JSUnresolvedReference -->
-            <img :src="item.imgUrl" alt="" />
-            <div class="item-info">
-              <div class="item-name">{{ item.name }}</div>
-              <div class="item-package-name van-ellipsis">{{ item.packageName }}</div>
+  <!-- 最外层div用于使“::v-deep(.lavsource-list)”生效 -->
+  <div>
+    <div class="lavsource-list" ref="rootDom">
+      <van-list v-model:loading="componentParams.lavsourceList.loading"
+                :finished="componentParams.lavsourceList.loadFinished"
+                :finished-text="componentParams.lavsourceList.loadFinishedText"
+                @load="loadLavsourceList">
+        <van-cell v-for="(item, index) in lavsourceList" :key="item.id"
+                  size="large" is-link @click="emits('itemClick', item, index)">
+          <template #title>
+            <div class="item-title">
+              <!--suppress JSUnresolvedReference -->
+              <img :src="item.imgUrl" alt="" />
+              <div class="item-info">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-package-name van-ellipsis">{{ item.packageName }}</div>
+              </div>
             </div>
-          </div>
-        </template>
-      </van-cell>
-    </van-list>
+          </template>
+        </van-cell>
+      </van-list>
+    </div>
   </div>
 </template>
 

@@ -16,6 +16,13 @@ const methodDefinitions = {
       method: 'post',
       data
     })
+  },
+  getExistingLavsourceList: {
+    isAsync: true,
+    fallback: () => request({
+      url: '/lavsource/existingLavsourceList',
+      method: 'get'
+    })
   }
 }
 

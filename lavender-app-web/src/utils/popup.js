@@ -1,4 +1,4 @@
-import { allowMultipleToast, showConfirmDialog, showLoadingToast } from 'vant'
+import { showConfirmDialog, showLoadingToast } from 'vant'
 
 export function showCustomConfirmDialog({ title, message, onConfirm }) {
   showConfirmDialog({
@@ -22,23 +22,18 @@ export function showCustomConfirmDialog({ title, message, onConfirm }) {
 }
 
 export function showCustomLoadingToast(options) {
-  let result = {
-    isClosed: false,
-    close: () => {}
-  }
   //noinspection JSUnusedGlobalSymbols
   let mergedOptions = Object.assign({
     duration: 0,
     forbidClick: true,
-    onClose: () => {
-      result.isClosed = true
-    }
+    className: 'custom-vant-loading-toast'
   }, options)
-  allowMultipleToast()
   let toast = showLoadingToast(mergedOptions)
-  result.close = () => {
-    if(!result.isClosed) toast.close()
-    allowMultipleToast(false)
+  return {
+    close: () => {
+      let toastDom = document.querySelector('.custom-vant-loading-toast')
+      if(toastDom == null) return
+      toast.close()
+    }
   }
-  return result
 }

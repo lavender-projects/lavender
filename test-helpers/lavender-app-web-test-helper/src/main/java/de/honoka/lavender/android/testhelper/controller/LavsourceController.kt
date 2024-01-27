@@ -42,4 +42,15 @@ class LavsourceController(
 
     @PostMapping("/addLocalLavsource")
     fun addLocalLavsource(@RequestBody lavsourceInfo: LavsourceInfo): ApiResponse<*> = ApiResponse.success(null)
+
+    @GetMapping("/existingLavsourceList")
+    fun existingLavsourceList(): ApiResponse<*> = ApiResponse.success(listOf(
+        LavsourceInfo().apply {
+            id = 1
+            type = "local"
+            name = "LavSource bilibili"
+            packageName = "de.honoka.lavender.lavsource.bilibili"
+            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+        }
+    ))
 }
