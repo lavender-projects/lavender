@@ -127,7 +127,6 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import BackIcon from '@/components/icon/BackIcon.vue'
 import ScrollBlock from '@/components/common/ScrollBlock.vue'
-import videoApi from '@/api/video'
 import DanmakuIcon from '@/components/icon/DanmakuIcon.vue'
 import PlayCountIcon from '@/components/icon/PlayCountIcon.vue'
 import LikeIcon from '@/components/icon/LikeIcon.vue'
@@ -142,6 +141,7 @@ import androidEventListeners from '@/utils/androidEventListeners'
 import VideoInfoList from '@/components/video/VideoInfoList.vue'
 import PlayIcon from '@/components/icon/PlayIcon.vue'
 import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
+import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
 
 const props = defineProps({
   videoId: String
@@ -284,7 +284,7 @@ async function loadDomAndCssValues() {
 }
 
 function loadVideoDetails() {
-  videoApi.videoDetail({
+  videoJsInterface.videoDetail({
     id: props.videoId
   }).then(res => {
     videoDetail.value = res.data
@@ -303,7 +303,7 @@ async function initVideoTitleBlock() {
 }
 
 async function startVideoPlay() {
-  episodeInfoList.value = (await videoApi.episodeInfoList({
+  episodeInfoList.value = (await videoJsInterface.episodeInfoList({
     videoId: props.videoId
   })).data
   nowEpisodeId.value = String(episodeInfoList.value[0].id)
@@ -354,7 +354,7 @@ function onTopBarPlayBtnClick() {
 }
 
 function getLoadCommentListRequest(sortBy, page) {
-  return videoApi.commentList({
+  return videoJsInterface.commentList({
     videoId: props.videoId,
     sortBy,
     page
@@ -362,7 +362,7 @@ function getLoadCommentListRequest(sortBy, page) {
 }
 
 function getLoadCommentReplyListRequest(commentId, page) {
-  return videoApi.commentReplyList({
+  return videoJsInterface.commentReplyList({
     videoId: props.videoId,
     commentId,
     page

@@ -3,8 +3,8 @@ import MainView from '@/views/MainView.vue'
 import RecommendedVideoView from '@/views/RecommendedVideoView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import DynamicView from '@/views/DynamicView.vue'
-import VideoPlayingView from '@/views/VideoPlayingView.vue'
 import settingsRoutes from '@/router/routes/settings'
+import videoRoutes from '@/router/routes/video'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,11 +27,7 @@ const router = createRouter({
         }
       ]
     },
-    {
-      path: '/videoPlaying',
-      component: VideoPlayingView,
-      props: route => ({ ...route.query })
-    },
+    ...videoRoutes,
     ...settingsRoutes
   ]
 })

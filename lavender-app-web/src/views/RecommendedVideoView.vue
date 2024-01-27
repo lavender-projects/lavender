@@ -31,10 +31,10 @@
 import { showToast } from 'vant'
 import { onMounted, reactive, ref } from 'vue'
 import RecommendedVideoItemContainer from '@/components/video/RecommendedVideoItemContainer.vue'
-import videoApi from '@/api/video'
 import { useRecommendedVideoListStore } from '@/stores/video'
 import ScrollBlock from '@/components/common/ScrollBlock.vue'
 import codeUtils from '@/utils/code'
+import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
 
 const recommendedVideoListStore = useRecommendedVideoListStore()
 
@@ -56,7 +56,7 @@ function search() {
 function onRefresh() {
   if(status.loading) return
   status.loading = true
-  videoApi.recommendedVideoList().then(res => {
+  videoJsInterface.recommendedVideoList().then(res => {
     recommendedVideoListStore.videoItems = res.data.concat(recommendedVideoListStore.videoItems)
     status.loadFinished = false
   }).finally(() => {
@@ -72,7 +72,7 @@ async function onLoad() {
   await waitForScrollToLoadingText()
   if(status.loading) return
   status.loading = true
-  videoApi.recommendedVideoList().then(res => {
+  videoJsInterface.recommendedVideoList().then(res => {
     recommendedVideoListStore.videoItems = recommendedVideoListStore.videoItems.concat(res.data)
   }).catch(() => {
     //防止因为页面中没有数据，而反复触发加载

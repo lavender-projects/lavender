@@ -17,11 +17,21 @@ import TopLayerSettingsView from '@/components/common/TopLayerSettingsView.vue'
 import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
 import LavsourceList from '@/components/settings/lavsource/LavsourceList.vue'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const lavsourceListComponent = ref()
 
+const router = useRouter()
+
 function onLavsourceItemClick(item) {
-  console.log(item)
+  router.push({
+    path: './lavsource/info',
+    state: {
+      lavsourceInfo: {
+        ...item
+      }
+    }
+  })
 }
 </script>
 

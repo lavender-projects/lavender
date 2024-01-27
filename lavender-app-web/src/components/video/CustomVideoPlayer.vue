@@ -15,10 +15,10 @@
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import Player, { EVENT, Popover } from 'nplayer'
 import Danmaku from '@nplayer/danmaku'
-import videoApi from '@/api/video'
 import codeUtils from '@/utils/code'
 import BackIcon from '@/components/icon/BackIcon.vue'
 import videoPlayingViewJsInterface from '@/androidJsInterfaces/videoPlayingViewJsInterface'
+import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
 
 const props = defineProps({
   videoId: String,
@@ -298,7 +298,7 @@ function onBackIconClick() {
 
 async function playVideo() {
   //获取视频流和音频流的URL
-  streamInfoList = (await videoApi.streamInfoList({
+  streamInfoList = (await videoJsInterface.streamInfoList({
     videoId: props.videoId,
     episodeId: props.episodeId
   })).data
@@ -349,7 +349,7 @@ function pauseVideo() {
 }
 
 function loadDanmakuList() {
-  videoApi.danmakuList({
+  videoJsInterface.danmakuList({
     episodeId: props.episodeId
   }).then(res => {
     let list = [ ...res.data ]
