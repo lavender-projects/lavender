@@ -51,6 +51,13 @@ class LavsourceController(
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
             imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+        },
+        LavsourceInfo().apply {
+            id = 2
+            type = "network"
+            name = "LavSource bilibili Network"
+            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            baseUrl = "https://lavsource.bilibili.com/api"
         }
     ))
 }

@@ -30,8 +30,12 @@ export function showCustomLoadingToast(options) {
   }, options)
   let toast = showLoadingToast(mergedOptions)
   return {
+    /*
+     * toast.close()可能导致其他toast实例被错误关闭，通过为loadingToast指定className，以及在close前检查指定
+     * className的toast是否存在的方式，可以在能够关闭
+     */
     close: () => {
-      let toastDom = document.querySelector('.custom-vant-loading-toast')
+      let toastDom = document.querySelector('.' + mergedOptions.className)
       if(toastDom == null) return
       toast.close()
     }

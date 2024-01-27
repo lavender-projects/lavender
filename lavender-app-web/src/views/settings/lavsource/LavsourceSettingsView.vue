@@ -7,7 +7,7 @@
     <van-cell-group inset title="信源">
       <lavsource-list ref="lavsourceListComponent"
                       :load-data-api="lavsourceJsInterface.getExistingLavsourceList"
-                      @item-click="" />
+                      @item-click="onLavsourceItemClick" />
     </van-cell-group>
   </top-layer-settings-view>
 </template>
@@ -20,7 +20,9 @@ import { ref } from 'vue'
 
 const lavsourceListComponent = ref()
 
-
+function onLavsourceItemClick(item) {
+  console.log(item)
+}
 </script>
 
 <style scoped lang="scss">

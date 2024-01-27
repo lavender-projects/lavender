@@ -14,7 +14,7 @@
               <img :src="item.imgUrl" alt="" />
               <div class="item-info">
                 <div class="item-name">{{ item.name }}</div>
-                <div class="item-package-name van-ellipsis">{{ item.packageName }}</div>
+                <div class="item-description van-ellipsis">{{ getLavsourceDescription(item) }}</div>
               </div>
             </div>
           </template>
@@ -78,6 +78,13 @@ function updateLavsourceListLoadFinishedText() {
   componentParams.lavsourceList.loadFinishedText = text
 }
 
+function getLavsourceDescription(item) {
+  switch(item.type) {
+    case 'local': return item.packageName
+    case 'network': return item.baseUrl
+  }
+}
+
 defineExpose({
   lavsourceList,
   rootDom,
@@ -105,7 +112,7 @@ defineExpose({
       position: relative;
       top: 1.2px;
 
-      .item-package-name {
+      .item-description {
         max-width: 247.5px;
         font-size: 14px;
         color: var(--van-cell-group-title-color);
