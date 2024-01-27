@@ -2,6 +2,7 @@ package de.honoka.lavender.android.jsinterface
 
 import de.honoka.lavender.android.jsinterface.async.AsyncTaskJsInterface
 import de.honoka.lavender.android.jsinterface.definition.BasicJsInterface
+import de.honoka.lavender.android.jsinterface.definition.LavsourceJsInterface
 import de.honoka.lavender.android.jsinterface.definition.VideoPlayingViewJsInterface
 import de.honoka.lavender.android.ui.WebActivity
 
@@ -9,7 +10,8 @@ class JavaScriptInterfaces(private val webActivity: WebActivity) {
 
     private val interfaceInstances = arrayListOf(
         BasicJsInterface(webActivity),
-        VideoPlayingViewJsInterface(webActivity)
+        VideoPlayingViewJsInterface(webActivity),
+        LavsourceJsInterface(webActivity)
     )
 
     val interfaces = HashMap<String, Any>().apply {

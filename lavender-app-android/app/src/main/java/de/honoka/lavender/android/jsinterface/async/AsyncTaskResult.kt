@@ -8,5 +8,7 @@ data class AsyncTaskResult(
     @JvmField
     var isPlainText: Boolean? = null,
 
+    var message: String? = null,
+
     var result: String? = null
 )

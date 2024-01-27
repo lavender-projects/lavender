@@ -45,9 +45,8 @@ class AsyncTaskJsInterface(
                 }
             } catch(t: Throwable) {
                 result.run {
-                    isPlainText = true
                     isResolve = false
-                    this.result = t.message
+                    message = t.message
                 }
             }
             val resultStr = JSON.toJSONString(result)

@@ -9,8 +9,10 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'vant/lib/index.css'
 import { androidEventListenerUtils } from '@/utils/androidEventListeners'
+import jsInterfaceAsyncMethodCallbackUtils from '@/utils/androidJsInterfaces/asyncSupport/callback'
 
 androidEventListenerUtils.exposeToGlobal()
+jsInterfaceAsyncMethodCallbackUtils.exposeToGlobal()
 
 const app = createApp(App)
 

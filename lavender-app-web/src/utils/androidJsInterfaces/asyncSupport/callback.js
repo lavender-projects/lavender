@@ -17,13 +17,15 @@ const jsInterfaceAsyncMethodCallbackUtils = {
       resultObj = resultObj ?? {
         isResolve: false,
         isPlainText: true,
+        message: null,
         result: ''
       }
       if(resultObj.isResolve === true) {
         resolve(resultObj.isPlainText ? resultObj.result : JSON.parse(resultObj.result))
         return
       }
-      reject(resultObj.isPlainText ? resultObj.result : JSON.parse(resultObj.result))
+      console.error('Android JavaScript Interface method error: \n', resultObj.message)
+      reject()
     }
   },
   removeCallback(id) {
