@@ -1,7 +1,7 @@
 import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
 
 const methodDefinitions = {
-  simulateClickBeforeVideoPlay: jsInterfaceUtils.emptyImplementation()
+  simulateClickBeforeVideoPlay: () => {}
 }
 
 const videoPlayingViewJsInterface = jsInterfaceUtils.getJsInterfaceStub(

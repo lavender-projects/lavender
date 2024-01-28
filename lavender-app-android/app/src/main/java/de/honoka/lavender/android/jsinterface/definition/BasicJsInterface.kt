@@ -4,7 +4,6 @@ import android.content.Intent
 import android.webkit.JavascriptInterface
 import de.honoka.lavender.android.ui.WebActivity
 import de.honoka.lavender.android.util.ServerVariables
-import java.util.UUID
 
 class BasicJsInterface(private val webActivity: WebActivity) {
 
@@ -21,7 +20,4 @@ class BasicJsInterface(private val webActivity: WebActivity) {
     fun finishCurrentWebActivity() {
         webActivity.finish()
     }
-
-    @JavascriptInterface
-    fun getUuid(): String = UUID.randomUUID().toString()
 }

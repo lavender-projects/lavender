@@ -1,9 +1,10 @@
 import jsInterfaceAsyncSupportUtils from '@/utils/androidJsInterfaces/asyncSupport'
 
 export const jsInterfaceUtils = {
-  emptyImplementation: () => () => jsInterfaceUtils.jsInterfaceWarning(),
-  jsInterfaceWarning() {
-    console.warn('You are calling a Android JavaScript Interface function directly in browser!')
+  enableJsInterfaceWarning: true,
+  jsInterfaceWarning(methodName) {
+    if(!this.enableJsInterfaceWarning) return
+    console.warn(`You are calling a Android JavaScript Interface function "${methodName}" directly in browser!`)
   },
   getJsInterfaceStub(jsInterfaceName, methodDefinitions) {
     let jsInterface = window[`android_${jsInterfaceName}`]
@@ -11,16 +12,25 @@ export const jsInterfaceUtils = {
     Object.keys(methodDefinitions).forEach(it => {
       let definition = methodDefinitions[it]
       if(definition instanceof Function) {
-        stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : definition
+        stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : (...args) => {
+          this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
+          definition(...args)
+        }
         return
       }
       if(definition instanceof Object) {
         let isAsync = definition.isAsync ?? false
         if(!isAsync) {
-          stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : definition.fallback
+          stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : (...args) => {
+            this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
+            definition.fallback(...args)
+          }
         } else {
           stub[it] = jsInterface != null ? jsInterfaceAsyncSupportUtils.getAsyncMethodStub(jsInterfaceName, it) : (
-            async (...args) => await definition.fallback(...args)
+            async (...args) => {
+              this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
+              await definition.fallback(...args)
+            }
           )
         }
         return
