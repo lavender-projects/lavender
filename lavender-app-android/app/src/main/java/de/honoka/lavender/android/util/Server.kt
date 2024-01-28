@@ -13,7 +13,11 @@ object ServerVariables {
 
     var webServerPort = 38081
 
+    const val imageUrlPrefix = "/android/img"
+
     fun getUrlByWebServerPrefix(path: String) = "http://localhost:$webServerPort$path"
+
+    fun getImageUrlByWebServerPrefix(path: String) = getUrlByWebServerPrefix("$imageUrlPrefix$path")
 }
 
 class WebServer(port: Int = ServerVariables.webServerPort) : NanoHTTPD(port) {
@@ -74,9 +78,8 @@ class WebServer(port: Int = ServerVariables.webServerPort) : NanoHTTPD(port) {
     }
 
     private fun androidImageResponse(urlPath: String): Response? {
-        val prefix = "/android/img"
-        if(!urlPath.startsWith(prefix)) return null
-        val filePath = "${GlobalData.application.dataDir}${urlPath.substring(prefix.length)}"
+        if(!urlPath.startsWith(ServerVariables.imageUrlPrefix)) return null
+        val filePath = "${GlobalData.application.dataDir}${urlPath.substring(ServerVariables.imageUrlPrefix.length)}"
         val file = File(filePath)
         if(!file.exists()) return notFoundResponse(filePath)
         return buildStaticResponse(urlPath, file.readBytes())
@@ -138,4 +141,14 @@ data class ApiResponse<T>(
     var msg: String? = null,
 
     var data: T? = null
-)
+) {
+
+    companion object {
+
+        fun <T> success(data: T? = null) = ApiResponse<T>().also {
+            it.data = data
+        }
+    }
+
+    override fun toString(): String = JSON.toJSONString(this)
+}

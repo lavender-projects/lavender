@@ -1,3 +1,5 @@
+import messageUtils from '@/utils/message'
+
 const jsInterfaceAsyncMethodCallbacks = {}
 
 //noinspection JSUnusedGlobalSymbols
@@ -25,6 +27,7 @@ const jsInterfaceAsyncMethodCallbackUtils = {
         return
       }
       console.error('Android JavaScript Interface method error: \n', resultObj.message)
+      messageUtils.error(resultObj.message)
       reject()
     }
   },
