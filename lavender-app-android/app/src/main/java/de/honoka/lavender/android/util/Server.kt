@@ -9,6 +9,7 @@ import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
 import java.io.File
 
+@Suppress("ConstPropertyName")
 object ServerVariables {
 
     var webServerPort = 38081

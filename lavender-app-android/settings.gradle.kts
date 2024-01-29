@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Lavender"
+rootProject.name = "lavender-app-android"
 include(":app")

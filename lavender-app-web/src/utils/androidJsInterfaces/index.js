@@ -14,7 +14,7 @@ export const jsInterfaceUtils = {
       if(definition instanceof Function) {
         stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : (...args) => {
           this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
-          definition(...args)
+          return definition(...args)
         }
         return
       }
@@ -23,13 +23,13 @@ export const jsInterfaceUtils = {
         if(!isAsync) {
           stub[it] = jsInterface != null ? this.getWrappedInterfaceMethod(jsInterface, it) : (...args) => {
             this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
-            definition.fallback(...args)
+            return definition.fallback(...args)
           }
         } else {
           stub[it] = jsInterface != null ? jsInterfaceAsyncSupportUtils.getAsyncMethodStub(jsInterfaceName, it) : (
             async (...args) => {
               this.jsInterfaceWarning(`${jsInterfaceName}.${it}()`)
-              await definition.fallback(...args)
+              return await definition.fallback(...args)
             }
           )
         }

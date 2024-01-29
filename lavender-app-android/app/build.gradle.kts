@@ -1,3 +1,5 @@
+import android.annotation.SuppressLint
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -10,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "de.honoka.lavender.android"
         minSdk = 26
-        //noinspection OldTargetApi
+        @SuppressLint("OldTargetApi")
         targetSdk = 33
         versionCode = 1
         versionName = "1.0.0-dev"
@@ -21,6 +23,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            @Suppress("UnstableApiUsage")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
