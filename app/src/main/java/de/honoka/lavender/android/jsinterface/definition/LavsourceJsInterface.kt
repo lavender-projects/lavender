@@ -1,7 +1,6 @@
 package de.honoka.lavender.android.jsinterface.definition
 
 import android.graphics.Bitmap
-import android.webkit.JavascriptInterface
 import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.io.FileUtil
 import de.honoka.lavender.android.data.LavsourceInfo
@@ -17,8 +16,7 @@ class LavsourceJsInterface(
     private val webActivity: WebActivity
 ) {
 
-    @AsyncJavascriptInterface(isPlainText = false)
-    @JavascriptInterface
+    @AsyncJavascriptInterface
     fun getLocalLavsourceListCanBeAdded(): ApiResponse<List<LavsourceInfo>> {
         val lavsourceIconPath = "${GlobalData.application.filesDir}/lavsource/local/icon".also {
             File(it).apply {
