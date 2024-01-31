@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "lavender-app"
+rootProject.name = "lavender"
 
 include(":app")
 include(":app-web")

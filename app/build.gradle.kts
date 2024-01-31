@@ -4,7 +4,7 @@ plugins {
     val versions = de.honoka.gradle.buildsrc.Versions.App
     //plugins
     id("com.android.application") version versions.android
-    id("org.jetbrains.kotlin.android") version versions.kotlin
+    kotlin("android") version versions.kotlin
 }
 
 android {
