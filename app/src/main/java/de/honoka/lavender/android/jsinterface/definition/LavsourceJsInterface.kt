@@ -7,8 +7,8 @@ import de.honoka.lavender.android.data.LavsourceInfo
 import de.honoka.lavender.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.lavender.android.ui.WebActivity
 import de.honoka.lavender.android.util.ApiResponse
-import de.honoka.lavender.android.util.GlobalData
 import de.honoka.lavender.android.util.ServerVariables
+import de.honoka.sdk.util.android.common.GlobalData
 import java.io.ByteArrayOutputStream
 import java.io.File
 

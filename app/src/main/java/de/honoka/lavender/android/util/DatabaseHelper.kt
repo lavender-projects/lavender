@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
+import de.honoka.sdk.util.android.common.GlobalData
 
 abstract class DatabaseHelper(
     databaseName: String,

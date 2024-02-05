@@ -2,7 +2,7 @@ package de.honoka.lavender.android.jsinterface.async
 
 import android.webkit.JavascriptInterface
 import cn.hutool.core.thread.BlockPolicy
-import com.alibaba.fastjson2.JSON
+import cn.hutool.json.JSONUtil
 import de.honoka.lavender.android.jsinterface.JavaScriptInterfaces
 import de.honoka.lavender.android.ui.WebActivity
 import java.lang.reflect.Method
@@ -39,7 +39,7 @@ class AsyncTaskJsInterface(
                 }
                 result.run {
                     isPlainText = annotation!!.isPlainText
-                    val methodArgs = JSON.parseArray(args).map { it?.toString() }.toTypedArray()
+                    val methodArgs = JSONUtil.parseArray(args).map { it?.toString() }.toTypedArray()
                     this.result = method.invoke(jsInterface, *methodArgs)?.toString()
                     isResolve = true
                 }
@@ -49,7 +49,7 @@ class AsyncTaskJsInterface(
                     message = t.message
                 }
             }
-            val resultStr = JSON.toJSONString(result)
+            val resultStr = JSONUtil.toJsonStr(result)
             val script = "window.jsInterfaceAsyncMethodCallbackUtils.invokeCallback('$callbackId', $resultStr)"
             webActivity.evaluateJavascript(script)
         }

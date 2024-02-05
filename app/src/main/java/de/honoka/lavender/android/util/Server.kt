@@ -2,9 +2,9 @@ package de.honoka.lavender.android.util
 
 import android.webkit.MimeTypeMap
 import cn.hutool.core.exceptions.ExceptionUtil
-import com.alibaba.fastjson2.JSON
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.JSONWriter
+import cn.hutool.json.JSONObject
+import cn.hutool.json.JSONUtil
+import de.honoka.sdk.util.android.common.GlobalData
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -89,22 +89,22 @@ class WebServer(port: Int = ServerVariables.webServerPort) : NanoHTTPD(port) {
     private fun notFoundResponse(resourcePath: String): Response = newFixedLengthResponse(
         Response.Status.NOT_FOUND,
         MimeTypeMap.getSingleton().getMimeTypeFromExtension("json"),
-        JSON.toJSONString(ApiResponse<Any>().apply {
+        JSONUtil.toJsonPrettyStr(ApiResponse<Any>().apply {
             code = Response.Status.NOT_FOUND.requestStatus
             msg = "$resourcePath is not found"
-        }, JSONWriter.Feature.PrettyFormat)
+        })
     )
 
     private fun errorResponse(t: Throwable): Response = newFixedLengthResponse(
         Response.Status.INTERNAL_ERROR,
         MimeTypeMap.getSingleton().getMimeTypeFromExtension("json"),
-        JSON.toJSONString(ApiResponse<Any>().apply {
+        JSONUtil.toJsonPrettyStr(ApiResponse<Any>().apply {
             code = Response.Status.INTERNAL_ERROR.requestStatus
             msg = t.message
             data = JSONObject().also {
                 it["stackTrace"] = ExceptionUtil.stacktraceToString(t)
             }
-        }, JSONWriter.Feature.PrettyFormat)
+        })
     )
 }
 
@@ -151,5 +151,5 @@ data class ApiResponse<T>(
         }
     }
 
-    override fun toString(): String = JSON.toJSONString(this)
+    override fun toString(): String = JSONUtil.toJsonStr(this)
 }

@@ -6,9 +6,9 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
-import de.honoka.lavender.android.util.GlobalData
 import de.honoka.lavender.android.util.ServerUtils
 import de.honoka.lavender.android.util.WebServer
+import de.honoka.sdk.util.android.common.GlobalData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
