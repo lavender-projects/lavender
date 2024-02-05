@@ -6,9 +6,9 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
-import de.honoka.lavender.android.util.ServerUtils
-import de.honoka.lavender.android.util.WebServer
-import de.honoka.sdk.util.android.common.GlobalData
+import de.honoka.sdk.util.android.common.GlobalComponents
+import de.honoka.sdk.util.android.server.HttpServer
+import de.honoka.sdk.util.android.server.HttpServerUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,10 +19,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         fullScreenToShow()
         setContentView(R.layout.activity_main)
-        GlobalData.application = application
+        GlobalComponents.application = application
         CoroutineScope(Dispatchers.IO).launch {
             //init可能是一个耗时的操作，故在IO线程中执行，防止阻塞UI线程
-            initWebServer()
+            initHttpServer()
             jumpToWebActivty()
         }
     }
@@ -41,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
     }
 
-    private fun initWebServer() {
-        ServerUtils.initServerPorts()
-        WebServer.createInstance()
+    private fun initHttpServer() {
+        HttpServerUtils.initServerPorts()
+        HttpServer.createInstance()
     }
 
     private fun jumpToWebActivty() = runOnUiThread {

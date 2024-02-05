@@ -1,24 +1,22 @@
-package de.honoka.lavender.android.jsinterface.definition
+package de.honoka.lavender.android.jsinterface
 
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.io.FileUtil
 import de.honoka.lavender.android.data.LavsourceInfo
-import de.honoka.lavender.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.lavender.android.ui.WebActivity
-import de.honoka.lavender.android.util.ApiResponse
-import de.honoka.lavender.android.util.ServerVariables
-import de.honoka.sdk.util.android.common.GlobalData
+import de.honoka.sdk.util.android.common.GlobalComponents
+import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
+import de.honoka.sdk.util.android.server.HttpServerVariables
+import de.honoka.sdk.util.framework.web.ApiResponse
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class LavsourceJsInterface(
-    private val webActivity: WebActivity
-) {
+class LavsourceJsInterface(private val webActivity: WebActivity) {
 
     @AsyncJavascriptInterface
     fun getLocalLavsourceListCanBeAdded(): ApiResponse<List<LavsourceInfo>> {
-        val lavsourceIconPath = "${GlobalData.application.filesDir}/lavsource/local/icon".also {
+        val lavsourceIconPath = "${GlobalComponents.application.filesDir}/lavsource/local/icon".also {
             File(it).apply {
                 if(exists()) FileUtil.del(this)
                 mkdirs()
@@ -46,7 +44,7 @@ class LavsourceJsInterface(
                 type = LavsourceInfo.Type.LOCAL
                 name = webActivity.packageManager.getApplicationLabel(it).toString()
                 packageName = it.packageName
-                imgUrl = ServerVariables.getImageUrlByWebServerPrefix(
+                imgUrl = HttpServerVariables.getImageUrlByWebServerPrefix(
                     "/files/lavsource/local/icon/${it.packageName}.png"
                 )
             })

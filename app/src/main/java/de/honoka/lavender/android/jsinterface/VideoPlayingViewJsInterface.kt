@@ -1,11 +1,9 @@
-package de.honoka.lavender.android.jsinterface.definition
+package de.honoka.lavender.android.jsinterface
 
 import android.webkit.JavascriptInterface
 import de.honoka.lavender.android.ui.WebActivity
 
-class VideoPlayingViewJsInterface(
-    private val webActivity: WebActivity
-) {
+class VideoPlayingViewJsInterface(private val webActivity: WebActivity) {
 
     @JavascriptInterface
     fun simulateClickBeforeVideoPlay() {

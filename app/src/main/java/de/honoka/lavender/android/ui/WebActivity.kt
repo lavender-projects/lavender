@@ -15,10 +15,11 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
-import de.honoka.lavender.android.jsinterface.JavaScriptInterfaces
-import de.honoka.lavender.android.util.ServerVariables
-import de.honoka.lavender.android.util.WebServer
-import de.honoka.lavender.android.util.launchCoroutineOnUiThread
+import de.honoka.lavender.android.util.JsInterfaceContainerFactory
+import de.honoka.sdk.util.android.code.launchCoroutineOnUiThread
+import de.honoka.sdk.util.android.jsinterface.JavascriptInterfaceContainer
+import de.honoka.sdk.util.android.server.HttpServer
+import de.honoka.sdk.util.android.server.HttpServerVariables
 import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
 
@@ -74,7 +75,7 @@ class WebActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var javaScriptInterfaces: JavaScriptInterfaces
+    private lateinit var jsInterfaceContainer: JavascriptInterfaceContainer
 
     private var fullScreenView: View? = null
 
@@ -160,7 +161,7 @@ class WebActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        WebServer.checkOrRestartInstance()
+        HttpServer.checkOrRestartInstance()
         dispatchEventToListenersInWebViewDirectly("onActivityResumeListeners")
         super.onResume()
     }
@@ -171,7 +172,7 @@ class WebActivity : AppCompatActivity() {
     }
 
     private fun initActivityParams() {
-        url = intent.getStringExtra("url") ?: ServerVariables.getUrlByWebServerPrefix("")
+        url = intent.getStringExtra("url") ?: HttpServerVariables.getUrlByWebServerPrefix("")
         firstWebActivity = intent.getBooleanExtra("firstWebActivity", false)
     }
 
@@ -186,15 +187,11 @@ class WebActivity : AppCompatActivity() {
             }
             isVerticalScrollBarEnabled = false
             scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
-            javaScriptInterfaces = JavaScriptInterfaces(this@WebActivity)
+            jsInterfaceContainer = JsInterfaceContainerFactory(this@WebActivity).getContainer()
             loadUrl(this@WebActivity.url)
         }
         onBackPressedDispatcher.addCallback(onBackPressedCallback)
         orientationEventListener.enable()
-    }
-
-    fun evaluateJavascript(script: String, callback: (String) -> Unit = {}) = runOnUiThread {
-        webView.evaluateJavascript(script, callback)
     }
 
     private fun setFullScreen(fullScreen: Boolean) {

@@ -48,7 +48,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("de.honoka.sdk:honoka-android-utils:1.0.0")
+    implementation("de.honoka.sdk:honoka-android-utils:1.0.1")
     implementation("cn.hutool:hutool-all:5.8.18")
     implementation("org.nanohttpd:nanohttpd:2.3.1")
     implementation("com.j256.ormlite:ormlite-android:5.1")
