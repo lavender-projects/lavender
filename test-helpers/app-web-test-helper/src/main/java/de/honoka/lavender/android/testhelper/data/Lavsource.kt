@@ -10,7 +10,7 @@ data class LavsourceInfo(
 
     var packageName: String? = null,
 
-    var imgUrl: String? = null,
+    var iconUrl: String? = null,
 
     var baseUrl: String? = null
 )

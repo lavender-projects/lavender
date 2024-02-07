@@ -3,14 +3,14 @@ package de.honoka.gradle.buildsrc
 @Suppress("ConstPropertyName")
 object Versions {
 
-    object App {
+    object AndroidApp {
 
         const val android = "8.0.0"
 
         const val kotlin = "1.8.0"
     }
 
-    object TestHelper {
+    object JvmApp {
 
         const val kotlin = "1.6.21"
 
@@ -18,6 +18,6 @@ object Versions {
 
         const val honokaUtils = "1.0.9"
 
-        const val honokaFrameworkUtils = "1.0.3"
+        const val honokaFrameworkUtils = "1.0.4"
     }
 }

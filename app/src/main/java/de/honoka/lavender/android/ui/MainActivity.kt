@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
+import de.honoka.lavender.android.util.DatabaseUtils
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.server.HttpServer
 import de.honoka.sdk.util.android.server.HttpServerUtils
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             //init可能是一个耗时的操作，故在IO线程中执行，防止阻塞UI线程
             initHttpServer()
+            DatabaseUtils.initDaoInstances()
             jumpToWebActivty()
         }
     }

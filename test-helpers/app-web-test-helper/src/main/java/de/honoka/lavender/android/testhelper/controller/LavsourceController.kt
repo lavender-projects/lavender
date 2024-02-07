@@ -18,26 +18,26 @@ class LavsourceController(
             type = "local"
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
-            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
         LavsourceInfo().apply {
             id = 2
             type = "local"
             name = "test1"
             packageName = "test1"
-            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
         LavsourceInfo().apply {
             id = 3
             type = "local"
             name = "test2"
             packageName = "test2"
-            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         }
     ))
 
     @PostMapping("/addLocalLavsource")
-    fun addLocalLavsource(@RequestBody lavsourceInfo: LavsourceInfo): ApiResponse<*> = ApiResponse.success(null)
+    fun addLocalLavsource(@RequestBody lavsourceInfo: LavsourceInfo): ApiResponse<*> = ApiResponse.success()
 
     @GetMapping("/existingLavsourceList")
     fun existingLavsourceList(): ApiResponse<*> = ApiResponse.success(listOf(
@@ -46,13 +46,13 @@ class LavsourceController(
             type = "local"
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
-            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
         LavsourceInfo().apply {
             id = 2
             type = "network"
             name = "LavSource bilibili Network"
-            imgUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
+            iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
             baseUrl = "https://lavsource.bilibili.com/api"
         }
     ))

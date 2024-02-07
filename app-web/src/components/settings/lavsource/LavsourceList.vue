@@ -11,7 +11,7 @@
           <template #title>
             <div class="item-title">
               <!--suppress JSUnresolvedReference -->
-              <img :src="item.imgUrl" alt="" />
+              <img :src="item.iconUrl" alt="" />
               <div class="item-info">
                 <div class="item-name">{{ item.name }}</div>
                 <div class="item-description van-ellipsis">{{ getLavsourceDescription(item) }}</div>
@@ -46,7 +46,7 @@ const lavsourceList = ref([]) ?? [
     type: '',
     name: '',
     packageName: '',
-    imgUrl: '',
+    iconUrl: '',
     baseUrl: ''
   }
 ]
