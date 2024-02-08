@@ -13,9 +13,9 @@ const jsInterfaceAsyncMethodCallbackUtils = {
     if(callback == null) return
     callback(resultObj)
   },
-  addCallback(id, resolve, reject) {
-    jsInterfaceAsyncMethodCallbacks[id] = resultObj => {
-      this.removeCallback(id)
+  addCallback(params) {
+    jsInterfaceAsyncMethodCallbacks[params.id] = resultObj => {
+      this.removeCallback(params.id)
       resultObj = resultObj ?? {
         isResolve: false,
         isPlainText: true,
@@ -23,12 +23,14 @@ const jsInterfaceAsyncMethodCallbackUtils = {
         result: ''
       }
       if(resultObj.isResolve === true) {
-        resolve(resultObj.isPlainText ? resultObj.result : JSON.parse(resultObj.result))
+        let result = resultObj.isPlainText ? resultObj.result : JSON.parse(resultObj.result)
+        console.log(`${params.jsInterfaceName}.${params.methodName}()\nparams:`, params.args, '\nresult:', result)
+        params.resolve(result)
         return
       }
       console.error('Android JavaScript Interface method error: \n', resultObj.message)
       messageUtils.error(resultObj.message)
-      reject()
+      params.reject()
     }
   },
   removeCallback(id) {
