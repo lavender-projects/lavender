@@ -1,7 +1,8 @@
 package de.honoka.lavender.android.testhelper.controller
 
+import de.honoka.lavender.android.api.data.LavsourceInfoVo
+import de.honoka.lavender.android.api.entity.LavsourceInfo
 import de.honoka.lavender.android.testhelper.MainProperties
-import de.honoka.lavender.android.testhelper.data.LavsourceInfo
 import de.honoka.sdk.util.framework.web.ApiResponse
 import org.springframework.web.bind.annotation.*
 
@@ -13,21 +14,21 @@ class LavsourceController(
 
     @GetMapping("/localLavsourceListCanBeAdded")
     fun localLavsourceListCanBeAdded(): ApiResponse<*> = ApiResponse.success(listOf(
-        LavsourceInfo().apply {
+        LavsourceInfoVo().apply {
             id = 1
             type = "local"
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
             iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
-        LavsourceInfo().apply {
+        LavsourceInfoVo().apply {
             id = 2
             type = "local"
             name = "test1"
             packageName = "test1"
             iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
-        LavsourceInfo().apply {
+        LavsourceInfoVo().apply {
             id = 3
             type = "local"
             name = "test2"
@@ -41,14 +42,14 @@ class LavsourceController(
 
     @GetMapping("/existingLavsourceList")
     fun existingLavsourceList(): ApiResponse<*> = ApiResponse.success(listOf(
-        LavsourceInfo().apply {
+        LavsourceInfoVo().apply {
             id = 1
             type = "local"
             name = "LavSource bilibili"
             packageName = "de.honoka.lavender.lavsource.bilibili"
             iconUrl = "http://${mainProperties.remoteAccessHostName}:${mainProperties.serverPort}/img/lavsource_bilibili.png"
         },
-        LavsourceInfo().apply {
+        LavsourceInfoVo().apply {
             id = 2
             type = "network"
             name = "LavSource bilibili Network"

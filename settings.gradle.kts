@@ -23,5 +23,6 @@ pluginManagement {
 rootProject.name = "lavender"
 
 include(":app")
+include(":app-api")
 include(":app-web")
-include(":test-helpers:app-web-test-helper")
+include(":app-web:test-helper")

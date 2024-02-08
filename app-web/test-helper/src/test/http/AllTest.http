@@ -1,0 +1,11 @@
+###
+GET {{base_url}}/lavsource/localLavsourceListCanBeAdded
+
+###
+POST {{base_url}}/lavsource/addLocalLavsource
+Content-Type: application/json
+
+{}
+
+###
+GET {{base_url}}/lavsource/existingLavsourceList

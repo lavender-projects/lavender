@@ -21,6 +21,7 @@ java {
 }
 
 dependencies {
+    implementation(project(":app-api"))
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.JvmApp.kotlin}")

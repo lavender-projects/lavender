@@ -1,6 +1,8 @@
 import android.annotation.SuppressLint
+import de.honoka.gradle.buildsrc.Versions
 
 plugins {
+    @Suppress("RemoveRedundantQualifierName")
     val versions = de.honoka.gradle.buildsrc.Versions.AndroidApp
     //plugins
     id("com.android.application") version versions.android
@@ -41,11 +43,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":app-api"))
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("de.honoka.sdk:honoka-android-utils:1.0.3-dev")
+    implementation("de.honoka.sdk:honoka-android-utils:${Versions.AndroidApp.honokaAndroidUtils}")
     implementation("cn.hutool:hutool-all:5.8.18")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
