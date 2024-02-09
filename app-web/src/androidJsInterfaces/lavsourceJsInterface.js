@@ -1,6 +1,7 @@
 import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
 import request from '@/utils/request'
 
+//noinspection JSUnusedLocalSymbols
 const methodDefinitions = {
   getLocalLavsourceListCanBeAdded: {
     isAsync: true,
@@ -23,6 +24,10 @@ const methodDefinitions = {
       url: '/lavsource/existingLavsourceList',
       method: 'get'
     })
+  },
+  getLavsourceStatus: {
+    isAsync: true,
+    fallback: async id => true
   }
 }
 
