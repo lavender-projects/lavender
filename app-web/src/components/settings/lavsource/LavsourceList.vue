@@ -6,7 +6,7 @@
                 :finished="componentParams.lavsourceList.loadFinished"
                 :finished-text="componentParams.lavsourceList.loadFinishedText"
                 @load="loadLavsourceList">
-        <van-cell v-for="(item, index) in lavsourceList" :key="item.id"
+        <van-cell v-for="(item, index) in lavsourceList" :key="item.id" center
                   size="large" is-link @click="emits('itemClick', item, index)">
           <template #title>
             <div class="item-title">
@@ -40,7 +40,7 @@ const componentParams = reactive({
   }
 })
 
-const lavsourceList = ref([]) ?? [
+const lavsourceList = ref([] ?? [
   {
     id: 0,
     type: '',
@@ -49,7 +49,7 @@ const lavsourceList = ref([]) ?? [
     iconUrl: '',
     baseUrl: ''
   }
-]
+])
 
 const rootDom = ref()
 
@@ -122,10 +122,6 @@ defineExpose({
 }
 
 ::v-deep(.lavsource-list) {
-  .van-cell {
-    align-items: center;
-  }
-
   .van-list__loading, .van-list__finished-text {
     line-height: unset;
   }

@@ -32,7 +32,7 @@ export function showCustomLoadingToast(options) {
   return {
     /*
      * toast.close()可能导致其他toast实例被错误关闭，通过为loadingToast指定className，以及在close前检查指定
-     * className的toast是否存在的方式，可以在能够关闭
+     * className的toast是否存在的方式，可以确保在尝试关闭toast时仅关闭loadingToast
      */
     close: () => {
       let toastDom = document.querySelector('.' + mergedOptions.className)
