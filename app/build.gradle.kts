@@ -43,7 +43,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":app-api"))
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.9.0")

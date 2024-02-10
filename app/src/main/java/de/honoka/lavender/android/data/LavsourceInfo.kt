@@ -1,6 +1,6 @@
-package de.honoka.lavender.android.api.data
+package de.honoka.lavender.android.data
 
-import de.honoka.lavender.android.api.entity.LavsourceInfo
+import de.honoka.lavender.android.entity.LavsourceInfo
 
 data class LavsourceInfoVo(
 

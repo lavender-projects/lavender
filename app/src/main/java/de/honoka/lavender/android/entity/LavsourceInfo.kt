@@ -1,4 +1,4 @@
-package de.honoka.lavender.android.api.entity
+package de.honoka.lavender.android.entity
 
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable

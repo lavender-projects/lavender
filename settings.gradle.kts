@@ -23,5 +23,4 @@ pluginManagement {
 rootProject.name = "lavender"
 
 include(":app")
-include(":app-api")
 include(":app-web")
