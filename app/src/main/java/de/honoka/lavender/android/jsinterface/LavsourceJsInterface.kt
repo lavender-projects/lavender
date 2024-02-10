@@ -1,6 +1,7 @@
 package de.honoka.lavender.android.jsinterface
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.bean.copier.CopyOptions
@@ -23,7 +24,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
         "/files/lavsource/local/icon/$packageName.png"
     }
 
-    private fun getSavedLavsourceIconRelativePath(id: Long) = "/files/lavsource/saved/icon/$id.png"
+    private fun getSavedLavsourceIconRelativePath(id: String) = "/files/lavsource/saved/icon/$id.png"
 
     @AsyncJavascriptInterface
     fun getLocalLavsourceListCanBeAdded(): List<LavsourceInfoVo> {
@@ -58,7 +59,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
                 type = LavsourceInfo.Type.LOCAL
                 name = webActivity.packageManager.getApplicationLabel(it).toString()
                 packageName = it.packageName
-                iconUrl = HttpServerVariables.getImageUrlByWebServerPrefix(
+                iconUrl = HttpServerVariables.getImageUrlByPrefix(
                     getLocalLavsourceIconRelativePath(packageName)
                 )
             })
@@ -69,7 +70,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     @AsyncJavascriptInterface
     fun addLocalLavsource(params: LavsourceAddParams) {
         val info = LavsourceInfo().apply {
-            id = SnowflakeUtils.nextId()
+            id = SnowflakeUtils.nextId().toString()
             BeanUtil.copyProperties(params, this, CopyOptions.create().ignoreNullValue())
         }
         val imgFile = File("${GlobalComponents.application.dataDir.absolutePath}${
@@ -87,15 +88,20 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     fun getExistingLavsourceList(): List<LavsourceInfoVo> = LavsourceInfoDao.listAll().map {
         LavsourceInfoVo().apply {
             BeanUtil.copyProperties(it, this)
-            iconUrl = HttpServerVariables.getImageUrlByWebServerPrefix(
+            iconUrl = HttpServerVariables.getImageUrlByPrefix(
                 getSavedLavsourceIconRelativePath(it.id!!)
             )
         }
     }
 
     @AsyncJavascriptInterface
-    fun getLavsourceStatus(id: Long): Boolean {
-        println(id)
+    fun getLavsourceStatus(id: String): Boolean {
+        val lavsourceInfo = LavsourceInfoDao.getById(id)
+        lavsourceInfo ?: return false
+        val bundle = GlobalComponents.application.contentResolver.call(
+            Uri.parse("content://${lavsourceInfo.packageName}.provider.LavsourceProvider"),
+            "", null, null
+        )
         return true
     }
 }

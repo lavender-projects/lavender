@@ -10,7 +10,7 @@ import java.io.Serializable
 open class LavsourceInfo(
 
     @DatabaseField(id = true)
-    var id: Long? = null,
+    var id: String? = null,
 
     @DatabaseField
     var type: String? = null,

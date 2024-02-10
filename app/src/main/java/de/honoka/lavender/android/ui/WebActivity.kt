@@ -16,7 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
 import de.honoka.lavender.android.util.JsInterfaceContainerFactory
-import de.honoka.sdk.util.android.code.launchCoroutineOnUiThread
+import de.honoka.sdk.util.android.common.launchCoroutineOnUiThread
 import de.honoka.sdk.util.android.jsinterface.JavascriptInterfaceContainer
 import de.honoka.sdk.util.android.server.HttpServer
 import de.honoka.sdk.util.android.server.HttpServerVariables
@@ -172,7 +172,7 @@ class WebActivity : AppCompatActivity() {
     }
 
     private fun initActivityParams() {
-        url = intent.getStringExtra("url") ?: HttpServerVariables.getUrlByWebServerPrefix("")
+        url = intent.getStringExtra("url") ?: HttpServerVariables.getUrlByPrefix("")
         firstWebActivity = intent.getBooleanExtra("firstWebActivity", false)
     }
 
