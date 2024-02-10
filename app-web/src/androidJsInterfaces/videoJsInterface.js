@@ -5,14 +5,14 @@ const methodDefinitions = {
   recommendedVideoList: {
     isAsync: true,
     fallback: () => request({
-      url: '/proxy/video/recommended',
+      url: '/video/recommended',
       method: 'get'
     })
   },
   videoDetail: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/detail',
+      url: '/video/detail',
       method: 'get',
       params
     })
@@ -20,7 +20,7 @@ const methodDefinitions = {
   commentList: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/comment/list',
+      url: '/video/comment/list',
       method: 'get',
       params
     })
@@ -28,7 +28,7 @@ const methodDefinitions = {
   commentReplyList: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/comment/reply/list',
+      url: '/video/comment/reply/list',
       method: 'get',
       params
     })
@@ -36,7 +36,7 @@ const methodDefinitions = {
   danmakuList: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/danmaku/list',
+      url: '/video/danmaku/list',
       method: 'get',
       params
     })
@@ -44,7 +44,7 @@ const methodDefinitions = {
   episodeInfoList: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/episode/list',
+      url: '/video/episode/list',
       method: 'get',
       params
     })
@@ -52,7 +52,7 @@ const methodDefinitions = {
   streamInfoList: {
     isAsync: true,
     fallback: params => request({
-      url: '/proxy/video/stream/urlList',
+      url: '/video/stream/urlList',
       method: 'get',
       params
     })

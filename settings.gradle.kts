@@ -25,4 +25,3 @@ rootProject.name = "lavender"
 include(":app")
 include(":app-api")
 include(":app-web")
-include(":app-web:test-helper")
