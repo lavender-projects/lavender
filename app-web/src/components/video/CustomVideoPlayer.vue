@@ -298,10 +298,10 @@ function onBackIconClick() {
 
 async function playVideo() {
   //获取视频流和音频流的URL
-  streamInfoList = (await videoJsInterface.streamInfoList({
+  streamInfoList = await videoJsInterface.streamInfoList({
     videoId: props.videoId,
     episodeId: props.episodeId
-  })).data
+  })
   //创建容器，并根据清晰度列表计算出对应每一个清晰度的DOM元素
   const fragment = document.createDocumentFragment()
   qualityController.itemElements = streamInfoList.map(info => {
@@ -352,14 +352,13 @@ function loadDanmakuList() {
   videoJsInterface.danmakuList({
     episodeId: props.episodeId
   }).then(res => {
-    let list = [ ...res.data ]
-    list.forEach(it => {
+    res.forEach(it => {
       //使字段名称兼容nplayer-danmaku
       it.text = it.content
       //noinspection JSUnresolvedReference
       it.color = it.colorRgb
     })
-    player.danmaku.resetItems(list)
+    player.danmaku.resetItems(res)
   })
 }
 

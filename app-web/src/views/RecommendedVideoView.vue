@@ -57,7 +57,7 @@ function onRefresh() {
   if(status.loading) return
   status.loading = true
   videoJsInterface.recommendedVideoList().then(res => {
-    recommendedVideoListStore.videoItems = res.data.concat(recommendedVideoListStore.videoItems)
+    recommendedVideoListStore.videoItems = res.concat(recommendedVideoListStore.videoItems)
     status.loadFinished = false
   }).finally(() => {
     if(recommendedVideoListStore.videoItems.length > 30) {
@@ -73,7 +73,8 @@ async function onLoad() {
   if(status.loading) return
   status.loading = true
   videoJsInterface.recommendedVideoList().then(res => {
-    recommendedVideoListStore.videoItems = recommendedVideoListStore.videoItems.concat(res.data)
+    res = res ?? []
+    recommendedVideoListStore.videoItems = recommendedVideoListStore.videoItems.concat(res)
   }).catch(() => {
     //防止因为页面中没有数据，而反复触发加载
     status.loadFinished = true

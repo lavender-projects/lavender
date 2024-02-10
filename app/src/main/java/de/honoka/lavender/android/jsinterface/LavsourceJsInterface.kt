@@ -14,7 +14,6 @@ import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.SnowflakeUtils
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.sdk.util.android.server.HttpServerVariables
-import de.honoka.sdk.util.framework.web.ApiResponse
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -27,7 +26,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     private fun getSavedLavsourceIconRelativePath(id: Long) = "/files/lavsource/saved/icon/$id.png"
 
     @AsyncJavascriptInterface
-    fun getLocalLavsourceListCanBeAdded(): ApiResponse<List<LavsourceInfoVo>> {
+    fun getLocalLavsourceListCanBeAdded(): List<LavsourceInfoVo> {
         val lavsourceIconPath = "${GlobalComponents.application.filesDir}/lavsource/local/icon".also {
             File(it).apply {
                 if(exists()) FileUtil.del(this)
@@ -64,11 +63,11 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
                 )
             })
         }
-        return ApiResponse.success(result)
+        return result
     }
 
     @AsyncJavascriptInterface
-    fun addLocalLavsource(params: LavsourceAddParams): ApiResponse<*> {
+    fun addLocalLavsource(params: LavsourceAddParams) {
         val info = LavsourceInfo().apply {
             id = SnowflakeUtils.nextId()
             BeanUtil.copyProperties(params, this, CopyOptions.create().ignoreNullValue())
@@ -82,19 +81,15 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
             FileUtil.copy(imgFile, it, true)
         }
         LavsourceInfoDao.save(info)
-        return ApiResponse.success()
     }
 
     @AsyncJavascriptInterface
-    fun getExistingLavsourceList(): ApiResponse<List<LavsourceInfoVo>> {
-        val list = LavsourceInfoDao.listAll().map {
-            LavsourceInfoVo().apply {
-                BeanUtil.copyProperties(it, this)
-                iconUrl = HttpServerVariables.getImageUrlByWebServerPrefix(
-                    getSavedLavsourceIconRelativePath(it.id!!)
-                )
-            }
+    fun getExistingLavsourceList(): List<LavsourceInfoVo> = LavsourceInfoDao.listAll().map {
+        LavsourceInfoVo().apply {
+            BeanUtil.copyProperties(it, this)
+            iconUrl = HttpServerVariables.getImageUrlByWebServerPrefix(
+                getSavedLavsourceIconRelativePath(it.id!!)
+            )
         }
-        return ApiResponse.success(list)
     }
 }

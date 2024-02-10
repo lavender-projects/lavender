@@ -58,7 +58,7 @@ const emits = defineEmits([ 'itemClick' ])
 function loadLavsourceList() {
   componentParams.lavsourceList.loadFailed = false
   props.loadDataApi().then(res => {
-    lavsourceList.value = res.data
+    lavsourceList.value = res
   }).catch(() => {
     componentParams.lavsourceList.loadFailed = true
   }).finally(() => {

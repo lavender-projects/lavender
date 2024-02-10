@@ -1,3 +1,5 @@
+import request from '@/utils/request'
+
 const codeUtils = {
   sleep: timeMillis => new Promise(res => setTimeout(res, timeMillis)),
   getDomHeight: dom => parseFloat(window.getComputedStyle(dom).height),
@@ -22,7 +24,8 @@ const codeUtils = {
       clonedObject[prop] = object[prop]
     }
     return clonedObject
-  }
+  },
+  requestAndGetData: async axiosParams => (await request(axiosParams)).data
 }
 
 export default codeUtils

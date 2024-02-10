@@ -58,11 +58,11 @@ function loadCommentList() {
   let oldCommentPage = commentPage
   commentPage = commentPage + 1
   props.getLoadReplyListRequest(props.rootCommentData.id, commentPage).then(res => {
-    if(res.data.list.length <= 0) {
+    if(res.list.length <= 0) {
       status.commentLoadFinished = true
       return
     }
-    commentList.value = commentList.value.concat(res.data.list)
+    commentList.value = commentList.value.concat(res.list)
     status.commentLoadFinished = false
   }).catch(() => {
     if(commentList.value.length <= 0) {

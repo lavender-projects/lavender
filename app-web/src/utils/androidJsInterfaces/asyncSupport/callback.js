@@ -23,7 +23,12 @@ const jsInterfaceAsyncMethodCallbackUtils = {
         result: ''
       }
       if(resultObj.isResolve === true) {
-        let result = resultObj.isPlainText ? resultObj.result : JSON.parse(resultObj.result)
+        let result
+        if(resultObj.isPlainText) {
+          result = resultObj.result
+        } else {
+          result = resultObj.result != null ? JSON.parse(resultObj.result) : null
+        }
         console.log(`${params.jsInterfaceName}.${params.methodName}()\nparams:`, params.args, '\nresult:', result)
         params.resolve(result)
         return

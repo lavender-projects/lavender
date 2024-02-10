@@ -287,7 +287,7 @@ function loadVideoDetails() {
   videoJsInterface.videoDetail({
     id: props.videoId
   }).then(res => {
-    videoDetail.value = res.data
+    videoDetail.value = res
   })
 }
 
@@ -303,9 +303,9 @@ async function initVideoTitleBlock() {
 }
 
 async function startVideoPlay() {
-  episodeInfoList.value = (await videoJsInterface.episodeInfoList({
+  episodeInfoList.value = await videoJsInterface.episodeInfoList({
     videoId: props.videoId
-  })).data
+  })
   nowEpisodeId.value = String(episodeInfoList.value[0].id)
   await codeUtils.sleep(50)
   await videoPlayerComponent.value.playVideo()

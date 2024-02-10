@@ -81,14 +81,14 @@ function loadCommentList(replace = false) {
   let oldCommentPage = commentPage
   commentPage = replace ? 1 : commentPage + 1
   props.getLoadCommentListRequest(commentSortBy.value, commentPage).then(res => {
-    if(res.data.top != null) {
-      commentList.value.top = res.data.top
+    if(res.top != null) {
+      commentList.value.top = res.top
     }
-    if(res.data.list.length <= 0) {
+    if(res.list.length <= 0) {
       status.commentLoadFinished = true
       return
     }
-    commentList.value.list = replace ? res.data.list : commentList.value.list.concat(res.data.list)
+    commentList.value.list = replace ? res.list : commentList.value.list.concat(res.list)
     changeListTitleAndSortByText()
     status.commentLoadFinished = false
   }).catch(() => {
