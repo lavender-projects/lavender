@@ -92,4 +92,10 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
             )
         }
     }
+
+    @AsyncJavascriptInterface
+    fun getLavsourceStatus(id: Long): Boolean {
+        println(id)
+        return true
+    }
 }

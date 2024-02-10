@@ -18,19 +18,12 @@ const jsInterfaceAsyncMethodCallbackUtils = {
       this.removeCallback(params.id)
       resultObj = resultObj ?? {
         isResolve: false,
-        isPlainText: true,
         message: null,
-        result: ''
+        result: null
       }
       if(resultObj.isResolve === true) {
-        let result
-        if(resultObj.isPlainText) {
-          result = resultObj.result
-        } else {
-          result = resultObj.result != null ? JSON.parse(resultObj.result) : null
-        }
-        console.log(`${params.jsInterfaceName}.${params.methodName}()\nparams:`, params.args, '\nresult:', result)
-        params.resolve(result)
+        console.log(`${params.jsInterfaceName}.${params.methodName}()\nparams:`, params.args, '\nresult:', resultObj.result)
+        params.resolve(resultObj.result)
         return
       }
       console.error('Android JavaScript Interface method error: \n', resultObj.message)
