@@ -1,7 +1,6 @@
 package de.honoka.lavender.android.jsinterface
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.bean.copier.CopyOptions
@@ -13,6 +12,7 @@ import de.honoka.lavender.android.entity.LavsourceInfo
 import de.honoka.lavender.android.ui.WebActivity
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.SnowflakeUtils
+import de.honoka.sdk.util.android.common.contentResolverCall
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.sdk.util.android.server.HttpServerVariables
 import java.io.ByteArrayOutputStream
@@ -96,12 +96,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
 
     @AsyncJavascriptInterface
     fun getLavsourceStatus(id: String): Boolean {
-        val lavsourceInfo = LavsourceInfoDao.getById(id)
-        lavsourceInfo ?: return false
-        val bundle = GlobalComponents.application.contentResolver.call(
-            Uri.parse("content://${lavsourceInfo.packageName}.provider.LavsourceProvider"),
-            "", null, null
-        )
-        return true
+        val lavsourceInfo = LavsourceInfoDao.getById(id) ?: return false
+        return contentResolverCall<Boolean>("${lavsourceInfo.packageName}.provider.LavsourceProvider")
     }
 }
