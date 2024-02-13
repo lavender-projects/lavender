@@ -5,21 +5,19 @@ import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.bean.copier.CopyOptions
 import cn.hutool.core.io.FileUtil
-import cn.hutool.json.JSONObject
 import de.honoka.lavender.android.dao.LavsourceInfoDao
 import de.honoka.lavender.android.data.LavsourceAddParams
 import de.honoka.lavender.android.data.LavsourceInfoVo
 import de.honoka.lavender.android.entity.LavsourceInfo
-import de.honoka.lavender.android.ui.WebActivity
+import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.SnowflakeUtils
-import de.honoka.sdk.util.android.common.contentResolverCall
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.sdk.util.android.server.HttpServerVariables
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class LavsourceJsInterface(private val webActivity: WebActivity) {
+class LavsourceJsInterface {
 
     private fun getLocalLavsourceIconRelativePath(packageName: String?) = run {
         "/files/lavsource/local/icon/$packageName.png"
@@ -38,7 +36,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
         val existLavsourcesPackageNameList = LavsourceInfoDao.listAll().map { it.packageName }
         val result = ArrayList<LavsourceInfoVo>()
         @Suppress("DEPRECATION")
-        webActivity.packageManager.getInstalledApplications(0).forEach {
+        GlobalComponents.application.packageManager.getInstalledApplications(0).forEach {
             val isLavsourceApp = it.packageName.startsWith("lavsource.") ||
                 it.packageName.endsWith(".lavsource") ||
                 it.packageName.contains(".lavsource.")
@@ -46,7 +44,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
                 return@forEach
             }
             val iconBytes = ByteArrayOutputStream().run {
-                val icon = webActivity.packageManager.getApplicationIcon(it)
+                val icon = GlobalComponents.application.packageManager.getApplicationIcon(it)
                 icon.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, this)
                 toByteArray()
             }
@@ -58,7 +56,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
             }
             result.add(LavsourceInfoVo().apply {
                 type = LavsourceInfo.Type.LOCAL
-                name = webActivity.packageManager.getApplicationLabel(it).toString()
+                name = GlobalComponents.application.packageManager.getApplicationLabel(it).toString()
                 packageName = it.packageName
                 iconUrl = HttpServerVariables.getImageUrlByPrefix(
                     getLocalLavsourceIconRelativePath(packageName)
@@ -99,9 +97,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     @AsyncJavascriptInterface
     fun getLavsourceStatus(id: String): Boolean {
         val lavsourceInfo = LavsourceInfoDao.getById(id) ?: return false
-        return contentResolverCall<JSONObject>(
-            "${lavsourceInfo.packageName}.provider.LavsourceProvider"
-        ).getBool("status")
+        return LavsourceUtils.getLavsourceStatus(lavsourceInfo.packageName!!)
     }
 
     @AsyncJavascriptInterface

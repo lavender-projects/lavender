@@ -25,7 +25,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.WebActivity"
-                  android:exported="false"
-                  android:configChanges="orientation|screenSize" />
+                  android:configChanges="orientation|screenSize"
+                  android:exported="false" />
+        <service android:name=".service.LavsourceMonitorService"
+                 android:enabled="true" />
     </application>
 </manifest>

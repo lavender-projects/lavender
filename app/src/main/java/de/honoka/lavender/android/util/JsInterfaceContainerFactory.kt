@@ -15,7 +15,7 @@ class JsInterfaceContainerFactory(private val webActivity: WebActivity) : Abstra
 
     override val interfaceInstances: List<Any> = listOf(
         BasicJsInterface(webActivity),
-        LavsourceJsInterface(webActivity),
+        LavsourceJsInterface(),
         VideoPlayingViewJsInterface(webActivity)
     )
 }

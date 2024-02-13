@@ -6,13 +6,15 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import de.honoka.lavender.android.R
+import de.honoka.lavender.android.dao.LavsourceInfoDao
+import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.android.util.DatabaseUtils
+import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.sdk.util.android.common.GlobalComponents
+import de.honoka.sdk.util.android.common.launchCoroutineOnIoThread
 import de.honoka.sdk.util.android.server.HttpServer
 import de.honoka.sdk.util.android.server.HttpServerUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,10 +23,11 @@ class MainActivity : AppCompatActivity() {
         fullScreenToShow()
         setContentView(R.layout.activity_main)
         GlobalComponents.application = application
-        CoroutineScope(Dispatchers.IO).launch {
+        launchCoroutineOnIoThread {
             //init可能是一个耗时的操作，故在IO线程中执行，防止阻塞UI线程
             initHttpServer()
             DatabaseUtils.initDaoInstances()
+            initLavsources()
             jumpToWebActivty()
         }
     }
@@ -46,6 +49,21 @@ class MainActivity : AppCompatActivity() {
     private fun initHttpServer() {
         HttpServerUtils.initServerPorts()
         HttpServer.createInstance()
+    }
+
+    private fun initLavsources() {
+        val list = LavsourceInfoDao.listEnabled()
+        if(list.isEmpty()) return
+        LavsourceMonitorService.createAndStart()
+        val startTime = System.currentTimeMillis()
+        while(true) {
+            list.forEach {
+                if(LavsourceUtils.getLavsourceStatus(it.packageName!!)) return
+                //等待时间太短可能会导致设备内存（RAM）被迅速耗尽
+                TimeUnit.SECONDS.sleep(1)
+                if(System.currentTimeMillis() - startTime > 10 * 1000) return
+            }
+        }
     }
 
     private fun jumpToWebActivty() = runOnUiThread {
