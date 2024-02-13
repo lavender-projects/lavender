@@ -19,15 +19,23 @@ class LavsourceMonitorService : BaseService() {
     override val companion: BaseServiceCompanion = Companion
 
     private val thread = Thread {
-        var lavsourceInfoList: List<LavsourceInfo> = LavsourceInfoDao.listEnabled()
         while(true) {
             if(Thread.currentThread().isInterrupted) return@Thread
-            if(lavsourceInfoList.isEmpty()) {
-                lavsourceInfoList = LavsourceInfoDao.listEnabled()
-            }
-            lavsourceInfoList.forEach {
-                LavsourceUtils.getLavsourceBaseUrl(it.packageName!!)?.let { url ->
-                    baseUrlMap[it.id!!] = url
+            runCatching {
+                val lavsourceInfoList: List<LavsourceInfo> = LavsourceInfoDao.listEnabled()
+                val idSet = lavsourceInfoList.map { it.id!! }.toSet()
+                baseUrlMap.iterator().run {
+                    while(hasNext()) {
+                        val key = next().key
+                        if(!idSet.contains(key)) remove()
+                    }
+                }
+                lavsourceInfoList.forEach {
+                    LavsourceUtils.getLavsourceBaseUrl(it.packageName!!)?.let { url ->
+                        baseUrlMap[it.id!!] = url
+                        return@forEach
+                    }
+                    baseUrlMap.remove(it.id!!)
                 }
             }
             TimeUnit.SECONDS.sleep(10)
