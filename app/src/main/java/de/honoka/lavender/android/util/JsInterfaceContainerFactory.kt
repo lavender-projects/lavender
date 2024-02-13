@@ -2,6 +2,7 @@ package de.honoka.lavender.android.util
 
 import de.honoka.lavender.android.jsinterface.BasicJsInterface
 import de.honoka.lavender.android.jsinterface.LavsourceJsInterface
+import de.honoka.lavender.android.jsinterface.VideoJsInterface
 import de.honoka.lavender.android.jsinterface.VideoPlayingViewJsInterface
 import de.honoka.lavender.android.ui.WebActivity
 import de.honoka.sdk.util.android.jsinterface.AbstractJavascriptInterfaceContainerFactory
@@ -16,6 +17,7 @@ class JsInterfaceContainerFactory(private val webActivity: WebActivity) : Abstra
     override val interfaceInstances: List<Any> = listOf(
         BasicJsInterface(webActivity),
         LavsourceJsInterface(),
+        VideoJsInterface(),
         VideoPlayingViewJsInterface(webActivity)
     )
 }
