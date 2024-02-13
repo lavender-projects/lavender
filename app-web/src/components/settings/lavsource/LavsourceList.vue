@@ -47,7 +47,8 @@ const lavsourceList = ref([] ?? [
     name: '',
     packageName: '',
     iconUrl: '',
-    baseUrl: ''
+    baseUrl: '',
+    enabled: false
   }
 ])
 

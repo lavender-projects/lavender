@@ -18,6 +18,10 @@ const methodDefinitions = {
   getLavsourceStatus: {
     isAsync: true,
     fallback: async id => true
+  },
+  changeLavsourceEnableStatus: {
+    isAsync: true,
+    fallback: async (id, enabled) => null
   }
 }
 

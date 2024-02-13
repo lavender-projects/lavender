@@ -1,5 +1,3 @@
-import './assets/main.scss'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -8,6 +6,9 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'vant/lib/index.css'
+
+//自定义样式需最后一个导入，以提高其优先级
+import './assets/main.scss'
 import { androidEventListenerUtils } from '@/utils/androidEventListeners'
 import jsInterfaceAsyncMethodCallbackUtils from '@/utils/androidJsInterfaces/asyncSupport/callback'
 

@@ -95,12 +95,14 @@ class WebActivity : AppCompatActivity() {
 
         private var lastTimePressBack = 0L
 
-        override fun handleOnBackPressed() = launchCoroutineOnUiThread {
-            try {
-                val result = dispatchEventToListenersInWebView("onBackButtonPressedListeners")
-                if(!result) doBack()
-            } catch(t: Throwable) {
-                doBack()
+        override fun handleOnBackPressed() {
+            launchCoroutineOnUiThread {
+                try {
+                    val result = dispatchEventToListenersInWebView("onBackButtonPressedListeners")
+                    if(!result) doBack()
+                } catch(t: Throwable) {
+                    doBack()
+                }
             }
         }
 

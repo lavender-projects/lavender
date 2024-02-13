@@ -30,14 +30,16 @@ const lavsourceJsInterfaceMockData = {
       type: 'local',
       name: 'LavSource bilibili',
       packageName: 'de.honoka.lavender.lavsource.bilibili',
-      iconUrl: `${remoteAccessUrlPrefix}/mockData/img/lavsource_bilibili.png`
+      iconUrl: `${remoteAccessUrlPrefix}/mockData/img/lavsource_bilibili.png`,
+      enabled: true
     },
     {
       id: 2,
       type: 'network',
       name: 'LavSource bilibili Network',
       baseUrl: 'https://lavsource.bilibili.com/api',
-      iconUrl: `${remoteAccessUrlPrefix}/mockData/img/lavsource_bilibili.png`
+      iconUrl: `${remoteAccessUrlPrefix}/mockData/img/lavsource_bilibili.png`,
+      enabled: false
     }
   ]
 }

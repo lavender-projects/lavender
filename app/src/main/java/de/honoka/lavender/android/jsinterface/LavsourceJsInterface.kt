@@ -5,6 +5,7 @@ import androidx.core.graphics.drawable.toBitmap
 import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.bean.copier.CopyOptions
 import cn.hutool.core.io.FileUtil
+import cn.hutool.json.JSONObject
 import de.honoka.lavender.android.dao.LavsourceInfoDao
 import de.honoka.lavender.android.data.LavsourceAddParams
 import de.honoka.lavender.android.data.LavsourceInfoVo
@@ -71,6 +72,7 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     fun addLocalLavsource(params: LavsourceAddParams) {
         val info = LavsourceInfo().apply {
             id = SnowflakeUtils.nextId().toString()
+            enabled = true
             BeanUtil.copyProperties(params, this, CopyOptions.create().ignoreNullValue())
         }
         val imgFile = File("${GlobalComponents.application.dataDir.absolutePath}${
@@ -97,6 +99,16 @@ class LavsourceJsInterface(private val webActivity: WebActivity) {
     @AsyncJavascriptInterface
     fun getLavsourceStatus(id: String): Boolean {
         val lavsourceInfo = LavsourceInfoDao.getById(id) ?: return false
-        return contentResolverCall<Boolean>("${lavsourceInfo.packageName}.provider.LavsourceProvider")
+        return contentResolverCall<JSONObject>(
+            "${lavsourceInfo.packageName}.provider.LavsourceProvider"
+        ).getBool("status")
+    }
+
+    @AsyncJavascriptInterface
+    fun changeLavsourceEnableStatus(id: String, enabled: Boolean) {
+        val lavsourceInfo = LavsourceInfoDao.getById(id)
+        lavsourceInfo ?: throw Exception("No LavSource with ID \"$id\"")
+        lavsourceInfo.enabled = enabled
+        LavsourceInfoDao.updateById(lavsourceInfo)
     }
 }

@@ -22,7 +22,10 @@ open class LavsourceInfo(
     var packageName: String? = null,
 
     @DatabaseField
-    var baseUrl: String? = null
+    var baseUrl: String? = null,
+
+    @DatabaseField
+    var enabled: Boolean? = null
 ) : Serializable {
 
     object Type {
