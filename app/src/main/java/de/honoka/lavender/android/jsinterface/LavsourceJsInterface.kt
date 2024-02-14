@@ -9,9 +9,11 @@ import de.honoka.lavender.android.dao.LavsourceInfoDao
 import de.honoka.lavender.android.data.LavsourceAddParams
 import de.honoka.lavender.android.data.LavsourceInfoVo
 import de.honoka.lavender.android.entity.LavsourceInfo
+import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.SnowflakeUtils
+import de.honoka.sdk.util.android.common.launchCoroutineOnIoThread
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 import de.honoka.sdk.util.android.server.HttpServerVariables
 import java.io.ByteArrayOutputStream
@@ -106,5 +108,8 @@ class LavsourceJsInterface {
         lavsourceInfo ?: throw Exception("No LavSource with ID \"$id\"")
         lavsourceInfo.enabled = enabled
         LavsourceInfoDao.updateById(lavsourceInfo)
+        launchCoroutineOnIoThread {
+            LavsourceMonitorService.syncBaseUrlMap()
+        }
     }
 }

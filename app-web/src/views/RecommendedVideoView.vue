@@ -75,8 +75,10 @@ async function onLoad() {
   videoJsInterface.recommendedVideoList().then(res => {
     res = res ?? []
     recommendedVideoListStore.videoItems = recommendedVideoListStore.videoItems.concat(res)
+    //防止因为没有数据添加到列表底部，而反复触发触底加载
+    if(res.length <= 0) status.loadFinished = true
   }).catch(() => {
-    //防止因为页面中没有数据，而反复触发加载
+    //防止因为页面中没有数据，而反复触发触底加载
     status.loadFinished = true
   }).finally(() => {
     if(recommendedVideoListStore.videoItems.length > 30) {

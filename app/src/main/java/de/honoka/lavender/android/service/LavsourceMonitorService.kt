@@ -14,6 +14,25 @@ class LavsourceMonitorService : BaseService() {
         override val serviceClass: Class<out BaseService> = LavsourceMonitorService::class.java
 
         val baseUrlMap = HashMap<String, String>()
+
+        @Synchronized
+        fun syncBaseUrlMap() {
+            val lavsourceInfoList: List<LavsourceInfo> = LavsourceInfoDao.listEnabled()
+            val idSet = lavsourceInfoList.map { it.id!! }.toSet()
+            baseUrlMap.iterator().run {
+                while(hasNext()) {
+                    val key = next().key
+                    if(!idSet.contains(key)) remove()
+                }
+            }
+            lavsourceInfoList.forEach {
+                LavsourceUtils.getLavsourceBaseUrl(it.packageName!!)?.let { url ->
+                    baseUrlMap[it.id!!] = url
+                    return@forEach
+                }
+                baseUrlMap.remove(it.id!!)
+            }
+        }
     }
 
     override val companion: BaseServiceCompanion = Companion
@@ -22,21 +41,7 @@ class LavsourceMonitorService : BaseService() {
         while(true) {
             if(Thread.currentThread().isInterrupted) return@Thread
             runCatching {
-                val lavsourceInfoList: List<LavsourceInfo> = LavsourceInfoDao.listEnabled()
-                val idSet = lavsourceInfoList.map { it.id!! }.toSet()
-                baseUrlMap.iterator().run {
-                    while(hasNext()) {
-                        val key = next().key
-                        if(!idSet.contains(key)) remove()
-                    }
-                }
-                lavsourceInfoList.forEach {
-                    LavsourceUtils.getLavsourceBaseUrl(it.packageName!!)?.let { url ->
-                        baseUrlMap[it.id!!] = url
-                        return@forEach
-                    }
-                    baseUrlMap.remove(it.id!!)
-                }
+                syncBaseUrlMap()
             }
             TimeUnit.SECONDS.sleep(10)
         }

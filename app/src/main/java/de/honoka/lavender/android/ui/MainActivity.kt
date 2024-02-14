@@ -10,6 +10,7 @@ import de.honoka.lavender.android.dao.LavsourceInfoDao
 import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.android.util.DatabaseUtils
 import de.honoka.lavender.android.util.LavsourceUtils
+import de.honoka.lavender.android.util.RecommendedVideoPool
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.launchCoroutineOnIoThread
 import de.honoka.sdk.util.android.server.HttpServer
@@ -25,9 +26,7 @@ class MainActivity : AppCompatActivity() {
         GlobalComponents.application = application
         launchCoroutineOnIoThread {
             //init可能是一个耗时的操作，故在IO线程中执行，防止阻塞UI线程
-            initHttpServer()
-            DatabaseUtils.initDaoInstances()
-            initLavsources()
+            initApp()
             jumpToWebActivty()
         }
     }
@@ -44,6 +43,14 @@ class MainActivity : AppCompatActivity() {
         )
         //隐藏虚拟按键
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+    }
+
+    //应用在跳转到WebView前所需要做的所有初始化操作
+    private fun initApp() {
+        initHttpServer()
+        DatabaseUtils.initDaoInstances()
+        initLavsources()
+        RecommendedVideoPool.init()
     }
 
     private fun initHttpServer() {
