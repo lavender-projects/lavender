@@ -42,17 +42,20 @@ import OperationsIcon from '@/components/icon/OperationsIcon.vue'
 import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 
 const props = defineProps({
+  videoId: String,
+  lavsourceId: String,
   coverImg: String,
   playCount: String,
   danmakuCount: String,
   duration: String,
   author: String,
-  title: String,
-  videoId: String
+  title: String
 })
 
 function onVideoCardClick() {
-  basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${props.videoId}`)
+  basicJsInterface.openNewWebActivity(
+      `/videoPlaying?videoId=${props.videoId}&lavsourceId=${props.lavsourceId}`
+  )
 }
 
 function onOperationClick() {

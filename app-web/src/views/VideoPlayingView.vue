@@ -32,14 +32,14 @@
                             :scrollable="componentParams.tabPageScrollable">
                 <div class="video-detail">
                   <div class="uploader">
-                    <van-image round fit="cover" :src="videoDetail.uploader.avatar"
+                    <van-image round fit="cover" :src="videoDetails.uploader.avatar"
                                :width="componentParams.uploaderAvatarSize"
                                :height="componentParams.uploaderAvatarSize" />
                     <div class="name-container">
-                      <div>{{ videoDetail.uploader.name }}</div>
+                      <div>{{ videoDetails.uploader.name }}</div>
                       <div class="fans">
-                        <span>{{ videoDetail.uploader.followerCount }}粉丝</span>
-                        <span style="margin-left: 0.9em;">{{ videoDetail.uploader.publishedVideosCount }}视频</span>
+                        <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
+                        <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
                       </div>
                     </div>
                   </div>
@@ -49,7 +49,7 @@
                                   :before-expand-change="beforeTitleBlockExpandChange"
                                   :after-expand-change="afterTitleBlockExpandChange"
                                   @click="onTitleArrowClick">
-                      {{ videoDetail.title }}
+                      {{ videoDetails.title }}
                     </expand-block>
                     <div class="arrow" @click="onTitleArrowClick">
                       <van-icon :name="componentParams.titleArrowIconName" />
@@ -57,18 +57,18 @@
                   </div>
                   <div class="counts">
                     <play-count-icon class="icon" :color="componentParams.countIconColor" />
-                    <span>{{ videoDetail.playCount }}</span>
+                    <span>{{ videoDetails.playCount }}</span>
                     <danmaku-icon class="icon" :color="componentParams.countIconColor" />
-                    <span>{{ videoDetail.danmakuCount }}</span>
-                    <span>{{ videoDetail.publishTime }}</span>
+                    <span>{{ videoDetails.danmakuCount }}</span>
+                    <span>{{ videoDetails.publishTime }}</span>
                   </div>
                   <expand-block class="description" ref="videoDescriptionBlockComponent"
                                 :expand="componentParams.videoDetailExpanded"
                                 :before-expand-change="beforeDescriptionBlockExpandChange">
-                    <div class="video-id">{{ videoDetail.id }}</div>
-                    <div class="description-content">{{ videoDetail.description }}</div>
+                    <div class="video-id">{{ videoDetails.id }}</div>
+                    <div class="description-content">{{ videoDetails.description }}</div>
                     <div class="tags">
-                      <div class="tag" v-for="item in videoDetail.tagList">
+                      <div class="tag" v-for="item in videoDetails.tagList">
                         <div>{{ item }}</div>
                       </div>
                     </div>
@@ -76,23 +76,23 @@
                   <div class="heat-degree">
                     <div class="item">
                       <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetail.likeCount }}</div>
+                      <div class="count">{{ videoDetails.likeCount }}</div>
                     </div>
                     <div class="item">
                       <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetail.coinCount }}</div>
+                      <div class="count">{{ videoDetails.coinCount }}</div>
                     </div>
                     <div class="item">
                       <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetail.collectCount }}</div>
+                      <div class="count">{{ videoDetails.collectCount }}</div>
                     </div>
                     <div class="item">
                       <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetail.shareCount }}</div>
+                      <div class="count">{{ videoDetails.shareCount }}</div>
                     </div>
                   </div>
                 </div>
-                <video-info-list class="related-video-list" :video-info-list="videoDetail.relatedVideoList" />
+                <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
               </scroll-block>
             </div>
           </van-tab>
@@ -100,7 +100,7 @@
             <template #title>
               <div class="tab-title">
                 <div>评论</div>
-                <div class="comment-count">{{ videoDetail.replyCount }}</div>
+                <div class="comment-count">{{ videoDetails.replyCount }}</div>
               </div>
             </template>
             <div class="content" ref="commentListTabPageContentDom">
@@ -144,10 +144,11 @@ import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
 
 const props = defineProps({
-  videoId: String
+  videoId: String,
+  lavsourceId: String
 })
 
-const videoDetail = ref({
+const videoDetails = ref({
   id: '',
   uploader: {
     id: 0,
@@ -284,10 +285,11 @@ async function loadDomAndCssValues() {
 }
 
 function loadVideoDetails() {
-  videoJsInterface.videoDetail({
-    id: props.videoId
+  videoJsInterface.videoDetails({
+    id: props.videoId,
+    lavsourceId: props.lavsourceId
   }).then(res => {
-    videoDetail.value = res
+    videoDetails.value = res
   })
 }
 

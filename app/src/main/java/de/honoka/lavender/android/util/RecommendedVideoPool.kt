@@ -52,7 +52,7 @@ object RecommendedVideoPool {
         }
     }
 
-    private fun removeVideosOfDisabledLavsource() {
+    fun removeVideosOfDisabledLavsource() {
         val newLavsourceIdCacheSet = HashSet(LavsourceMonitorService.baseUrlMap.keys)
         var shouldReturn = false
         lavsourceIdCacheSet?.let {

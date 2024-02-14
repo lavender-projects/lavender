@@ -9,10 +9,10 @@ const methodDefinitions = {
       method: 'get'
     })
   },
-  videoDetail: {
+  videoDetails: {
     isAsync: true,
     fallback: async params => await codeUtils.requestAndGetData({
-      url: '/video/detail',
+      url: '/video/details',
       method: 'get',
       params
     })

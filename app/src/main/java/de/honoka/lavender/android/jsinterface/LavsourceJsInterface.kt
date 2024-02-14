@@ -11,6 +11,7 @@ import de.honoka.lavender.android.data.LavsourceInfoVo
 import de.honoka.lavender.android.entity.LavsourceInfo
 import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.android.util.LavsourceUtils
+import de.honoka.lavender.android.util.RecommendedVideoPool
 import de.honoka.sdk.util.android.common.GlobalComponents
 import de.honoka.sdk.util.android.common.SnowflakeUtils
 import de.honoka.sdk.util.android.common.launchCoroutineOnIoThread
@@ -87,6 +88,12 @@ class LavsourceJsInterface {
     }
 
     @AsyncJavascriptInterface
+    fun removeLavsource(id: String) {
+        LavsourceInfoDao.deleteById(id)
+        syncDataWhenLavsourceListChanged()
+    }
+
+    @AsyncJavascriptInterface
     fun getExistingLavsourceList(): List<LavsourceInfoVo> = LavsourceInfoDao.listAll().map {
         LavsourceInfoVo().apply {
             BeanUtil.copyProperties(it, this)
@@ -108,8 +115,12 @@ class LavsourceJsInterface {
         lavsourceInfo ?: throw Exception("No LavSource with ID \"$id\"")
         lavsourceInfo.enabled = enabled
         LavsourceInfoDao.updateById(lavsourceInfo)
-        launchCoroutineOnIoThread {
-            LavsourceMonitorService.syncBaseUrlMap()
-        }
+        syncDataWhenLavsourceListChanged()
+    }
+
+    //主要用于LavSource状态改变，或者被删除时，同步删除位于其他位置的此LavSource的相关数据
+    private fun syncDataWhenLavsourceListChanged() = launchCoroutineOnIoThread {
+        LavsourceMonitorService.syncBaseUrlMap()
+        RecommendedVideoPool.removeVideosOfDisabledLavsource()
     }
 }
