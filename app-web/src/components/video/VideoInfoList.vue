@@ -51,7 +51,9 @@ const componentParams = reactive({
 })
 
 function onVideoItemClick(item) {
-  basicJsInterface.openNewWebActivity(`/videoPlaying?videoId=${item.videoId}`)
+  basicJsInterface.openNewWebActivity(
+      `/videoPlaying?videoId=${item.videoId}&lavsourceId=${item.lavsourceId}`
+  )
 }
 </script>
 

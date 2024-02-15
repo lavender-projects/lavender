@@ -357,6 +357,7 @@ function onTopBarPlayBtnClick() {
 
 function getLoadCommentListRequest(sortBy, page) {
   return videoJsInterface.commentList({
+    lavsourceId: props.lavsourceId,
     videoId: props.videoId,
     sortBy,
     page
