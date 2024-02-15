@@ -13,6 +13,7 @@
     </div>
     <div class="custom-player-wrapper" ref="customPlayerWrapperDom">
       <custom-video-player ref="videoPlayerComponent"
+                           :lavsource-id="props.lavsourceId"
                            :video-id="props.videoId"
                            :episode-id="nowEpisodeId"
                            @playing-status-changed="onVideoPlayingStatusChanged"
@@ -306,6 +307,7 @@ async function initVideoTitleBlock() {
 
 async function startVideoPlay() {
   episodeInfoList.value = await videoJsInterface.episodeInfoList({
+    lavsourceId: props.lavsourceId,
     videoId: props.videoId
   })
   nowEpisodeId.value = String(episodeInfoList.value[0].id)

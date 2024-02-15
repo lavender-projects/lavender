@@ -3,9 +3,7 @@ package de.honoka.lavender.android.jsinterface
 import cn.hutool.json.JSONObject
 import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.lavender.android.util.RecommendedVideoPool
-import de.honoka.lavender.api.data.CommentList
-import de.honoka.lavender.api.data.RecommendedVideoItem
-import de.honoka.lavender.api.data.VideoDetails
+import de.honoka.lavender.api.data.*
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 
 class VideoJsInterface {
@@ -26,5 +24,20 @@ class VideoJsInterface {
     @AsyncJavascriptInterface
     fun commentReplyList(params: JSONObject): CommentList = run {
         LavsourceUtils.httpGetForObject<CommentList>("/video/comment/reply/list", params)
+    }
+
+    @AsyncJavascriptInterface
+    fun danmakuList(params: JSONObject): List<DanmakuInfo> = run {
+        LavsourceUtils.httpGetForList<DanmakuInfo>("/video/danmaku/list", params)
+    }
+
+    @AsyncJavascriptInterface
+    fun episodeInfoList(params: JSONObject): List<VideoEpisodeInfo> = run {
+        LavsourceUtils.httpGetForList<VideoEpisodeInfo>("/video/episode/list", params)
+    }
+
+    @AsyncJavascriptInterface
+    fun streamInfoList(params: JSONObject): List<VideoStreamInfo> = run {
+        LavsourceUtils.httpGetForList<VideoStreamInfo>("/video/stream/urlList", params)
     }
 }

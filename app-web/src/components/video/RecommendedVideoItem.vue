@@ -54,7 +54,7 @@ const props = defineProps({
 
 function onVideoCardClick() {
   basicJsInterface.openNewWebActivity(
-      `/videoPlaying?videoId=${props.videoId}&lavsourceId=${props.lavsourceId}`
+      `/videoPlaying?lavsourceId=${props.lavsourceId}&videoId=${props.videoId}`
   )
 }
 

@@ -21,6 +21,7 @@ import videoPlayingViewJsInterface from '@/androidJsInterfaces/videoPlayingViewJ
 import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
 
 const props = defineProps({
+  lavsourceId: String,
   videoId: String,
   episodeId: String
 })
@@ -299,6 +300,7 @@ function onBackIconClick() {
 async function playVideo() {
   //获取视频流和音频流的URL
   streamInfoList = await videoJsInterface.streamInfoList({
+    lavsourceId: props.lavsourceId,
     videoId: props.videoId,
     episodeId: props.episodeId
   })
@@ -350,6 +352,7 @@ function pauseVideo() {
 
 function loadDanmakuList() {
   videoJsInterface.danmakuList({
+    lavsourceId: props.lavsourceId,
     episodeId: props.episodeId
   }).then(res => {
     res.forEach(it => {
