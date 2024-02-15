@@ -1,15 +1,12 @@
 package de.honoka.lavender.android.jsinterface
 
-import cn.hutool.http.HttpUtil
 import cn.hutool.json.JSONObject
-import cn.hutool.json.JSONUtil
-import de.honoka.lavender.android.service.LavsourceMonitorService
+import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.lavender.android.util.RecommendedVideoPool
 import de.honoka.lavender.api.data.CommentList
 import de.honoka.lavender.api.data.RecommendedVideoItem
 import de.honoka.lavender.api.data.VideoDetails
 import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
-import de.honoka.sdk.util.kotlin.hutool.params
 
 class VideoJsInterface {
 
@@ -17,22 +14,17 @@ class VideoJsInterface {
     fun recommendedVideoList(): List<RecommendedVideoItem> = RecommendedVideoPool.takeOutVideos(10)
 
     @AsyncJavascriptInterface
-    fun videoDetails(params: JSONObject): VideoDetails {
-        val lavsourceId = params["lavsourceId"] as String
-        val urlPrefix = LavsourceMonitorService.baseUrlMap[lavsourceId]
-        val res = HttpUtil.createGet("$urlPrefix/video/details").params(params).execute().body()
-        return JSONUtil.parseObj(res).getJSONObject("data").toBean(VideoDetails::class.java).apply {
-            setMultipleLavsourceId(lavsourceId)
-        }
+    fun videoDetails(params: JSONObject): VideoDetails = run {
+        LavsourceUtils.httpGetForObject<VideoDetails>("/video/details", params)
     }
 
     @AsyncJavascriptInterface
-    fun commentList(params: JSONObject): CommentList {
-        val lavsourceId = params["lavsourceId"] as String
-        val urlPrefix = LavsourceMonitorService.baseUrlMap[lavsourceId]
-        val res = HttpUtil.createGet("$urlPrefix/video/comment/list").params(params).execute().body()
-        return JSONUtil.parseObj(res).getJSONObject("data").toBean(CommentList::class.java).apply {
-            setMultipleLavsourceId(lavsourceId)
-        }
+    fun commentList(params: JSONObject): CommentList = run {
+        LavsourceUtils.httpGetForObject<CommentList>("/video/comment/list", params)
+    }
+
+    @AsyncJavascriptInterface
+    fun commentReplyList(params: JSONObject): CommentList = run {
+        LavsourceUtils.httpGetForObject<CommentList>("/video/comment/reply/list", params)
     }
 }

@@ -366,6 +366,7 @@ function getLoadCommentListRequest(sortBy, page) {
 
 function getLoadCommentReplyListRequest(commentId, page) {
   return videoJsInterface.commentReplyList({
+    lavsourceId: props.lavsourceId,
     videoId: props.videoId,
     commentId,
     page
