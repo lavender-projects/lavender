@@ -26,7 +26,7 @@ const jsInterfaceAsyncMethodCallbackUtils = {
         params.resolve(resultObj.result)
         return
       }
-      console.error('Android JavaScript Interface method error: \n', resultObj.message)
+      console.error(`${params.jsInterfaceName}.${params.methodName}()\nparams:`, params.args, '\nerror:', resultObj.message)
       messageUtils.error(resultObj.message)
       params.reject()
     }

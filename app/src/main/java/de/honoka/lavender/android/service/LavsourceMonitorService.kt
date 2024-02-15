@@ -1,7 +1,6 @@
 package de.honoka.lavender.android.service
 
 import de.honoka.lavender.android.dao.LavsourceInfoDao
-import de.honoka.lavender.android.entity.LavsourceInfo
 import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.sdk.util.android.common.BaseService
 import de.honoka.sdk.util.android.common.BaseServiceCompanion
@@ -18,7 +17,7 @@ class LavsourceMonitorService : BaseService() {
 
         @Synchronized
         fun syncBaseUrlMap() {
-            val lavsourceInfoList: List<LavsourceInfo> = LavsourceInfoDao.listEnabled()
+            val lavsourceInfoList = LavsourceInfoDao.listEnabled()
             val idSet = lavsourceInfoList.map { it.id!! }.toSet()
             baseUrlMap.removeIf { !idSet.contains(it.key) }
             lavsourceInfoList.forEach {
