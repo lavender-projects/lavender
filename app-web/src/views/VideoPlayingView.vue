@@ -555,6 +555,7 @@ function calcTabPageScrollable(heightChangeAmount) {
  */
 function dispatchCustomTouchMoveEvent(e) {
   if(componentParams.commentListPullRefreshDisabled) return
+  if(componentParams.activeTabName !== 'commentList') return
   let eventNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e)
   let touchNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e.changedTouches[0])
   touchNormalObject.clientX = tabPageSwipeBlockTouchPositionOnTouchStart.x
