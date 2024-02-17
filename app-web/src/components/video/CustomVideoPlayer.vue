@@ -7,7 +7,8 @@
       </div>
     </div>
     <div class="player-click-frame" ref="playerClickFrameDom"></div>
-    <audio class="audio-player" controls ref="audioPlayerDom" />
+    <audio class="audio-player" ref="audioPlayerDom" controls
+           @playing="onAudioPlaying" @waiting="onAudioWaiting" />
   </div>
 </template>
 
@@ -31,7 +32,8 @@ const componentParams = reactive({
   //视频播放状态标记量，仅在手动暂停视频时会被置为false，用于确保视频仅能被手动暂停
   videoPlaying: false,
   fullScreen: false,
-  videoControlBarShowStatus: true
+  videoControlBarShowStatus: true,
+  audioWaiting: false
 })
 
 const customVideoPlayerDom = ref()
@@ -228,14 +230,16 @@ function onVideoCanplay() {
   resumeVideo()
 }
 
-//在视频即将开始播放时触发
+//在视频从其他状态变更为播放状态时触发（除非手动暂停再播放或者播放结束后重新播放，该事件都只触发一次）
 function onVideoPlay() {
+  if(componentParams.audioWaiting) return
   componentParams.videoPlaying = true
+  //为audioPlayerDom设置currentTime时将会触发其waiting事件
   audioPlayerDom.value.currentTime = videoDom.currentTime
   emits('playingStatusChanged', true)
 }
 
-//在视频开始播放后触发一次
+//在视频开始播放后触发（调整进度条也会触发）
 function onVideoPlaying() {
   audioPlayerDom.value.play()
 }
@@ -247,6 +251,7 @@ function onVideoWaiting() {
 
 //视频被暂停后时触发（不论是手动还是自动）
 function onVideoPause() {
+  if(componentParams.audioWaiting) return
   //检查标记量，若视频不是被手动暂停的（视频已暂停，但标记量为true），则立即恢复播放
   if(componentParams.videoPlaying && !videoDom.ended) {
     videoDom.play()
@@ -269,6 +274,22 @@ function onVideoDomDoubleClick() {
     return
   }
   pauseVideo()
+}
+
+async function onAudioPlaying() {
+  if(!componentParams.audioWaiting) return
+  /*
+   * 需确保video的play事件监听器处理完成后再修改audioWaiting的值，否则video的play事件监听器很可能会再次触发audio的
+   * waiting事件，从而导致无限循环
+   */
+  await videoDom.play()
+  componentParams.audioWaiting = false
+}
+
+//waiting可能会在play事件之后触发（页面加载完成后视频第一次开始播放时）
+function onAudioWaiting() {
+  componentParams.audioWaiting = true
+  videoDom.pause()
 }
 
 function onFullScreenStatusChanged(fullScreen) {
@@ -297,7 +318,7 @@ function onBackIconClick() {
   document.exitFullscreen()
 }
 
-async function playVideo() {
+async function initQualityController() {
   //获取视频流和音频流的URL
   streamInfoList = await videoJsInterface.streamInfoList({
     lavsourceId: props.lavsourceId,
@@ -331,6 +352,10 @@ async function playVideo() {
   qualityController.popover.panelEl.innerHTML = ''
   qualityController.popover.panelEl.appendChild(fragment)
   qualityController.el.style.display = 'block'
+}
+
+async function playVideo() {
+  await initQualityController()
   //模拟对第一个清晰度项目进行点击
   //noinspection JSCheckFunctionSignatures
   qualityController.itemElements[0].dispatchEvent(new Event('click'))
