@@ -25,7 +25,7 @@
 
 <script setup>
 import CommentList from '@/components/common/CommentList.vue'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import codeUtils from '@/utils/code'
 import CommentReplyList from '@/components/common/CommentReplyList.vue'
 
@@ -56,9 +56,24 @@ const commentReplyListComponent = ref()
 
 const floatLoadingBlockDom = ref()
 
+let commentListPullRefreshTrackDom
+
+let commentListPullRefreshHeadDom
+
 const rootCommentDataOfReplyList = ref({})
 
 const emits = defineEmits([ 'commentItemReplyClick', 'commentReplyListClose' ])
+
+onMounted(() => {
+  loadDomAndCssValues()
+})
+
+async function loadDomAndCssValues() {
+  commentListPullRefreshTrackDom = await codeUtils.tryForResult(() => {
+    return commentListComponentWrapperDom.value.querySelector('.van-pull-refresh__track')
+  })
+  commentListPullRefreshHeadDom = commentListPullRefreshTrackDom.querySelector('.van-pull-refresh__head')
+}
 
 async function showFloatLoadingBlockDom(show) {
   let dom = floatLoadingBlockDom.value
@@ -96,8 +111,17 @@ function closeCommentReplyList() {
   return true
 }
 
+function appendBlankDomToCommentListPullRefreshTrackDom() {
+  let blankDom = document.createElement('div')
+  commentListPullRefreshHeadDom.appendChild(blankDom)
+  setTimeout(() => {
+    commentListPullRefreshHeadDom.removeChild(blankDom)
+  }, 50)
+}
+
 defineExpose({
-  closeCommentReplyList
+  closeCommentReplyList,
+  appendBlankDomToCommentListPullRefreshTrackDom
 })
 </script>
 

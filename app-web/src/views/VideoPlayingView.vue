@@ -556,8 +556,8 @@ function calcTabPageScrollable(heightChangeAmount) {
  * 从而使的TabPageSwipeBlock中的DOM的监听器只能监听到纵向滚动，而不触发横向滚动的动作
  */
 function dispatchCustomTouchMoveEvent(e) {
-  if(componentParams.commentListPullRefreshDisabled) return
   if(componentParams.activeTabName !== 'commentList') return
+  if(componentParams.commentListPullRefreshDisabled) return
   let eventNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e)
   let touchNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e.changedTouches[0])
   touchNormalObject.clientX = tabPageSwipeBlockTouchPositionOnTouchStart.x
@@ -569,6 +569,9 @@ function dispatchCustomTouchMoveEvent(e) {
   let newEvent = new TouchEvent('touchmove', eventNormalObject)
   newEvent.custom = true
   commentListPullRefreshTrackDom.dispatchEvent(newEvent)
+  setTimeout(() => {
+    commentListContainerComponent.value.appendBlankDomToCommentListPullRefreshTrackDom()
+  }, 1)
 }
 
 function calcPlayerTopBarBackgroundOpacity() {
@@ -588,7 +591,7 @@ function calcIsCommentListPullRefreshDisabled() {
   componentParams.commentListPullRefreshDisabled = (
       commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
         codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
-        Date.now() - componentParams.lastTimeTabChangeTime < 200
+        Date.now() - componentParams.lastTimeTabChangeTime < 300
   )
 }
 
