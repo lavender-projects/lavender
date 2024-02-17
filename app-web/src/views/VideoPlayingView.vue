@@ -188,7 +188,8 @@ const componentParams = reactive({
   cachedVideoPlayingStatus: false,
   enableAuxiliaryScroll: false,
   keepMaxTabPageHeight: false,
-  commentListPullRefreshPhysicalActionDoing: false
+  commentListPullRefreshPhysicalActionDoing: false,
+  lastTimeTabChangeTime: 0
 })
 
 const videoPlayingViewDom = ref()
@@ -397,6 +398,7 @@ function onCommentReplyListClose(cachedScrollTopValue) {
 }
 
 function onTabChange() {
+  componentParams.lastTimeTabChangeTime = Date.now()
   try {
     calcIsKeepMaxTabPageHeight()
   } catch(e) {
@@ -585,7 +587,8 @@ function calcPlayerTopBarBackgroundOpacity() {
 function calcIsCommentListPullRefreshDisabled() {
   componentParams.commentListPullRefreshDisabled = (
       commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
-        codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight
+        codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
+        Date.now() - componentParams.lastTimeTabChangeTime < 200
   )
 }
 
