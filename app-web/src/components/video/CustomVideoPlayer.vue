@@ -84,7 +84,11 @@ const playerControllers = {
   }
 }
 
-const emits = defineEmits([ 'playingStatusChanged', 'beforeControlBarShowStatusChange' ])
+const emits = defineEmits([
+  'playingStatusChanged',
+  'beforeControlBarShowStatusChange',
+  'playingFinished'
+])
 
 let player
 
@@ -261,6 +265,7 @@ function onVideoPause() {
   audioPlayerDom.value.pause()
   componentParams.videoPlaying = false
   emits('playingStatusChanged', false)
+  if(videoDom.ended) emits('playingFinished')
 }
 
 //视频播放倍速值被更改时触发
@@ -362,7 +367,7 @@ async function playVideo() {
 }
 
 function resumeVideo() {
-  videoDom.play().catch(async () => {
+  videoDom.play().catch(async() => {
     videoPlayingViewJsInterface.simulateClickBeforeVideoPlay()
     await codeUtils.sleep(20)
     videoDom.play()

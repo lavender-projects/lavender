@@ -17,6 +17,7 @@
                            :video-id="props.videoId"
                            :episode-id="nowEpisodeId"
                            @playing-status-changed="onVideoPlayingStatusChanged"
+                           @playing-finished="onVideoPlayingFinished"
                            @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
     </div>
     <div class="video-detail-and-comment-list">
@@ -494,6 +495,10 @@ function onVideoPlayingStatusChanged(playing) {
   calcIsTobBarPlayBtnShouldBeShown()
 }
 
+function onVideoPlayingFinished() {
+  setPlayerTopBarHide(false)
+}
+
 function onDeviceBackButtonPressed() {
   return commentListContainerComponent.value.closeCommentReplyList()
 }
@@ -523,7 +528,6 @@ function adjustPlayerAndTabPageHeight(scrollDistance) {
   let nowTabMaxScrollTopValue = calcNowTabMaxScrollTopValue()
   if(scrollDistance > 0 && nowTabScrollTopValue > 0) return 0
   if(Math.max(nowTabMaxScrollTopValue - nowTabScrollTopValue) <= 1) return 0
-  console.log(nowTabScrollTopValue, nowTabMaxScrollTopValue)
   //计算播放器高度
   let originalPlayerWrapperHeight = codeUtils.getDomHeight(customPlayerWrapperDom.value)
   let playerWrapperHeight = originalPlayerWrapperHeight + scrollDistance
