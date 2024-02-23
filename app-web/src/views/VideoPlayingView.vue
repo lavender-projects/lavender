@@ -182,7 +182,7 @@ const componentParams = reactive({
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
   activeTabName: '',
-  commentListPullRefreshDisabled: false,
+  commentListPullRefreshDisabled: true,
   tabPageScrollable: false,
   tabPageSwipeable: true,
   videoPlaying: false,
@@ -602,7 +602,7 @@ function calcPlayerTopBarBackgroundOpacity() {
 }
 
 function calcIsCommentListPullRefreshDisabled() {
-  componentParams.commentListPullRefreshDisabled = (
+  componentParams.commentListPullRefreshDisabled = componentParams.activeTabName !== 'commentList' || (
       commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
         codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
         Date.now() - componentParams.lastTimeTabChangeTime < 300
