@@ -478,6 +478,12 @@ function onTabPageSwipeBlockTouchEnd() {
   calcIsCommentListPullRefreshDisabled()
   tabPageSwipeBlockSwipingDirection = null
   componentParams.commentListPullRefreshPhysicalActionDoing = false
+  setTimeout(async () => {
+    for(let i = 0; i < 3; i++) {
+      calcPlayerTopBarBackgroundOpacity()
+      await codeUtils.sleep(30)
+    }
+  })
 }
 
 function onVideoPlayingStatusChanged(playing) {
@@ -513,7 +519,11 @@ function adjustPlayerAndTabPageHeight(scrollDistance) {
     return 0
   }
   if(componentParams.keepMaxTabPageHeight) return 0
-  if(scrollDistance > 0 && calcNowTabScrollTopValue() > 0) return 0
+  let nowTabScrollTopValue = calcNowTabScrollTopValue()
+  let nowTabMaxScrollTopValue = calcNowTabMaxScrollTopValue()
+  if(scrollDistance > 0 && nowTabScrollTopValue > 0) return 0
+  if(Math.max(nowTabMaxScrollTopValue - nowTabScrollTopValue) <= 1) return 0
+  console.log(nowTabScrollTopValue, nowTabMaxScrollTopValue)
   //计算播放器高度
   let originalPlayerWrapperHeight = codeUtils.getDomHeight(customPlayerWrapperDom.value)
   let playerWrapperHeight = originalPlayerWrapperHeight + scrollDistance
@@ -610,6 +620,15 @@ function calcNowTabScrollTopValue() {
       return videoDetailsScrollBlockComponent.value.getScrollTopValue()
     case 'commentList':
       return commentListScrollBlockComponent.value.getScrollTopValue()
+  }
+}
+
+function calcNowTabMaxScrollTopValue() {
+  switch(componentParams.activeTabName) {
+    case 'videoDetails':
+      return videoDetailsScrollBlockComponent.value.getMaxScrollTopValue()
+    case 'commentList':
+      return commentListScrollBlockComponent.value.getMaxScrollTopValue()
   }
 }
 
