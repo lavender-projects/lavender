@@ -31,7 +31,7 @@
             </template>
             <div class="content" ref="videoDetailsTabPageContentDom">
               <scroll-block ref="videoDetailsScrollBlockComponent"
-                            :scrollable="componentParams.tabPageScrollable">
+                            :scrollable="false">
                 <div class="video-detail">
                   <div class="uploader">
                     <van-image round fit="cover" :src="videoDetails.uploader.avatar"
@@ -107,7 +107,7 @@
             </template>
             <div class="content" ref="commentListTabPageContentDom">
               <scroll-block ref="commentListScrollBlockComponent"
-                            :scrollable="componentParams.tabPageScrollable">
+                            :scrollable="false">
                 <comment-list-container ref="commentListContainerComponent"
                                         :get-scroll-top="getCommentListScrollBlockComponentScrollTop"
                                         :get-max-scroll-top="getCommentListScrollBlockComponentMaxScrollTop"
@@ -144,6 +144,7 @@ import VideoInfoList from '@/components/video/VideoInfoList.vue'
 import PlayIcon from '@/components/icon/PlayIcon.vue'
 import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
+import InertialScrollEngine from '@/utils/inertialScroll'
 
 const props = defineProps({
   videoId: String,
@@ -187,7 +188,6 @@ const componentParams = reactive({
   tabPageSwipeable: true,
   videoPlaying: false,
   cachedVideoPlayingStatus: false,
-  enableAuxiliaryScroll: false,
   keepMaxTabPageHeight: false,
   commentListPullRefreshPhysicalActionDoing: false,
   lastTimeTabChangeTime: 0
@@ -245,6 +245,8 @@ let tabPageSwipeBlockTouchPositionOnTouchMoving = {
   x: 0,
   y: 0
 }
+
+const inertialScrollEngine = new InertialScrollEngine(onTabPageSwipeBlockVerticalSwipe)
 
 onMounted(() => {
   loadDomAndCssValues()
@@ -398,6 +400,15 @@ function onCommentReplyListClose(cachedScrollTopValue) {
   componentParams.tabPageSwipeable = true
 }
 
+function getActiveScrollBlockComponent() {
+  switch(componentParams.activeTabName) {
+    case 'videoDetails':
+      return videoDetailsScrollBlockComponent.value
+    case 'commentList':
+      return commentListScrollBlockComponent.value
+  }
+}
+
 function onTabChange() {
   componentParams.lastTimeTabChangeTime = Date.now()
   try {
@@ -411,8 +422,8 @@ function onTabPageSwipeBlockTouchStart(e) {
   tabPageSwipeBlockTouchPositionOnTouchStart.x = e.changedTouches[0].clientX
   tabPageSwipeBlockTouchPositionOnTouchStart.y = e.changedTouches[0].clientY
   tabPageSwipeBlockTouchPositionOnTouchMoving = { ...tabPageSwipeBlockTouchPositionOnTouchStart }
-  componentParams.enableAuxiliaryScroll = !componentParams.tabPageScrollable
   calcIsCommentListPullRefreshDisabled()
+  inertialScrollEngine.onTouchStart(e)
 }
 
 function onTabPageSwipeBlockTouchMove(e) {
@@ -444,6 +455,9 @@ function onTabPageSwipeBlockTouchMove(e) {
       dispatchCustomTouchMoveEvent(e)
       break
   }
+  if(tabPageSwipeBlockSwipingDirection === 'vertical') {
+    inertialScrollEngine.onTouchMove(e)
+  }
 }
 
 function onTabPageSwipeBlockHorizontalSwipe(scrollDistance) {
@@ -459,16 +473,15 @@ function onTabPageSwipeBlockVerticalSwipe(scrollDistance) {
   calcPlayerTopBarBackgroundOpacity()
   let heightChangeAmount = adjustPlayerAndTabPageHeight(scrollDistance)
   if(scrollDistance < 0) componentParams.commentListPullRefreshDisabled = true
-  calcTabPageScrollable(heightChangeAmount)
-  if(!componentParams.tabPageScrollable) componentParams.enableAuxiliaryScroll = true
-  if(heightChangeAmount === 0 && componentParams.enableAuxiliaryScroll) {
-    switch(componentParams.activeTabName) {
-      case 'videoDetails':
-        videoDetailsScrollBlockComponent.value.contentWrapperScrollBy(-scrollDistance)
-        break
-      case 'commentList':
-        commentListScrollBlockComponent.value.contentWrapperScrollBy(-scrollDistance)
-        break
+  if(heightChangeAmount === 0) {
+    let scrollBlockComponent = getActiveScrollBlockComponent()
+    scrollBlockComponent.contentWrapperScrollBy(-scrollDistance)
+    let shouldStopScroll = (
+        scrollBlockComponent.isAtMinScrollTopValue() &&
+        codeUtils.getDomHeight(customPlayerWrapperDom.value) >= domHeightValues.defaultPlayerWrapperHeight
+    ) || scrollBlockComponent.isAtMaxScrollTopValue()
+    if(shouldStopScroll) {
+      inertialScrollEngine.stopScroll()
     }
   }
   calcIsKeepMaxTabPageHeight()
@@ -485,10 +498,12 @@ function onTabPageSwipeBlockTouchEnd() {
       await codeUtils.sleep(30)
     }
   })
+  inertialScrollEngine.onTouchEnd()
 }
 
 function onVideoPlayingStatusChanged(playing) {
   componentParams.videoPlaying = playing
+  inertialScrollEngine.stopScroll()
   adjustPlayerAndTabPageHeight()
   calcIsKeepMaxTabPageHeight()
   calcPlayerTopBarBackgroundOpacity()
@@ -551,15 +566,6 @@ function adjustPlayerAndTabPageHeight(scrollDistance) {
   videoDetailsTabPageContentDom.value.style.height = `${tabPageContentHeight}px`
   commentListTabPageContentDom.value.style.height = `${tabPageContentHeight}px`
   return playerWrapperHeight - originalPlayerWrapperHeight
-}
-
-function calcTabPageScrollable(heightChangeAmount) {
-  let playerWrapperHeight = codeUtils.getDomHeight(customPlayerWrapperDom.value)
-  componentParams.tabPageScrollable = (
-    heightChangeAmount < 0 && playerWrapperHeight < domHeightValues.minPlayerWrapperHeightToDisableScroll
-  ) || (
-    heightChangeAmount > 0 && playerWrapperHeight > domHeightValues.maxPlayerWrapperHeightToDisableScroll
-  ) || heightChangeAmount === 0
 }
 
 /**

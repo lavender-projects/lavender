@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 const codeUtils = {
-  sleep: timeMillis => new Promise(res => setTimeout(res, timeMillis)),
+  sleep: timeMillis => new Promise(resolve => setTimeout(resolve, timeMillis)),
   getDomHeight: dom => parseFloat(window.getComputedStyle(dom).height),
   async tryForResult(getter, times = 20, interval = 5) {
     let result

@@ -108,6 +108,14 @@ function getMaxScrollTopValue() {
   return contentHeight - contentWrapperHeight
 }
 
+function isAtMinScrollTopValue() {
+  return getScrollTopValue() < 1
+}
+
+function isAtMaxScrollTopValue() {
+  return Math.abs(getScrollTopValue() - getMaxScrollTopValue()) < 1
+}
+
 function contentWrapperScrollBy(distance) {
   contentWrapperDom.value.scrollBy(0, distance)
 }
@@ -119,6 +127,8 @@ function getContentWrapperDom() {
 defineExpose({
   getScrollTopValue,
   getMaxScrollTopValue,
+  isAtMinScrollTopValue,
+  isAtMaxScrollTopValue,
   contentWrapperScrollBy,
   getContentWrapperDom
 })
