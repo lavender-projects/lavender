@@ -18,7 +18,11 @@ object RecommendedVideoPool {
             runCatching {
                 if(pool.size < 100) fetchVideosFromLavsources()
             }
-            TimeUnit.SECONDS.sleep(5)
+            try {
+                TimeUnit.SECONDS.sleep(5)
+            } catch(t: Throwable) {
+                return@Thread
+            }
         }
     }
 

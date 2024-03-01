@@ -38,7 +38,11 @@ class LavsourceMonitorService : BaseService() {
             runCatching {
                 syncBaseUrlMap()
             }
-            TimeUnit.SECONDS.sleep(10)
+            try {
+                TimeUnit.SECONDS.sleep(10)
+            } catch(t: Throwable) {
+                return@Thread
+            }
         }
     }
 
