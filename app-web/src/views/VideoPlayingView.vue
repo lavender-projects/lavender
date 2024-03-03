@@ -359,6 +359,7 @@ function onTitleArrowClick() {
 
 function onTopBarPlayBtnClick() {
   videoPlayerComponent.value.resumeVideo()
+  videoPlayerComponent.value.getOriginalPlayer().control.showTransient()
 }
 
 function getLoadCommentListRequest(sortBy, page) {

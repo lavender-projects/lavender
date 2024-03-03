@@ -15,13 +15,13 @@ object RecommendedVideoPool {
     private val thread = Thread {
         while(true) {
             if(Thread.currentThread().isInterrupted) return@Thread
-            runCatching {
-                if(pool.size < 100) fetchVideosFromLavsources()
-            }
             try {
                 TimeUnit.SECONDS.sleep(5)
             } catch(t: Throwable) {
                 return@Thread
+            }
+            runCatching {
+                if(pool.size < 100) fetchVideosFromLavsources()
             }
         }
     }

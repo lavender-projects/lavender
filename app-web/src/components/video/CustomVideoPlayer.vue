@@ -191,10 +191,11 @@ function setPlayerControlShowAndHideCallback() {
   player.control.hide = () => {
     beforeControlBarShowStatusChange(false)
     playerControlDom.style.visibility = 'hidden'
+    //延迟一段时间等待外部组件响应播放器控制栏消失事件，以保障外部组件的额外的控制栏能与播放器控制栏消失时间相近
     playerControlHideCallbackTask = setTimeout(() => {
       playerControlHideCallback()
       playerControlHideCallbackTask = null
-    }, 300)
+    }, 500)
   }
 }
 
@@ -445,6 +446,7 @@ function movePlayerClickFrame() {
 }
 
 defineExpose({
+  getOriginalPlayer: () => player,
   playVideo,
   pauseVideo,
   resumeVideo
