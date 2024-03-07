@@ -1,48 +1,27 @@
 package de.honoka.lavender.android.util
 
-import cn.hutool.http.HttpUtil
+import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
-import cn.hutool.json.JSONUtil
-import de.honoka.lavender.android.service.LavsourceMonitorService
-import de.honoka.lavender.api.util.MultipleLavsourceIdContainer
+import de.honoka.lavender.android.lavsource.sdk.provider.LavsourceProviderRequest
+import de.honoka.lavender.api.business.BasicBusiness
 import de.honoka.sdk.util.android.common.contentResolverCall
-import de.honoka.sdk.util.kotlin.hutool.params
+import kotlin.reflect.KFunction
+import kotlin.reflect.jvm.javaMethod
 
 object LavsourceUtils {
 
-    fun getLavsourceStatus(packageName: String): Boolean = contentResolverCall<JSONObject>(
-        "${packageName}.provider.LavsourceProvider"
+    inline fun <reified T> callLavsourceProvider(
+        packageName: String, businessMethod: KFunction<*>, args: Iterable<Any?>? = null
+    ): T {
+        val request = LavsourceProviderRequest().apply {
+            className = businessMethod.javaMethod!!.declaringClass.simpleName
+            method = businessMethod.name
+            args?.let { this.args = JSONArray(args, false) }
+        }
+        return contentResolverCall<T>("${packageName}.provider.LavsourceProvider", args = request)
+    }
+
+    fun getLavsourceStatus(packageName: String): Boolean = callLavsourceProvider<JSONObject>(
+        packageName, BasicBusiness::statusCheck
     ).getBool("status")
-
-    fun getLavsourceBaseUrl(packageName: String): String? = contentResolverCall(
-        "${packageName}.provider.LavsourceProvider",
-        "getBaseUrl"
-    ) as String?
-
-    fun httpGet(urlPath: String, params: JSONObject): String {
-        val lavsourceId = params["lavsourceId"] as String
-        val urlPrefix = LavsourceMonitorService.baseUrlMap[lavsourceId]
-        return HttpUtil.createGet("$urlPrefix$urlPath").params(params).execute().body()
-    }
-
-    inline fun <reified T> httpGetForObject(urlPath: String, params: JSONObject): T {
-        val lavsourceId = params["lavsourceId"] as String
-        val res = httpGet(urlPath, params)
-        return JSONUtil.parseObj(res).getJSONObject("data").toBean(T::class.java).also {
-            if(it is MultipleLavsourceIdContainer) it.setMultipleLavsourceId(lavsourceId)
-        }
-    }
-
-    inline fun <reified T> httpGetForList(urlPath: String, params: JSONObject): List<T> {
-        val lavsourceId = params["lavsourceId"] as String
-        val res = httpGet(urlPath, params)
-        val list = ArrayList<T>()
-        JSONUtil.parseObj(res).getJSONArray("data").forEach {
-            it as JSONObject
-            list.add(it.toBean(T::class.java).also { bean ->
-                if(bean is MultipleLavsourceIdContainer) bean.setMultipleLavsourceId(lavsourceId)
-            })
-        }
-        return list
-    }
 }

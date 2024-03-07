@@ -67,10 +67,7 @@ class MainActivity : AppCompatActivity() {
             list.forEach {
                 runCatching {
                     val packageName = it.packageName!!
-                    if(LavsourceUtils.getLavsourceStatus(packageName)) {
-                        LavsourceMonitorService.baseUrlMap[it.id!!] = LavsourceUtils.getLavsourceBaseUrl(packageName)!!
-                        return
-                    }
+                    if(LavsourceUtils.getLavsourceStatus(packageName)) return
                 }
                 //等待时间太短可能会导致设备内存（RAM）被迅速耗尽
                 TimeUnit.SECONDS.sleep(1)

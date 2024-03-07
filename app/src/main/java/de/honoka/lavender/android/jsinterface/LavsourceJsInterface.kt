@@ -9,7 +9,6 @@ import de.honoka.lavender.android.dao.LavsourceInfoDao
 import de.honoka.lavender.android.data.LavsourceAddParams
 import de.honoka.lavender.android.data.LavsourceInfoVo
 import de.honoka.lavender.android.entity.LavsourceInfo
-import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.android.util.LavsourceUtils
 import de.honoka.lavender.android.util.RecommendedVideoPool
 import de.honoka.sdk.util.android.common.GlobalComponents
@@ -61,7 +60,7 @@ class LavsourceJsInterface {
                 type = LavsourceInfo.Type.LOCAL
                 name = GlobalComponents.application.packageManager.getApplicationLabel(it).toString()
                 packageName = it.packageName
-                iconUrl = HttpServerVariables.getImageUrlByPrefix(
+                iconUrl = HttpServerVariables.getImageUrlByPath(
                     getLocalLavsourceIconRelativePath(packageName)
                 )
             })
@@ -97,7 +96,7 @@ class LavsourceJsInterface {
     fun getExistingLavsourceList(): List<LavsourceInfoVo> = LavsourceInfoDao.listAll().map {
         LavsourceInfoVo().apply {
             BeanUtil.copyProperties(it, this)
-            iconUrl = HttpServerVariables.getImageUrlByPrefix(
+            iconUrl = HttpServerVariables.getImageUrlByPath(
                 getSavedLavsourceIconRelativePath(it.id!!)
             )
         }
@@ -120,7 +119,6 @@ class LavsourceJsInterface {
 
     //主要用于LavSource状态改变，或者被删除时，同步删除位于其他位置的此LavSource的相关数据
     private fun syncDataWhenLavsourceListChanged() = launchCoroutineOnIoThread {
-        LavsourceMonitorService.syncBaseUrlMap()
         RecommendedVideoPool.removeVideosOfDisabledLavsource()
     }
 }

@@ -11,7 +11,7 @@ class BasicJsInterface(private val webActivity: WebActivity) {
     fun openNewWebActivity(path: String) {
         webActivity.run {
             startActivity(Intent(this, WebActivity::class.java).apply {
-                putExtra("url", HttpServerVariables.getUrlByPrefix(path))
+                putExtra("url", HttpServerVariables.getUrlByPath(path))
             })
         }
     }

@@ -20,7 +20,6 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0.0-dev"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,6 +29,13 @@ android {
             @Suppress("UnstableApiUsage")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    packaging {
+        resources.excludes.addAll(listOf(
+            "META-INF/INDEX.LIST",
+            "META-INF/io.netty.versions.properties"
+        ))
     }
 
     compileOptions {
@@ -48,7 +54,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("de.honoka.sdk:honoka-android-utils:${Versions.honokaAndroidUtils}")
-    implementation("de.honoka.lavender:lavender-api:${Versions.lavenderApiVersion}")
+    implementation("de.honoka.lavender:lavsource-app-sdk:${Versions.lavenderAppSdk}")
     implementation("cn.hutool:hutool-all:5.8.18")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

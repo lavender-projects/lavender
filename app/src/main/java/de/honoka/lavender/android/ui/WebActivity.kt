@@ -176,7 +176,7 @@ class WebActivity : AppCompatActivity() {
     }
 
     private fun initActivityParams() {
-        url = intent.getStringExtra("url") ?: HttpServerVariables.getUrlByPrefix("")
+        url = intent.getStringExtra("url") ?: HttpServerVariables.getUrlByPath("")
         firstWebActivity = intent.getBooleanExtra("firstWebActivity", false)
     }
 

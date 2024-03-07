@@ -1,9 +1,5 @@
 package de.honoka.lavender.android.util
 
-import cn.hutool.http.HttpUtil
-import cn.hutool.json.JSONObject
-import cn.hutool.json.JSONUtil
-import de.honoka.lavender.android.service.LavsourceMonitorService
 import de.honoka.lavender.api.data.RecommendedVideoItem
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
@@ -39,17 +35,17 @@ object RecommendedVideoPool {
 
     private fun fetchVideosFromLavsources() {
         val newVideoList = ArrayList<RecommendedVideoItem>()
-        LavsourceMonitorService.baseUrlMap.forEach { entry ->
-            runCatching {
-                val res = HttpUtil.get("${entry.value}/video/recommended")
-                JSONUtil.parseObj(res).getJSONArray("data").map {
-                    it as JSONObject
-                    it.toBean(RecommendedVideoItem::class.java).apply {
-                        lavsourceId = entry.key
-                    }
-                }.let { newVideoList.addAll(it) }
-            }
-        }
+        //LavsourceMonitorService.baseUrlMap.forEach { entry ->
+        //    runCatching {
+        //        val res = HttpUtil.get("${entry.value}/video/recommended")
+        //        JSONUtil.parseObj(res).getJSONArray("data").map {
+        //            it as JSONObject
+        //            it.toBean(RecommendedVideoItem::class.java).apply {
+        //                lavsourceId = entry.key
+        //            }
+        //        }.let { newVideoList.addAll(it) }
+        //    }
+        //}
         synchronized(this) {
             pool.addAll(newVideoList)
             removeVideosOfDisabledLavsource()
@@ -57,7 +53,8 @@ object RecommendedVideoPool {
     }
 
     fun removeVideosOfDisabledLavsource() {
-        val newLavsourceIdCacheSet = HashSet(LavsourceMonitorService.baseUrlMap.keys)
+        //val newLavsourceIdCacheSet = HashSet(LavsourceMonitorService.baseUrlMap.keys)
+        val newLavsourceIdCacheSet = HashSet<String>()
         var shouldReturn = false
         lavsourceIdCacheSet?.let {
             shouldReturn = it.size == newLavsourceIdCacheSet.size && it.containsAll(newLavsourceIdCacheSet)
