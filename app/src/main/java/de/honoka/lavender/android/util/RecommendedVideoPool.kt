@@ -1,12 +1,15 @@
 package de.honoka.lavender.android.util
 
+import de.honoka.lavender.android.dao.LavsourceInfoDao
+import de.honoka.lavender.android.lavsource.sdk.business.stub.VideoBusinessStub
 import de.honoka.lavender.api.data.RecommendedVideoItem
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 object RecommendedVideoPool {
 
-    private val pool = ArrayList<RecommendedVideoItem>()
+    private val pool = ConcurrentLinkedQueue<RecommendedVideoItem>()
 
     private val thread = Thread {
         while(true) {
@@ -24,7 +27,7 @@ object RecommendedVideoPool {
 
     private var initialized = false
 
-    private var lavsourceIdCacheSet: Set<String>? = null
+    private var lavsourceIdCacheSet: Set<String?>? = null
 
     fun init() {
         if(initialized) return
@@ -35,17 +38,11 @@ object RecommendedVideoPool {
 
     private fun fetchVideosFromLavsources() {
         val newVideoList = ArrayList<RecommendedVideoItem>()
-        //LavsourceMonitorService.baseUrlMap.forEach { entry ->
-        //    runCatching {
-        //        val res = HttpUtil.get("${entry.value}/video/recommended")
-        //        JSONUtil.parseObj(res).getJSONArray("data").map {
-        //            it as JSONObject
-        //            it.toBean(RecommendedVideoItem::class.java).apply {
-        //                lavsourceId = entry.key
-        //            }
-        //        }.let { newVideoList.addAll(it) }
-        //    }
-        //}
+        LavsourceInfoDao.listEnabled().forEach {
+            runCatching {
+                newVideoList.addAll(VideoBusinessStub(it.packageName!!).getRecommendedVideoList())
+            }
+        }
         synchronized(this) {
             pool.addAll(newVideoList)
             removeVideosOfDisabledLavsource()
@@ -53,8 +50,7 @@ object RecommendedVideoPool {
     }
 
     fun removeVideosOfDisabledLavsource() {
-        //val newLavsourceIdCacheSet = HashSet(LavsourceMonitorService.baseUrlMap.keys)
-        val newLavsourceIdCacheSet = HashSet<String>()
+        val newLavsourceIdCacheSet = LavsourceInfoDao.listEnabled().map { it.id }.toSet()
         var shouldReturn = false
         lavsourceIdCacheSet?.let {
             shouldReturn = it.size == newLavsourceIdCacheSet.size && it.containsAll(newLavsourceIdCacheSet)
@@ -64,7 +60,6 @@ object RecommendedVideoPool {
         pool.removeIf { !lavsourceIdCacheSet!!.contains(it.lavsourceId) }
     }
 
-    @Synchronized
     fun takeOutVideos(maxCount: Int): List<RecommendedVideoItem> {
         if(pool.isEmpty()) {
             //此处不需要调用removeVideosOfDisabledLavsource方法
@@ -75,9 +70,11 @@ object RecommendedVideoPool {
         }
         //removeVideosOfDisabledLavsource之后pool可能为空
         if(pool.isEmpty()) return emptyList()
-        val subList = pool.subList(0, min(pool.size, maxCount))
-        return ArrayList(subList).apply {
-            subList.clear()
+        val count = min(pool.size, maxCount)
+        return ArrayList<RecommendedVideoItem>().apply {
+            for(i in 0 until count) {
+                pool.poll()?.let { add(it) }
+            }
         }
     }
 }
