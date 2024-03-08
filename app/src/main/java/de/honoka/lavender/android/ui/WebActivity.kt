@@ -1,19 +1,20 @@
 package de.honoka.lavender.android.ui
 
-import android.annotation.SuppressLint
+import de.honoka.lavender.android.jsinterface.LavsourceJsInterface
+import de.honoka.lavender.android.jsinterface.VideoJsInterface
+import de.honoka.lavender.android.jsinterface.VideoPlayingViewJsInterface
 import de.honoka.lavender.android.service.LavsourceMonitorService
-import de.honoka.lavender.android.util.JsInterfaceContainerFactory
-import de.honoka.sdk.util.android.jsinterface.JavascriptInterfaceContainer
 import de.honoka.sdk.util.android.ui.AbstractWebActivity
 
-@SuppressLint("SetJavaScriptEnabled")
 class WebActivity : AbstractWebActivity() {
+
+    override val definedJsInterfaceInstances: List<Any> = listOf(
+        LavsourceJsInterface(),
+        VideoJsInterface(),
+        VideoPlayingViewJsInterface(this)
+    )
 
     override fun extendedOnResume() {
         LavsourceMonitorService.checkOrRestartAsync()
-    }
-
-    override fun newJavascriptInterfaceContainer(): JavascriptInterfaceContainer = run {
-        JsInterfaceContainerFactory(this@WebActivity).getContainer()
     }
 }
