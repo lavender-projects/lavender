@@ -19,7 +19,7 @@ import de.honoka.sdk.util.android.server.HttpServerVariables
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class LavsourceJsInterface {
+class LavsourceManagementJsInterface {
 
     private fun getLocalLavsourceIconRelativePath(packageName: String?) = run {
         "/files/lavsource/local/icon/$packageName.png"

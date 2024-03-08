@@ -1,6 +1,6 @@
 const remoteAccessUrlPrefix = import.meta.env.VITE_REMOTE_ACCESS_URL_PREFIX
 
-const lavsourceJsInterfaceMockData = {
+const lavsourceManagementJsInterfaceMockData = {
   getLocalLavsourceListCanBeAdded: [
     {
       id: 1,
@@ -44,4 +44,4 @@ const lavsourceJsInterfaceMockData = {
   ]
 }
 
-export default lavsourceJsInterfaceMockData
+export default lavsourceManagementJsInterfaceMockData

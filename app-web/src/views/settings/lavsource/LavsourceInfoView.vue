@@ -28,7 +28,7 @@
 <script setup>
 import TopLayerSettingsView from '@/components/common/TopLayerSettingsView.vue'
 import { onMounted, reactive, ref } from 'vue'
-import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
+import lavsourceManagementJsInterface from '@/androidJsInterfaces/lavsourceManagementJsInterface'
 
 const lavsourceInfo = ref({} ?? {
   id: 0,
@@ -61,7 +61,7 @@ function getLavsourceTypeText() {
 
 function loadLavsourceStatus() {
   lavsourceStatus.value = '获取中……'
-  lavsourceJsInterface.getLavsourceStatus(lavsourceInfo.value.id).then(status => {
+  lavsourceManagementJsInterface.getLavsourceStatus(lavsourceInfo.value.id).then(status => {
     lavsourceStatus.value = status === true ? '正常' : '不可用'
   }).catch(() => {
     lavsourceStatus.value = '获取失败'
@@ -70,7 +70,7 @@ function loadLavsourceStatus() {
 
 function onEnableStatusChange() {
   status.enableStatusChanging = true
-  lavsourceJsInterface.changeLavsourceEnableStatus(
+  lavsourceManagementJsInterface.changeLavsourceEnableStatus(
     lavsourceInfo.value.id,
     lavsourceInfo.value.enabled
   ).then(() => {}).catch(() => {

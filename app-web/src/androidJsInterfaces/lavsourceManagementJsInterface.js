@@ -1,11 +1,11 @@
 import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
-import lavsourceJsInterfaceMockData from '@/mockData/lavsourceJsInterface'
+import lavsourceManagementJsInterfaceMockData from '@/mockData/lavsourceManagementJsInterface'
 
 //noinspection JSUnusedLocalSymbols
 const methodDefinitions = {
   getLocalLavsourceListCanBeAdded: {
     isAsync: true,
-    fallback: async () => lavsourceJsInterfaceMockData.getLocalLavsourceListCanBeAdded
+    fallback: async () => lavsourceManagementJsInterfaceMockData.getLocalLavsourceListCanBeAdded
   },
   addLocalLavsource: {
     isAsync: true,
@@ -13,7 +13,7 @@ const methodDefinitions = {
   },
   getExistingLavsourceList: {
     isAsync: true,
-    fallback: () => lavsourceJsInterfaceMockData.getExistingLavsourceList
+    fallback: () => lavsourceManagementJsInterfaceMockData.getExistingLavsourceList
   },
   getLavsourceStatus: {
     isAsync: true,
@@ -25,8 +25,8 @@ const methodDefinitions = {
   }
 }
 
-const lavsourceJsInterface = jsInterfaceUtils.getJsInterfaceStub(
-  'LavsourceJsInterface', methodDefinitions
+const lavsourceManagementJsInterface = jsInterfaceUtils.getJsInterfaceStub(
+  'LavsourceManagementJsInterface', methodDefinitions
 ) ?? methodDefinitions
 
-export default lavsourceJsInterface
+export default lavsourceManagementJsInterface

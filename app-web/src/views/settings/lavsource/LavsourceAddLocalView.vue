@@ -2,7 +2,7 @@
   <top-layer-settings-view title="添加本地信源">
     <van-cell-group inset title="可添加信源">
       <lavsource-list ref="localLavsourceListComponent"
-                      :load-data-api="lavsourceJsInterface.getLocalLavsourceListCanBeAdded"
+                      :load-data-api="lavsourceManagementJsInterface.getLocalLavsourceListCanBeAdded"
                       @item-click="addLocalLavsource" />
     </van-cell-group>
   </top-layer-settings-view>
@@ -11,7 +11,7 @@
 <script setup>
 import TopLayerSettingsView from '@/components/common/TopLayerSettingsView.vue'
 import { ref } from 'vue'
-import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
+import lavsourceManagementJsInterface from '@/androidJsInterfaces/lavsourceManagementJsInterface'
 import { showCustomConfirmDialog, showCustomLoadingToast } from '@/utils/popup'
 import messageUtils from '@/utils/message'
 import LavsourceList from '@/components/settings/lavsource/LavsourceList.vue'
@@ -26,7 +26,7 @@ function addLocalLavsource(item, index) {
       let toast = showCustomLoadingToast({
         teleport: localLavsourceListComponent.value.rootDom
       })
-      lavsourceJsInterface.addLocalLavsource(item).then(() => {
+      lavsourceManagementJsInterface.addLocalLavsource(item).then(() => {
         localLavsourceListComponent.value.lavsourceList.splice(index, 1)
         localLavsourceListComponent.value.updateLavsourceListLoadFinishedText()
         messageUtils.success('添加成功')

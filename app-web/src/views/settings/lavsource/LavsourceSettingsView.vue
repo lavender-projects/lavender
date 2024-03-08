@@ -6,7 +6,7 @@
     </van-cell-group>
     <van-cell-group inset title="信源">
       <lavsource-list ref="lavsourceListComponent"
-                      :load-data-api="lavsourceJsInterface.getExistingLavsourceList"
+                      :load-data-api="lavsourceManagementJsInterface.getExistingLavsourceList"
                       @item-click="onLavsourceItemClick" />
     </van-cell-group>
   </top-layer-settings-view>
@@ -14,7 +14,7 @@
 
 <script setup>
 import TopLayerSettingsView from '@/components/common/TopLayerSettingsView.vue'
-import lavsourceJsInterface from '@/androidJsInterfaces/lavsourceJsInterface'
+import lavsourceManagementJsInterface from '@/androidJsInterfaces/lavsourceManagementJsInterface'
 import LavsourceList from '@/components/settings/lavsource/LavsourceList.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
