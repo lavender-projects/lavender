@@ -40,7 +40,11 @@ object RecommendedVideoPool {
         val newVideoList = ArrayList<RecommendedVideoItem>()
         LavsourceInfoDao.listEnabled().forEach {
             runCatching {
-                newVideoList.addAll(VideoBusinessStub(it.packageName!!).getRecommendedVideoList())
+                val videoList = VideoBusinessStub(it.packageName!!).getRecommendedVideoList()
+                videoList.forEach { video ->
+                    video.lavsourceId = it.id
+                }
+                newVideoList.addAll(videoList)
             }
         }
         synchronized(this) {

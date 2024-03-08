@@ -412,6 +412,7 @@ function getActiveScrollBlockComponent() {
 
 function onTabChange() {
   componentParams.lastTimeTabChangeTime = Date.now()
+  inertialScrollEngine.stopScroll()
   try {
     calcIsKeepMaxTabPageHeight()
   } catch(e) {

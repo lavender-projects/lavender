@@ -53,8 +53,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("de.honoka.sdk:honoka-android-utils:${Versions.honokaAndroidUtils}")
-    implementation("de.honoka.lavender:lavsource-app-sdk:${Versions.lavenderAppSdk}")
+    implementation("de.honoka.lavender:lavsource-app-sdk:${Versions.lavenderAppSdk}") {
+        exclude("gui.ava", "html2image")
+    }
     implementation("cn.hutool:hutool-all:5.8.18")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

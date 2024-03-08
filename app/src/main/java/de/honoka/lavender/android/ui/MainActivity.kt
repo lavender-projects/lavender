@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 //等待时间太短可能会导致设备内存（RAM）被迅速耗尽
                 TimeUnit.SECONDS.sleep(1)
-                if(System.currentTimeMillis() - startTime < 30 * 1000) return@forEach
+                if(System.currentTimeMillis() - startTime < 10 * 1000) return@forEach
                 throw Exception("LavSources status check timeout")
             }
         }
