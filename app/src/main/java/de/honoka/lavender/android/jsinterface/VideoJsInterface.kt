@@ -9,27 +9,31 @@ import de.honoka.sdk.util.android.jsinterface.async.AsyncJavascriptInterface
 
 class VideoJsInterface {
 
+    private val JSONObject.lavsourceId get() = getStr("lavsourceId")
+
     private fun getStub(params: JSONObject) = VideoBusinessStub(LavsourceUtils.getPackageNameById(params))
 
     @AsyncJavascriptInterface
     fun recommendedVideoList(): List<RecommendedVideoItem> = RecommendedVideoPool.takeOutVideos(10)
 
     @AsyncJavascriptInterface
-    fun videoDetails(params: JSONObject): VideoDetails = getStub(params).getVideoDetails(params.getStr("id"))
+    fun videoDetails(params: JSONObject): VideoDetails = getStub(params).getVideoDetails(params.getStr("id")).apply {
+        setMultipleLavsourceId(params.lavsourceId)
+    }
 
     @AsyncJavascriptInterface
     fun commentList(params: JSONObject): CommentList = getStub(params).getCommentList(
         params.getStr("videoId"),
         params.getStr("sortBy"),
         params.getInt("page")
-    )
+    ).apply { setMultipleLavsourceId(params.lavsourceId) }
 
     @AsyncJavascriptInterface
     fun commentReplyList(params: JSONObject): CommentList = getStub(params).getCommentReplyList(
         params.getStr("videoId"),
         params.getStr("commentId"),
         params.getInt("page")
-    )
+    ).apply { setMultipleLavsourceId(params.lavsourceId) }
 
     @AsyncJavascriptInterface
     fun danmakuList(params: JSONObject): List<DanmakuInfo> = getStub(params).getDanmakuList(

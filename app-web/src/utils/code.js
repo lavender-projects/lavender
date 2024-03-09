@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import remoteMockRequest from '@/utils/request'
 
 const codeUtils = {
   sleep: timeMillis => new Promise(resolve => setTimeout(resolve, timeMillis)),
@@ -25,7 +25,7 @@ const codeUtils = {
     }
     return clonedObject
   },
-  requestAndGetData: async axiosParams => (await request(axiosParams)).data
+  requestAndGetData: async axiosParams => (await remoteMockRequest(axiosParams)).data
 }
 
 export default codeUtils

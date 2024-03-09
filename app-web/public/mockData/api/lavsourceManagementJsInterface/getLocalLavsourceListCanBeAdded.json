@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "type": "local",
+    "name": "LavSource bilibili",
+    "packageName": "de.honoka.lavender.lavsource.bilibili",
+    "iconUrl": "/mockData/img/lavsource_bilibili.png"
+  },
+  {
+    "id": 2,
+    "type": "local",
+    "name": "test1",
+    "packageName": "test1",
+    "iconUrl": "/mockData/img/lavsource_bilibili.png"
+  },
+  {
+    "id": 3,
+    "type": "local",
+    "name": "test2",
+    "packageName": "test2",
+    "iconUrl": "/mockData/img/lavsource_bilibili.png"
+  }
+]

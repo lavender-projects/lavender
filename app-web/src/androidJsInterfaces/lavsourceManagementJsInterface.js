@@ -1,11 +1,14 @@
 import { jsInterfaceUtils } from '@/utils/androidJsInterfaces'
-import lavsourceManagementJsInterfaceMockData from '@/mockData/lavsourceManagementJsInterface'
+import { mockRequest } from '@/utils/request'
 
 //noinspection JSUnusedLocalSymbols
 const methodDefinitions = {
   getLocalLavsourceListCanBeAdded: {
     isAsync: true,
-    fallback: async () => lavsourceManagementJsInterfaceMockData.getLocalLavsourceListCanBeAdded
+    fallback: async () => await mockRequest({
+      url: '/lavsourceManagementJsInterface/getLocalLavsourceListCanBeAdded.json',
+      method: 'get'
+    })
   },
   addLocalLavsource: {
     isAsync: true,
@@ -13,7 +16,10 @@ const methodDefinitions = {
   },
   getExistingLavsourceList: {
     isAsync: true,
-    fallback: () => lavsourceManagementJsInterfaceMockData.getExistingLavsourceList
+    fallback: async () => await mockRequest({
+      url: '/lavsourceManagementJsInterface/getExistingLavsourceList.json',
+      method: 'get'
+    })
   },
   getLavsourceStatus: {
     isAsync: true,

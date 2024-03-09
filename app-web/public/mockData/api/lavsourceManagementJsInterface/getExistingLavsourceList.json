@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "type": "local",
+    "name": "LavSource bilibili",
+    "packageName": "de.honoka.lavender.lavsource.bilibili",
+    "iconUrl": "/mockData/img/lavsource_bilibili.png",
+    "enabled": true
+  },
+  {
+    "id": 2,
+    "type": "network",
+    "name": "LavSource bilibili Network",
+    "baseUrl": "https://lavsource.bilibili.com/api",
+    "iconUrl": "/mockData/img/lavsource_bilibili.png",
+    "enabled": false
+  }
+]
