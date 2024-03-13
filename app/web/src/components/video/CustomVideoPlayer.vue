@@ -1,11 +1,17 @@
 <template>
-  <div class="custom-video-player" ref="customVideoPlayerDom">
+  <div class="custom-video-player" ref="customVideoPlayerDom" @click="onRootDomClick" @dblclick="onRootDomDoubleClick">
     <div class="player-container" ref="playerContainerDom"></div>
     <div class="fullscreen-top-bar" ref="fullScreenTopBarDom">
       <div class="left">
         <back-icon :color="componentParams.backIconColor" @click="onBackIconClick" />
       </div>
     </div>
+    <!--
+      有时，播放器控制栏控件（按钮、开关、控制条等）在随着控制栏的消失而一并消失后，再在这些控件消失前的位置
+      进行点击，会出现即使控件已经消失也仍然会触发控件被点击的行为。
+      clickFrame的用途是在控制栏消失后，阻止点击事件传递到控制栏上。它会在控制栏消失后出现在整个播放器区域的
+      上层，覆盖住播放器区域，当它被点击时，将会使控制栏显示出来，然后将自身隐藏，控制栏消失后，它又会再次出现。
+    -->
     <div class="player-click-frame" ref="playerClickFrameDom"></div>
     <audio class="audio-player" ref="audioPlayerDom" controls
            @playing="onAudioPlaying" @waiting="onAudioWaiting" />
@@ -109,6 +115,10 @@ let streamInfoList = {
 
 let danmakuExtendSettingDoms = []
 
+let rootDomClickTask
+
+let clickFrameHideTask
+
 onMounted(() => {
   initPlayer()
   configurePlayer()
@@ -150,6 +160,7 @@ function configurePlayer() {
   //将定义的顶栏DOM移动至nplayer的根DOM中
   let innerPlayerDom = playerContainerDom.value.querySelector('.nplayer')
   innerPlayerDom.appendChild(fullScreenTopBarDom.value)
+  innerPlayerDom.removeEventListener('mousemove', player.control.showTransient)
   //设置内部视频播放器事件监听
   videoDom.onseeking = onVideoSeeking
   videoDom.oncanplay = onVideoCanplay
@@ -158,7 +169,6 @@ function configurePlayer() {
   videoDom.onwaiting = onVideoWaiting
   videoDom.onpause = onVideoPause
   videoDom.onratechange = onVideoRateChange
-  videoDom.ondblclick = onVideoDomDoubleClick
   //禁用单击播放暂停
   videoDom.removeEventListener('click', player.toggle)
   //禁用双击全屏
@@ -181,29 +191,26 @@ function setPlayerControlShowAndHideCallback() {
   let playerControlDom = playerContainerDom.value.querySelector('.nplayer_control')
   let playerControlShowCallback = player.control.show
   let playerControlHideCallback = player.control.hide
-  let playerControlHideCallbackTask
   player.control.show = () => {
-    if(playerControlHideCallbackTask != null) return
     beforeControlBarShowStatusChange(true)
     playerControlDom.style.visibility = 'unset'
+    //noinspection JSUnresolvedReference
+    clearTimeout(player.control.showTimer)
     playerControlShowCallback()
   }
   player.control.hide = () => {
     beforeControlBarShowStatusChange(false)
-    playerControlDom.style.visibility = 'hidden'
-    //延迟一段时间等待外部组件响应播放器控制栏消失事件，以保障外部组件的额外的控制栏能与播放器控制栏消失时间相近
-    playerControlHideCallbackTask = setTimeout(() => {
-      playerControlHideCallback()
-      playerControlHideCallbackTask = null
-    }, 500)
+    playerControlHideCallback()
   }
 }
 
-function onPlayerClickFrameClick() {
-  if(!componentParams.videoControlBarShowStatus) {
-    player.control.showTransient()
-  }
-  playerClickFrameDom.value.style.display = 'none'
+function onPlayerClickFrameClick(e) {
+  e.stopPropagation()
+  onRootDomClick()
+  if(clickFrameHideTask != null) clearTimeout(clickFrameHideTask)
+  clickFrameHideTask = setTimeout(() => {
+    playerClickFrameDom.value.style.display = 'none'
+  }, 200)
 }
 
 function onPlayerClickFrameTouchStart(e) {
@@ -274,14 +281,6 @@ function onVideoRateChange() {
   audioPlayerDom.value.playbackRate = videoDom.playbackRate
 }
 
-function onVideoDomDoubleClick() {
-  if(!componentParams.videoPlaying) {
-    videoDom.play()
-    return
-  }
-  pauseVideo()
-}
-
 async function onAudioPlaying() {
   if(!componentParams.audioWaiting) return
   /*
@@ -322,6 +321,27 @@ function onControlBarShowStatusChanged(show) {
 
 function onBackIconClick() {
   document.exitFullscreen()
+}
+
+function onRootDomClick() {
+  //防止双击动作触发单击事件
+  if(rootDomClickTask != null) {
+    clearTimeout(rootDomClickTask)
+    rootDomClickTask = null
+    return
+  }
+  rootDomClickTask = setTimeout(() => {
+    hideOrShowPlayerControl()
+    rootDomClickTask = null
+  }, 200)
+}
+
+function onRootDomDoubleClick() {
+  if(!componentParams.videoPlaying) {
+    videoDom.play()
+    return
+  }
+  pauseVideo()
 }
 
 async function initQualityController() {
@@ -443,6 +463,18 @@ function movePlayerClickFrame() {
     return
   }
   customVideoPlayerDom.value.appendChild(playerClickFrameDom.value)
+}
+
+function hideOrShowPlayerControl() {
+  if(componentParams.videoControlBarShowStatus) {
+    player.control.hide()
+  } else {
+    if(componentParams.videoPlaying) {
+      player.control.showTransient()
+    } else {
+      player.control.show()
+    }
+  }
 }
 
 defineExpose({
