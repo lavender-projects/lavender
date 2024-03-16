@@ -161,6 +161,9 @@ function configurePlayer() {
   let innerPlayerDom = playerContainerDom.value.querySelector('.nplayer')
   innerPlayerDom.appendChild(fullScreenTopBarDom.value)
   innerPlayerDom.removeEventListener('mousemove', player.control.showTransient)
+  //阻止控制栏上的点击事件传递到rootDom
+  let playerControlDom = innerPlayerDom.querySelector('.nplayer_control')
+  playerControlDom.addEventListener('click', e => e.stopPropagation())
   //设置内部视频播放器事件监听
   videoDom.onseeking = onVideoSeeking
   videoDom.oncanplay = onVideoCanplay
