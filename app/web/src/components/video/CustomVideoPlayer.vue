@@ -58,6 +58,7 @@ const qualityController = {
   btn: null,
   popover: null,
   itemElements: [],
+  nameItemElementMap: {},
   init() {
     this.btn = document.createElement('div')
     this.el.appendChild(this.btn)
@@ -119,6 +120,10 @@ let rootDomClickTask
 
 let clickFrameHideTask
 
+let videoStartPlayMonitorTask
+
+let videoStreamUrlRefreshTask
+
 onMounted(() => {
   initPlayer()
   configurePlayer()
@@ -156,6 +161,7 @@ function configurePlayer() {
   //为播放暂停按钮添加额外事件监听器
   let playBtnDom = playerContainerDom.value.querySelector('.nplayer_tooltip')
   playBtnDom.addEventListener('click', onPlayBtnClick)
+  //移除封面
   playerContainerDom.value.querySelector('.nplayer_poster').remove()
   //将定义的顶栏DOM移动至nplayer的根DOM中
   let innerPlayerDom = playerContainerDom.value.querySelector('.nplayer')
@@ -262,6 +268,7 @@ function onVideoCanplay() {
 //在视频从其他状态变更为播放状态时触发（除非手动暂停再播放或者播放结束后重新播放，该事件都只触发一次）
 function onVideoPlay() {
   if(componentParams.audioWaiting) return
+  newVideoStartPlayMonitorTask()
   componentParams.videoPlaying = true
   //为audioPlayerDom设置currentTime时将会触发其waiting事件
   audioPlayerDom.value.currentTime = videoDom.currentTime
@@ -270,11 +277,16 @@ function onVideoPlay() {
 
 //在视频开始播放后触发（调整进度条也会触发）
 function onVideoPlaying() {
+  if(videoStartPlayMonitorTask != null) {
+    clearTimeout(videoStartPlayMonitorTask)
+    videoStartPlayMonitorTask = null
+  }
   audioPlayerDom.value.play()
 }
 
 //视频开始缓冲时触发（视频未被手动暂停，但因暂未缓冲完成而被动暂停，此时不会触发pause事件）
 function onVideoWaiting() {
+  newVideoStartPlayMonitorTask()
   audioPlayerDom.value.pause()
 }
 
@@ -375,18 +387,19 @@ async function initQualityController() {
   })
   //创建容器，并根据清晰度列表计算出对应每一个清晰度的DOM元素
   const fragment = document.createDocumentFragment()
+  qualityController.nameItemElementMap = {}
   qualityController.itemElements = streamInfoList.map(info => {
     const qualityItemDom = document.createElement('div')
     qualityItemDom.textContent = info.qualityName
     qualityItemDom.classList.add('quality-item')
     //为清晰度DOM添加事件监听
     qualityItemDom.addEventListener('click', () => {
-      if(info.qualityName === nowVideoQualityName) return
-      qualityController.btn.textContent = info.qualityName
       qualityController.itemElements.forEach(it => {
         it.classList.remove('quality-item-active')
       })
       qualityItemDom.classList.add('quality-item-active')
+      qualityController.btn.textContent = info.qualityName
+      if(info.qualityName === nowVideoQualityName) return
       videoDom.src = info.videoStreamUrl
       audioPlayerDom.value.src = info.audioStreamUrl
       nowVideoQualityName = info.qualityName
@@ -394,19 +407,28 @@ async function initQualityController() {
     })
     //添加到容器
     fragment.appendChild(qualityItemDom)
+    qualityController.nameItemElementMap[info.qualityName] = qualityItemDom
     return qualityItemDom
   })
   //清空清晰度弹出框中原有内容，并放入新的内容
   qualityController.popover.panelEl.innerHTML = ''
   qualityController.popover.panelEl.appendChild(fragment)
   qualityController.el.style.display = 'block'
+  if(nowVideoQualityName != null) applyNowVideoQuality()
 }
 
-async function playVideo() {
+async function initAndPlayVideo() {
+  nowVideoQualityName = null
   await initQualityController()
-  //模拟对第一个清晰度项目进行点击
-  //noinspection JSCheckFunctionSignatures
-  qualityController.itemElements[0].dispatchEvent(new Event('click'))
+  applyNowVideoQuality()
+  initVideoStreamUrlRefreshTask()
+}
+
+function initVideoStreamUrlRefreshTask() {
+  if(videoStreamUrlRefreshTask != null) return
+  videoStreamUrlRefreshTask = setInterval(() => {
+    initQualityController()
+  }, 60 * 1000)
 }
 
 function resumeVideo() {
@@ -421,6 +443,18 @@ function resumeVideo() {
 function pauseVideo() {
   componentParams.videoPlaying = false
   videoDom.pause()
+}
+
+function applyNowVideoQuality() {
+  //模拟对清晰度项目进行点击
+  //noinspection JSCheckFunctionSignatures
+  let qualityControllerItem
+  if(nowVideoQualityName == null) {
+    qualityControllerItem = qualityController.itemElements[0]
+  } else {
+    qualityControllerItem = qualityController.nameItemElementMap[nowVideoQualityName]
+  }
+  qualityControllerItem.dispatchEvent(new Event('click'))
 }
 
 function loadDanmakuList() {
@@ -499,9 +533,16 @@ function hideOrShowPlayerControl() {
   }
 }
 
+function newVideoStartPlayMonitorTask() {
+  if(videoStartPlayMonitorTask != null) return
+  videoStartPlayMonitorTask = setTimeout(() => {
+    initAndPlayVideo()
+  }, 8 * 1000)
+}
+
 defineExpose({
   getOriginalPlayer: () => player,
-  playVideo,
+  initAndPlayVideo,
   pauseVideo,
   resumeVideo
 })

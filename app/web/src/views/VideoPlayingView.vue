@@ -293,7 +293,7 @@ async function loadDomAndCssValues() {
       domHeightValues.defaultPlayerWrapperHeight * 0.1
 }
 
-function loadVideoDetails() {
+async function loadVideoDetails() {
   videoJsInterface.videoDetails({
     id: props.videoId,
     lavsourceId: props.lavsourceId
@@ -320,7 +320,7 @@ async function startVideoPlay() {
   })
   nowEpisodeId.value = String(episodeInfoList.value[0].id)
   await codeUtils.sleep(50)
-  await videoPlayerComponent.value.playVideo()
+  await videoPlayerComponent.value.initAndPlayVideo()
 }
 
 async function beforeTitleBlockExpandChange() {
