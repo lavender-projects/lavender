@@ -520,7 +520,7 @@ function onVideoPlayingStatusChanged(playing) {
 }
 
 function onVideoPlayingFinished() {
-  setPlayerTopBarHide(false)
+  //ignore
 }
 
 function onDeviceBackButtonPressed() {

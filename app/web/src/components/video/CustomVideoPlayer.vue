@@ -182,9 +182,15 @@ function configurePlayer() {
   player.on(EVENT.EXIT_FULLSCREEN, () => onFullScreenStatusChanged(false))
   player.on(EVENT.CONTROL_SHOW, () => onControlBarShowStatusChanged(true))
   player.on(EVENT.CONTROL_HIDE, () => onControlBarShowStatusChanged(false))
-  setPlayerControlShowAndHideCallback()
+  setPlayerFunctions()
   //未全屏时隐藏除开关以外的弹幕设置项
   calcIsDanmakuExtendSettingsShow()
+}
+
+//改写player对象中所定义的一些函数的原有行为
+function setPlayerFunctions() {
+  player.seek = onPlayerSeek
+  setPlayerControlShowAndHideCallback()
 }
 
 function setPlayerControlShowAndHideCallback() {
@@ -232,6 +238,14 @@ function onPlayBtnClick() {
   pauseVideo()
 }
 
+//通过nplayer的组件调节视频进度时触发
+function onPlayerSeek(time) {
+  let duration = player.duration
+  if(time >= duration) time = duration - 0.1
+  if(time < 0) time = 0
+  videoDom.currentTime = time
+}
+
 //在快进快退动作触发后，视频缓冲触发前，触发seeking事件
 function onVideoSeeking() {
   //同步音频与视频的进度
@@ -273,7 +287,10 @@ function onVideoPause() {
   audioPlayerDom.value.pause()
   componentParams.videoPlaying = false
   emits('playingStatusChanged', false)
-  if(videoDom.ended) emits('playingFinished')
+  if(videoDom.ended) {
+    player.control.show()
+    emits('playingFinished')
+  }
 }
 
 //视频播放倍速值被更改时触发
