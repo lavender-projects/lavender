@@ -191,7 +191,8 @@ const componentParams = reactive({
   keepMaxTabPageHeight: false,
   commentListPullRefreshPhysicalActionDoing: false,
   lastTimeTabChangeTime: 0,
-  playerControlBarShowing: true
+  playerControlBarShowing: true,
+  commentReplyListShowing: false
 })
 
 const videoPlayingViewDom = ref()
@@ -398,11 +399,13 @@ function beforePlayerControlBarShowStatusChange(show) {
 
 function onCommentItemReplyClick() {
   componentParams.tabPageSwipeable = false
+  componentParams.commentReplyListShowing = true
 }
 
 function onCommentReplyListClose(cachedScrollTopValue) {
   commentListScrollBlockComponent.value.getContentWrapperDom().scrollTo(0, cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
+  componentParams.commentReplyListShowing = false
 }
 
 function getActiveScrollBlockComponent() {
@@ -615,11 +618,12 @@ function calcPlayerTopBarBackgroundOpacity() {
 }
 
 function calcIsCommentListPullRefreshDisabled() {
-  componentParams.commentListPullRefreshDisabled = componentParams.activeTabName !== 'commentList' || (
-      commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
-        codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
-        Date.now() - componentParams.lastTimeTabChangeTime < 300
-  )
+  componentParams.commentListPullRefreshDisabled = componentParams.activeTabName !== 'commentList' ||
+      componentParams.commentReplyListShowing || (
+          commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
+            codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
+            Date.now() - componentParams.lastTimeTabChangeTime < 300
+      )
 }
 
 function calcIsKeepMaxTabPageHeight() {
