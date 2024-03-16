@@ -54,6 +54,7 @@ const audioPlayerDom = ref()
 
 //noinspection JSUnusedGlobalSymbols
 const qualityController = {
+  id: 'quality-controller',
   el: document.createElement('div'),
   btn: null,
   popover: null,
@@ -123,6 +124,8 @@ let clickFrameHideTask
 let videoStartPlayMonitorTask
 
 let videoStreamUrlRefreshTask
+
+let activeControlPopoverNameSet = {}
 
 onMounted(() => {
   initPlayer()
@@ -200,6 +203,7 @@ function configurePlayer() {
 function setPlayerFunctions() {
   player.seek = onPlayerSeek
   setPlayerControlShowAndHideCallback()
+  setOnPlayerControlItemClick()
 }
 
 function setPlayerControlShowAndHideCallback() {
@@ -217,6 +221,39 @@ function setPlayerControlShowAndHideCallback() {
     beforeControlBarShowStatusChange(false)
     playerControlHideCallback()
   }
+}
+
+function setOnPlayerControlItemClick() {
+  let itemDefinitions = [ qualityController, 'danmaku-settings', 'settings' ]
+  let items = itemDefinitions.map(it => {
+    if(!(typeof it === 'string')) return it
+    return player.getControlItem(it)
+  })
+  items.forEach(it => {
+    let playerControl = player.control
+    it.el.addEventListener('click', () => {
+      activeControlPopoverNameSet[it.id] = 1
+      clearTimeout(playerControl.showTimer)
+      //noinspection JSUnresolvedReference
+      playerControl.showTimer = null
+    })
+    let popoverOnHide = it.popover.onHide
+    if(popoverOnHide == null) popoverOnHide = () => {}
+    //noinspection JSUnresolvedReference
+    it.popover.onHide = () => {
+      delete activeControlPopoverNameSet[it.id]
+      popoverOnHide()
+      if(Object.keys(activeControlPopoverNameSet).length <= 0 && playerControl.showTimer == null) {
+        newPlayerControlHideTask()
+      }
+    }
+  })
+}
+
+function newPlayerControlHideTask() {
+  if(player.control.showTimer != null) clearTimeout(player.control.showTimer)
+  //noinspection JSUnresolvedReference
+  player.control.showTimer = setTimeout(player.control.hide, player.control.delayHidTime)
 }
 
 function onPlayerClickFrameClick(e) {
@@ -282,6 +319,7 @@ function onVideoPlaying() {
     videoStartPlayMonitorTask = null
   }
   audioPlayerDom.value.play()
+  newPlayerControlHideTask()
 }
 
 //视频开始缓冲时触发（视频未被手动暂停，但因暂未缓冲完成而被动暂停，此时不会触发pause事件）

@@ -92,9 +92,7 @@ function loadCommentList(replace = false) {
     changeListTitleAndSortByText()
     status.commentLoadFinished = false
   }).catch(() => {
-    if(commentList.value.list.length <= 0) {
-      status.commentLoadFinished = true
-    }
+    status.commentLoadFinished = true
     commentPage = oldCommentPage
   }).finally(() => {
     status.commentLoading = false

@@ -65,9 +65,7 @@ function loadCommentList() {
     commentList.value = commentList.value.concat(res.list)
     status.commentLoadFinished = false
   }).catch(() => {
-    if(commentList.value.length <= 0) {
-      status.commentLoadFinished = true
-    }
+    status.commentLoadFinished = true
     commentPage = oldCommentPage
   }).finally(() => {
     status.commentLoading = false
