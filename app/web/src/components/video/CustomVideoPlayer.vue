@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-video-player" ref="customVideoPlayerDom" @click="onRootDomClick" @dblclick="onRootDomDoubleClick">
+  <div class="custom-video-player" ref="customVideoPlayerDom" @click="onRootDomClick">
     <div class="player-container" ref="playerContainerDom"></div>
     <div class="fullscreen-top-bar" ref="fullScreenTopBarDom">
       <div class="left">
@@ -210,7 +210,7 @@ function onPlayerClickFrameClick(e) {
   if(clickFrameHideTask != null) clearTimeout(clickFrameHideTask)
   clickFrameHideTask = setTimeout(() => {
     playerClickFrameDom.value.style.display = 'none'
-  }, 200)
+  }, 250)
 }
 
 function onPlayerClickFrameTouchStart(e) {
@@ -328,12 +328,14 @@ function onRootDomClick() {
   if(rootDomClickTask != null) {
     clearTimeout(rootDomClickTask)
     rootDomClickTask = null
+    onRootDomDoubleClick()
     return
   }
   rootDomClickTask = setTimeout(() => {
     hideOrShowPlayerControl()
-    rootDomClickTask = null
-  }, 200)
+    //在触发单击事件后，适当延长可触发双击事件的时间
+    setTimeout(() => rootDomClickTask = null, 200)
+  }, 250)
 }
 
 function onRootDomDoubleClick() {

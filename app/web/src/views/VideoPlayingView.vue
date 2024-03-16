@@ -190,7 +190,8 @@ const componentParams = reactive({
   cachedVideoPlayingStatus: false,
   keepMaxTabPageHeight: false,
   commentListPullRefreshPhysicalActionDoing: false,
-  lastTimeTabChangeTime: 0
+  lastTimeTabChangeTime: 0,
+  playerControlBarShowing: true
 })
 
 const videoPlayingViewDom = ref()
@@ -230,6 +231,8 @@ const domHeightValues = reactive({
   maxPlayerWrapperHeightToDisableScroll: 0
 })
 
+const inertialScrollEngine = new InertialScrollEngine(onTabPageSwipeBlockVerticalSwipe)
+
 let tabPageSwipeBlockDom
 
 let commentListPullRefreshTrackDom
@@ -246,7 +249,7 @@ let tabPageSwipeBlockTouchPositionOnTouchMoving = {
   y: 0
 }
 
-const inertialScrollEngine = new InertialScrollEngine(onTabPageSwipeBlockVerticalSwipe)
+let topBarOpacity = 0
 
 onMounted(() => {
   loadDomAndCssValues()
@@ -389,6 +392,7 @@ function getCommentListScrollBlockComponentMaxScrollTop() {
 }
 
 function beforePlayerControlBarShowStatusChange(show) {
+  componentParams.playerControlBarShowing = show
   setPlayerTopBarHide(!show)
 }
 
@@ -597,14 +601,15 @@ function dispatchCustomTouchMoveEvent(e) {
 }
 
 function calcPlayerTopBarBackgroundOpacity() {
-  let opacity = 1.0 - (codeUtils.getDomHeight(customPlayerWrapperDom.value) - domHeightValues.playerTopBarHeight) /
+  topBarOpacity = 1.0 - (codeUtils.getDomHeight(customPlayerWrapperDom.value) - domHeightValues.playerTopBarHeight) /
       (domHeightValues.defaultPlayerWrapperHeight - domHeightValues.playerTopBarHeight)
-  if(opacity > 1.0) opacity = 1.0
-  playerTopBarDom.value.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`
-  playerTopBarDom.value.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, ${(1 - opacity) / 2.0}) 0%,` +
+  if(topBarOpacity > 1.0) topBarOpacity = 1.0
+  setPlayerTopBarHide(topBarOpacity <= 0.4)
+  playerTopBarDom.value.style.backgroundColor = `rgba(255, 255, 255, ${topBarOpacity})`
+  playerTopBarDom.value.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, ${(1 - topBarOpacity) / 2.0}) 0%,` +
       'rgba(0, 0, 0, 0) 100%)'
   //设置顶栏图标颜色
-  let iconColor = opacity > 0.5 ? 'black' : 'white'
+  let iconColor = topBarOpacity > 0.5 ? 'black' : 'white'
   componentParams.backIconColor = iconColor
   topBarPlayBtnDom.value.style.color = iconColor
 }
@@ -645,6 +650,8 @@ function calcNowTabMaxScrollTopValue() {
 }
 
 function setPlayerTopBarHide(hide) {
+  let alwaysShow = componentParams.playerControlBarShowing || topBarOpacity > 0.4
+  if(alwaysShow) hide = false
   playerTopBarDom.value.style.display = hide ? 'none' : 'flex'
 }
 
@@ -653,7 +660,7 @@ function calcIsTobBarPlayBtnShouldBeShown() {
     topBarPlayBtnDom.value.style.display = 'none'
     return
   }
-  if(codeUtils.getDomHeight(customPlayerWrapperDom.value) / domHeightValues.defaultPlayerWrapperHeight < 0.7) {
+  if(topBarOpacity > 0.4) {
     topBarPlayBtnDom.value.style.display = 'flex'
     return
   }
