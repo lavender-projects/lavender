@@ -13,8 +13,6 @@
       上层，覆盖住播放器区域，当它被点击时，将会使控制栏显示出来，然后将自身隐藏，控制栏消失后，它又会再次出现。
     -->
     <div class="player-click-frame" ref="playerClickFrameDom"></div>
-    <audio class="audio-player" ref="audioPlayerDom" controls
-           @playing="onAudioPlaying" @waiting="onAudioWaiting" />
   </div>
 </template>
 
@@ -26,6 +24,7 @@ import codeUtils from '@/utils/code'
 import BackIcon from '@/components/icon/BackIcon.vue'
 import videoPlayingViewJsInterface from '@/androidJsInterfaces/videoPlayingViewJsInterface'
 import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
+import { MediaPlayer } from 'dashjs'
 
 const props = defineProps({
   lavsourceId: String,
@@ -38,8 +37,7 @@ const componentParams = reactive({
   //视频播放状态标记量，仅在手动暂停视频时会被置为false，用于确保视频仅能被手动暂停
   videoPlaying: false,
   fullScreen: false,
-  videoControlBarShowStatus: true,
-  audioWaiting: false
+  videoControlBarShowStatus: true
 })
 
 const customVideoPlayerDom = ref()
@@ -49,8 +47,6 @@ const playerContainerDom = ref()
 const fullScreenTopBarDom = ref()
 
 const playerClickFrameDom = ref()
-
-const audioPlayerDom = ref()
 
 //noinspection JSUnusedGlobalSymbols
 const qualityController = {
@@ -100,6 +96,8 @@ const emits = defineEmits([
 
 let player
 
+let dashPlayer
+
 let videoDom
 
 let nowVideoQualityName
@@ -108,9 +106,11 @@ let streamInfoList = {
   type: Object,
   default: [
     {
+      type: '',
       videoStreamUrl: '',
       audioStreamUrl: '',
-      qualityName: ''
+      qualityName: '',
+      dashManifest: ''
     }
   ]
 }
@@ -294,8 +294,7 @@ function onPlayerSeek(time) {
 
 //在快进快退动作触发后，视频缓冲触发前，触发seeking事件
 function onVideoSeeking() {
-  //同步音频与视频的进度
-  audioPlayerDom.value.currentTime = videoDom.currentTime
+  //ignore
 }
 
 function onVideoCanplay() {
@@ -304,11 +303,8 @@ function onVideoCanplay() {
 
 //在视频从其他状态变更为播放状态时触发（除非手动暂停再播放或者播放结束后重新播放，该事件都只触发一次）
 function onVideoPlay() {
-  if(componentParams.audioWaiting) return
   newVideoStartPlayMonitorTask()
   componentParams.videoPlaying = true
-  //为audioPlayerDom设置currentTime时将会触发其waiting事件
-  audioPlayerDom.value.currentTime = videoDom.currentTime
   emits('playingStatusChanged', true)
 }
 
@@ -318,26 +314,21 @@ function onVideoPlaying() {
     clearTimeout(videoStartPlayMonitorTask)
     videoStartPlayMonitorTask = null
   }
-  audioPlayerDom.value.play()
   newPlayerControlHideTask()
 }
 
 //视频开始缓冲时触发（视频未被手动暂停，但因暂未缓冲完成而被动暂停，此时不会触发pause事件）
 function onVideoWaiting() {
   newVideoStartPlayMonitorTask()
-  audioPlayerDom.value.pause()
 }
 
 //视频被暂停后时触发（不论是手动还是自动）
 function onVideoPause() {
-  if(componentParams.audioWaiting) return
   //检查标记量，若视频不是被手动暂停的（视频已暂停，但标记量为true），则立即恢复播放
   if(componentParams.videoPlaying && !videoDom.ended) {
     videoDom.play()
     return
   }
-  //同步暂停音频播放
-  audioPlayerDom.value.pause()
   componentParams.videoPlaying = false
   emits('playingStatusChanged', false)
   if(videoDom.ended) {
@@ -348,23 +339,7 @@ function onVideoPause() {
 
 //视频播放倍速值被更改时触发
 function onVideoRateChange() {
-  audioPlayerDom.value.playbackRate = videoDom.playbackRate
-}
-
-async function onAudioPlaying() {
-  if(!componentParams.audioWaiting) return
-  /*
-   * 需确保video的play事件监听器处理完成后再修改audioWaiting的值，否则video的play事件监听器很可能会再次触发audio的
-   * waiting事件，从而导致无限循环
-   */
-  await videoDom.play()
-  componentParams.audioWaiting = false
-}
-
-//waiting可能会在play事件之后触发（页面加载完成后视频第一次开始播放时）
-function onAudioWaiting() {
-  componentParams.audioWaiting = true
-  videoDom.pause()
+  //ignore
 }
 
 function onFullScreenStatusChanged(fullScreen) {
@@ -438,8 +413,13 @@ async function initQualityController() {
       qualityItemDom.classList.add('quality-item-active')
       qualityController.btn.textContent = info.qualityName
       if(info.qualityName === nowVideoQualityName) return
-      videoDom.src = info.videoStreamUrl
-      audioPlayerDom.value.src = info.audioStreamUrl
+      if(info.type === 'dash') {
+        let url = URL.createObjectURL(new Blob([ info.dashManifest ], { type: 'application/dash+xml' }))
+        dashPlayer = MediaPlayer().create()
+        dashPlayer.initialize(videoDom, url, false)
+      } else {
+        videoDom.src = info.videoStreamUrl
+      }
       nowVideoQualityName = info.qualityName
       loadDanmakuList()
     })
