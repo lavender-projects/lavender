@@ -615,10 +615,6 @@ defineExpose({
   }
 }
 
-.audio-player {
-  display: none;
-}
-
 ::v-deep(.nplayer_control-hide) {
   display: none;
 }

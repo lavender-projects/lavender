@@ -30,8 +30,7 @@
               <div class="tab-title">简介</div>
             </template>
             <div class="content" ref="videoDetailsTabPageContentDom">
-              <scroll-block ref="videoDetailsScrollBlockComponent"
-                            :scrollable="false">
+              <scroll-block ref="videoDetailsScrollBlockComponent">
                 <div class="video-detail">
                   <div class="uploader">
                     <van-image round fit="cover" :src="videoDetails.uploader.avatar"
@@ -106,8 +105,7 @@
               </div>
             </template>
             <div class="content" ref="commentListTabPageContentDom">
-              <scroll-block ref="commentListScrollBlockComponent"
-                            :scrollable="false">
+              <scroll-block ref="commentListScrollBlockComponent">
                 <comment-list-container ref="commentListContainerComponent"
                                         :get-scroll-top="getCommentListScrollBlockComponentScrollTop"
                                         :get-max-scroll-top="getCommentListScrollBlockComponentMaxScrollTop"
@@ -144,7 +142,6 @@ import VideoInfoList from '@/components/video/VideoInfoList.vue'
 import PlayIcon from '@/components/icon/PlayIcon.vue'
 import basicJsInterface from '@/androidJsInterfaces/basicJsInterface'
 import videoJsInterface from '@/androidJsInterfaces/videoJsInterface'
-import InertialScrollEngine from '@/utils/inertialScroll'
 
 const props = defineProps({
   videoId: String,
@@ -183,7 +180,7 @@ const componentParams = reactive({
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
   activeTabName: '',
-  commentListPullRefreshDisabled: true,
+  commentListPullRefreshDisabled: false,
   tabPageScrollable: false,
   tabPageSwipeable: true,
   videoPlaying: false,
@@ -232,23 +229,9 @@ const domHeightValues = reactive({
   maxPlayerWrapperHeightToDisableScroll: 0
 })
 
-const inertialScrollEngine = new InertialScrollEngine(onTabPageSwipeBlockVerticalSwipe)
-
 let tabPageSwipeBlockDom
 
 let commentListPullRefreshTrackDom
-
-let tabPageSwipeBlockSwipingDirection
-
-let tabPageSwipeBlockTouchPositionOnTouchStart = {
-  x: 0,
-  y: 0
-}
-
-let tabPageSwipeBlockTouchPositionOnTouchMoving = {
-  x: 0,
-  y: 0
-}
 
 let topBarOpacity = 0
 
@@ -271,9 +254,6 @@ async function loadDomAndCssValues() {
   commentListPullRefreshTrackDom = await codeUtils.tryForResult(() => {
     return commentListTabPageContentDom.value.querySelector('.van-pull-refresh__track')
   })
-  tabPageSwipeBlockDom.addEventListener('touchstart', onTabPageSwipeBlockTouchStart, true)
-  tabPageSwipeBlockDom.addEventListener('touchmove', onTabPageSwipeBlockTouchMove, true)
-  tabPageSwipeBlockDom.addEventListener('touchend', onTabPageSwipeBlockTouchEnd, true)
   domHeightValues.playerTopBarHeight = await codeUtils.tryForResult(() => {
     return codeUtils.getDomHeight(playerTopBarDom.value)
   })
@@ -408,18 +388,8 @@ function onCommentReplyListClose(cachedScrollTopValue) {
   componentParams.commentReplyListShowing = false
 }
 
-function getActiveScrollBlockComponent() {
-  switch(componentParams.activeTabName) {
-    case 'videoDetails':
-      return videoDetailsScrollBlockComponent.value
-    case 'commentList':
-      return commentListScrollBlockComponent.value
-  }
-}
-
 function onTabChange() {
   componentParams.lastTimeTabChangeTime = Date.now()
-  inertialScrollEngine.stopScroll()
   try {
     calcIsKeepMaxTabPageHeight()
   } catch(e) {
@@ -427,96 +397,12 @@ function onTabChange() {
   }
 }
 
-function onTabPageSwipeBlockTouchStart(e) {
-  tabPageSwipeBlockTouchPositionOnTouchStart.x = e.changedTouches[0].clientX
-  tabPageSwipeBlockTouchPositionOnTouchStart.y = e.changedTouches[0].clientY
-  tabPageSwipeBlockTouchPositionOnTouchMoving = { ...tabPageSwipeBlockTouchPositionOnTouchStart }
-  calcIsCommentListPullRefreshDisabled()
-  inertialScrollEngine.onTouchStart(e)
-}
-
-function onTabPageSwipeBlockTouchMove(e) {
-  if(e.custom === true) return
-  let xDistanceCompareWithStart = e.changedTouches[0].clientX - tabPageSwipeBlockTouchPositionOnTouchStart.x
-  let yDistanceCompareWithStart = e.changedTouches[0].clientY - tabPageSwipeBlockTouchPositionOnTouchStart.y
-  let xDistance = e.changedTouches[0].clientX - tabPageSwipeBlockTouchPositionOnTouchMoving.x
-  let yDistance = e.changedTouches[0].clientY - tabPageSwipeBlockTouchPositionOnTouchMoving.y
-  tabPageSwipeBlockTouchPositionOnTouchMoving.x = e.changedTouches[0].clientX
-  tabPageSwipeBlockTouchPositionOnTouchMoving.y = e.changedTouches[0].clientY
-  if(tabPageSwipeBlockSwipingDirection == null) {
-    if(Math.abs(yDistanceCompareWithStart) > 5) {
-      tabPageSwipeBlockSwipingDirection = 'vertical'
-    } else if(Math.abs(xDistanceCompareWithStart) > 1) {
-      tabPageSwipeBlockSwipingDirection = 'horizontal'
-    }
-    if(tabPageSwipeBlockSwipingDirection == null) {
-      e.stopPropagation()
-      return
-    }
-  }
-  switch(tabPageSwipeBlockSwipingDirection) {
-    case 'horizontal':
-      onTabPageSwipeBlockHorizontalSwipe(xDistance)
-      break
-    case 'vertical':
-      onTabPageSwipeBlockVerticalSwipe(yDistance)
-      e.stopPropagation()
-      dispatchCustomTouchMoveEvent(e)
-      break
-  }
-  if(tabPageSwipeBlockSwipingDirection === 'vertical') {
-    inertialScrollEngine.onTouchMove(e)
-  }
-}
-
-function onTabPageSwipeBlockHorizontalSwipe(scrollDistance) {
-  //暂时忽略
-}
-
-function onTabPageSwipeBlockVerticalSwipe(scrollDistance) {
-  if(Math.abs(scrollDistance) < 0.3) return
-  if(!componentParams.commentListPullRefreshDisabled && scrollDistance > 0) {
-    componentParams.commentListPullRefreshPhysicalActionDoing = true
-  }
-  if(componentParams.commentListPullRefreshPhysicalActionDoing) return
-  calcPlayerTopBarBackgroundOpacity()
-  let heightChangeAmount = adjustPlayerAndTabPageHeight(scrollDistance)
-  if(scrollDistance < 0) componentParams.commentListPullRefreshDisabled = true
-  if(heightChangeAmount === 0) {
-    let scrollBlockComponent = getActiveScrollBlockComponent()
-    scrollBlockComponent.contentWrapperScrollBy(-scrollDistance)
-    let shouldStopScroll = (
-        scrollBlockComponent.isAtMinScrollTopValue() &&
-        codeUtils.getDomHeight(customPlayerWrapperDom.value) >= domHeightValues.defaultPlayerWrapperHeight
-    ) || scrollBlockComponent.isAtMaxScrollTopValue()
-    if(shouldStopScroll) {
-      inertialScrollEngine.stopScroll()
-    }
-  }
-  calcIsKeepMaxTabPageHeight()
-  calcIsTobBarPlayBtnShouldBeShown()
-}
-
-function onTabPageSwipeBlockTouchEnd() {
-  calcIsCommentListPullRefreshDisabled()
-  tabPageSwipeBlockSwipingDirection = null
-  componentParams.commentListPullRefreshPhysicalActionDoing = false
-  setTimeout(async () => {
-    for(let i = 0; i < 3; i++) {
-      calcPlayerTopBarBackgroundOpacity()
-      await codeUtils.sleep(30)
-    }
-  })
-  inertialScrollEngine.onTouchEnd()
-}
-
 function onVideoPlayingStatusChanged(playing) {
   componentParams.videoPlaying = playing
-  inertialScrollEngine.stopScroll()
   adjustPlayerAndTabPageHeight()
   calcIsKeepMaxTabPageHeight()
   calcPlayerTopBarBackgroundOpacity()
-  calcIsTobBarPlayBtnShouldBeShown()
+  calcIsTopBarPlayBtnShouldBeShown()
 }
 
 function onVideoPlayingFinished() {
@@ -577,32 +463,6 @@ function adjustPlayerAndTabPageHeight(scrollDistance) {
   return playerWrapperHeight - originalPlayerWrapperHeight
 }
 
-/**
- * 在垂直滚动时，向TabPageSwipeBlock发送一个自定义TouchMove事件，以触发其用于监听下拉刷新的监听器，
- * 同时又不触发其横向滚动
- *
- * 此处复制了原有的TouchMove事件对象，但修改了其clientX等属性的值，使之与TouchStart时的值相同，
- * 从而使的TabPageSwipeBlock中的DOM的监听器只能监听到纵向滚动，而不触发横向滚动的动作
- */
-function dispatchCustomTouchMoveEvent(e) {
-  if(componentParams.activeTabName !== 'commentList') return
-  if(componentParams.commentListPullRefreshDisabled) return
-  let eventNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e)
-  let touchNormalObject = codeUtils.convertObjectWhichFromClassToNormal(e.changedTouches[0])
-  touchNormalObject.clientX = tabPageSwipeBlockTouchPositionOnTouchStart.x
-  touchNormalObject.pageX = tabPageSwipeBlockTouchPositionOnTouchStart.x
-  let clonedTouchObject = new Touch(touchNormalObject)
-  eventNormalObject.changedTouches = [ clonedTouchObject ]
-  eventNormalObject.targetTouches = [ clonedTouchObject ]
-  eventNormalObject.touches = [ clonedTouchObject ]
-  let newEvent = new TouchEvent('touchmove', eventNormalObject)
-  newEvent.custom = true
-  commentListPullRefreshTrackDom.dispatchEvent(newEvent)
-  setTimeout(() => {
-    commentListContainerComponent.value.appendBlankDomToCommentListPullRefreshTrackDom()
-  }, 1)
-}
-
 function calcPlayerTopBarBackgroundOpacity() {
   topBarOpacity = 1.0 - (codeUtils.getDomHeight(customPlayerWrapperDom.value) - domHeightValues.playerTopBarHeight) /
       (domHeightValues.defaultPlayerWrapperHeight - domHeightValues.playerTopBarHeight)
@@ -615,15 +475,6 @@ function calcPlayerTopBarBackgroundOpacity() {
   let iconColor = topBarOpacity > 0.5 ? 'black' : 'white'
   componentParams.backIconColor = iconColor
   topBarPlayBtnDom.value.style.color = iconColor
-}
-
-function calcIsCommentListPullRefreshDisabled() {
-  componentParams.commentListPullRefreshDisabled = componentParams.activeTabName !== 'commentList' ||
-      componentParams.commentReplyListShowing || (
-          commentListScrollBlockComponent.value.getScrollTopValue() !== 0 ||
-            codeUtils.getDomHeight(customPlayerWrapperDom.value) !== domHeightValues.defaultPlayerWrapperHeight ||
-            Date.now() - componentParams.lastTimeTabChangeTime < 300
-      )
 }
 
 function calcIsKeepMaxTabPageHeight() {
@@ -659,7 +510,7 @@ function setPlayerTopBarHide(hide) {
   playerTopBarDom.value.style.display = hide ? 'none' : 'flex'
 }
 
-function calcIsTobBarPlayBtnShouldBeShown() {
+function calcIsTopBarPlayBtnShouldBeShown() {
   if(componentParams.videoPlaying) {
     topBarPlayBtnDom.value.style.display = 'none'
     return
