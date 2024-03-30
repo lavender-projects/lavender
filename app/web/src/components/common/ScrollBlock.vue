@@ -41,6 +41,8 @@ const contentDom = computed(() => {
 
 let hideScrollBarTask
 
+let thumbFiller
+
 onMounted(() => {
   let verticalBar = scrollBlockDom.value.querySelector('.el-scrollbar__bar.is-vertical')
   let verticalThumb = verticalBar.querySelector('.el-scrollbar__thumb')
@@ -72,8 +74,8 @@ function disableVerticalThumbMouseEvent(bar, thumb) {
 }
 
 function setScrollListener(thumb) {
-  let thumbFiller = thumb.querySelector('.filler')
-  contentWrapperDom.value.addEventListener('scroll', () => onContentWrapperScroll(thumbFiller))
+  thumbFiller = thumb.querySelector('.filler')
+  contentWrapperDom.value.addEventListener('scroll', onContentWrapperScroll)
   contentWrapperDom.value.addEventListener('scrollend', onContentWrapperScrollEnd)
 }
 
@@ -81,7 +83,7 @@ function applyScrollableValue() {
   contentWrapperDom.value.style.overflow = props.scrollable ? 'scroll' : 'hidden'
 }
 
-function onContentWrapperScroll(thumbFiller) {
+function onContentWrapperScroll() {
   if(hideScrollBarTask != null) clearTimeout(hideScrollBarTask)
   if(!thumbFiller.classList.contains('show')) thumbFiller.classList.add('show')
   hideScrollBarTask = setTimeout(() => {
