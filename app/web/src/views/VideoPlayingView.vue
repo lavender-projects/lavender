@@ -21,6 +21,7 @@
                            @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
     </div>
     <scroll-block class="tab-and-content-wrapper" ref="tabAndContentWrapperComponent"
+                  @scroll="onContentWrapperScroll"
                   @scroll-end="onContentWrapperScrollEnd">
       <div class="blank"></div>
       <div class="tab-and-content">
@@ -224,7 +225,8 @@ const domHeightValues = reactive({
   defaultTabPageContentDomHeight: 0,
   maxTabPageContentDomHeight: 0,
   minPlayerWrapperHeightToDisableScroll: 0,
-  maxPlayerWrapperHeightToDisableScroll: 0
+  maxPlayerWrapperHeightToDisableScroll: 0,
+  minPlayerWrapperTopPosition: 0
 })
 
 const tabPageScrollTopValue = {
@@ -274,6 +276,8 @@ async function loadDomAndCssValues() {
       domHeightValues.playerTopBarHeight * 0.2
   domHeightValues.maxPlayerWrapperHeightToDisableScroll = domHeightValues.defaultPlayerWrapperHeight -
       domHeightValues.defaultPlayerWrapperHeight * 0.1
+  domHeightValues.minPlayerWrapperTopPosition = -domHeightValues.defaultPlayerWrapperHeight +
+      domHeightValues.playerTopBarHeight
   componentParams.tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
 }
 
@@ -350,6 +354,13 @@ function onTopBarPlayBtnClick() {
   videoPlayerComponent.value.getOriginalPlayer().control.showTransient()
 }
 
+function onContentWrapperScroll() {
+  calcPlayerWrapperDomPosition()
+  calcPlayerTopBarBackgroundOpacity()
+  calcIsTopBarPlayBtnShouldBeShown()
+  saveTabPageScrollTopValue()
+}
+
 function onContentWrapperScrollEnd() {
   saveTabPageScrollTopValue()
 }
@@ -377,6 +388,11 @@ function restoreTabPageScrollTopValue() {
       break
   }
   tabAndContentWrapperComponent.value.getContentWrapperDom().scrollTo(0, scrollTop)
+  for(let i = 0; i <= 30; i += 10) {
+    setTimeout(() => {
+      tabAndContentWrapperComponent.value.getContentWrapperDom().scrollTo(0, scrollTop)
+    }, i)
+  }
 }
 
 function getLoadCommentListRequest(sortBy, page) {
@@ -426,6 +442,7 @@ function onTabChange() {
   try {
     restoreTabPageScrollTopValue()
     calcIsKeepMaxTabPageHeight()
+    commentListContainerComponent.value.closeCommentReplyList()
   } catch(e) {
     //ignore
   }
@@ -459,9 +476,25 @@ function onAndroidActivityResume() {
   return true
 }
 
+function calcPlayerWrapperDomPosition() {
+  let scrollTop = tabAndContentWrapperComponent.value.getScrollTopValue().toFixed(2)
+  let playerWrapperDomTopPosition = -scrollTop
+  if(playerWrapperDomTopPosition < domHeightValues.minPlayerWrapperTopPosition) {
+    playerWrapperDomTopPosition = domHeightValues.minPlayerWrapperTopPosition
+  }
+  customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
+  let tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight - scrollTop
+  if(tabBarOffsetTop < domHeightValues.playerTopBarHeight) {
+    tabBarOffsetTop = domHeightValues.playerTopBarHeight
+  }
+  componentParams.tabBarOffsetTop = tabBarOffsetTop
+}
+
 function calcPlayerTopBarBackgroundOpacity() {
-  topBarOpacity = 1.0 - (codeUtils.getDomHeight(customPlayerWrapperDom.value) - domHeightValues.playerTopBarHeight) /
+  topBarOpacity = 1.0 - (
+      (componentParams.tabBarOffsetTop - domHeightValues.playerTopBarHeight) /
       (domHeightValues.defaultPlayerWrapperHeight - domHeightValues.playerTopBarHeight)
+  )
   if(topBarOpacity > 1.0) topBarOpacity = 1.0
   setPlayerTopBarHide(topBarOpacity <= 0.4)
   playerTopBarDom.value.style.backgroundColor = `rgba(255, 255, 255, ${topBarOpacity})`
@@ -546,7 +579,7 @@ function unregisterAndroidEventListeners() {
   align-items: center;
   background-color: rgba(255, 255, 255, 0);
   background-image: linear-gradient(rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
-  z-index: var(--player-wrapper-z-index);
+  z-index: calc(var(--player-wrapper-z-index) + 1);
 
   .left {
     display: flex;
