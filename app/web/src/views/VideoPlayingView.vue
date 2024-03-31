@@ -20,10 +20,7 @@
                            @playing-finished="onVideoPlayingFinished"
                            @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
     </div>
-    <scroll-block class="tab-and-content-wrapper" ref="tabAndContentWrapperComponent"
-                  @scroll="onContentWrapperScroll"
-                  @scroll-end="onContentWrapperScrollEnd">
-      <div class="blank"></div>
+    <div class="tab-and-content-wrapper">
       <div class="tab-and-content">
         <van-tabs shrink sticky animated :swipeable="componentParams.tabPageSwipeable"
                   v-model:active="componentParams.activeTabName"
@@ -33,7 +30,9 @@
             <template #title>
               <div class="tab-title">简介</div>
             </template>
-            <div class="content" ref="videoDetailsTabPageContentDom">
+            <scroll-block class="content" ref="videoDetailsTabPageContentComponent"
+                          @scroll="onContentWrapperScroll">
+              <div class="blank"></div>
               <div class="video-detail">
                 <div class="uploader">
                   <van-image round fit="cover" :src="videoDetails.uploader.avatar"
@@ -97,7 +96,7 @@
                 </div>
               </div>
               <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
-            </div>
+            </scroll-block>
           </van-tab>
           <van-tab name="commentList">
             <template #title>
@@ -106,20 +105,22 @@
                 <div class="comment-count">{{ videoDetails.replyCount }}</div>
               </div>
             </template>
-            <div class="content" ref="commentListTabPageContentDom">
+            <scroll-block class="content" ref="commentListTabPageContentComponent"
+                          @scroll="onContentWrapperScroll">
+              <div class="blank"></div>
               <comment-list-container ref="commentListContainerComponent"
-                                      :get-scroll-top="getTabAndContentWrapperScrollTop"
-                                      :get-max-scroll-top="getTabAndContentWrapperMaxScrollTop"
+                                      :get-scroll-top="() => getContentComponentScrollTop('commentList')"
+                                      :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
                                       :get-load-comment-list-request="getLoadCommentListRequest"
                                       :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
                                       :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
                                       @comment-item-reply-click="onCommentItemReplyClick"
                                       @comment-reply-list-close="onCommentReplyListClose" />
-            </div>
+            </scroll-block>
           </van-tab>
         </van-tabs>
       </div>
-    </scroll-block>
+    </div>
   </div>
 </template>
 
@@ -177,6 +178,7 @@ const componentParams = reactive({
   countIconColor: '#969799',
   heatDegreeIconColor: 'rgb(97, 102, 109)',
   titleArrowIconName: 'arrow-down',
+  playerWrapperTopPosition: 0,
   tabBarOffsetTop: 0,
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
@@ -186,9 +188,7 @@ const componentParams = reactive({
   tabPageSwipeable: true,
   videoPlaying: false,
   cachedVideoPlayingStatus: false,
-  keepMaxTabPageHeight: false,
   commentListPullRefreshPhysicalActionDoing: false,
-  lastTimeTabChangeTime: 0,
   playerControlBarShowing: true,
   commentReplyListShowing: false
 })
@@ -201,11 +201,9 @@ const topBarPlayBtnDom = ref()
 
 const customPlayerWrapperDom = ref()
 
-const tabAndContentWrapperComponent = ref()
+const videoDetailsTabPageContentComponent = ref()
 
-const videoDetailsTabPageContentDom = ref()
-
-const commentListTabPageContentDom = ref()
+const commentListTabPageContentComponent = ref()
 
 const videoPlayerComponent = ref()
 
@@ -222,12 +220,16 @@ const nowEpisodeId = ref('0')
 const domHeightValues = reactive({
   playerTopBarHeight: 0,
   defaultPlayerWrapperHeight: 0,
-  defaultTabPageContentDomHeight: 0,
   maxTabPageContentDomHeight: 0,
   minPlayerWrapperHeightToDisableScroll: 0,
   maxPlayerWrapperHeightToDisableScroll: 0,
   minPlayerWrapperTopPosition: 0
 })
+
+const tabPageComponent = {
+  videoDetails: null,
+  commentList: null
+}
 
 const tabPageScrollTopValue = {
   videoDetails: 0,
@@ -235,8 +237,6 @@ const tabPageScrollTopValue = {
 }
 
 let tabPageSwipeBlockDom
-
-let commentListPullRefreshTrackDom
 
 let topBarOpacity = 0
 
@@ -253,20 +253,16 @@ onUnmounted(() => {
 })
 
 async function loadDomAndCssValues() {
+  tabPageComponent.videoDetails = videoDetailsTabPageContentComponent
+  tabPageComponent.commentList = commentListTabPageContentComponent
   tabPageSwipeBlockDom = await codeUtils.tryForResult(() => {
     return videoPlayingViewDom.value.querySelector('.van-swipe__track')
-  })
-  commentListPullRefreshTrackDom = await codeUtils.tryForResult(() => {
-    return commentListTabPageContentDom.value.querySelector('.van-pull-refresh__track')
   })
   domHeightValues.playerTopBarHeight = await codeUtils.tryForResult(() => {
     return codeUtils.getDomHeight(playerTopBarDom.value)
   })
   domHeightValues.defaultPlayerWrapperHeight = await codeUtils.tryForResult(() => {
     return codeUtils.getDomHeight(customPlayerWrapperDom.value)
-  })
-  domHeightValues.defaultTabPageContentDomHeight = await codeUtils.tryForResult(() => {
-    return codeUtils.getDomHeight(videoDetailsTabPageContentDom.value)
   })
   domHeightValues.maxTabPageContentDomHeight = await codeUtils.tryForResult(() => {
     return codeUtils.getDomHeight(videoPlayingViewDom.value) - domHeightValues.playerTopBarHeight -
@@ -358,41 +354,6 @@ function onContentWrapperScroll() {
   calcPlayerWrapperDomPosition()
   calcPlayerTopBarBackgroundOpacity()
   calcIsTopBarPlayBtnShouldBeShown()
-  saveTabPageScrollTopValue()
-}
-
-function onContentWrapperScrollEnd() {
-  saveTabPageScrollTopValue()
-}
-
-function saveTabPageScrollTopValue() {
-  let scrollTop = tabAndContentWrapperComponent.value.getScrollTopValue()
-  switch(componentParams.activeTabName) {
-    case 'videoDetails':
-      tabPageScrollTopValue.videoDetails = scrollTop
-      break
-    case 'commentList':
-      tabPageScrollTopValue.commentList = scrollTop
-      break
-  }
-}
-
-function restoreTabPageScrollTopValue() {
-  let scrollTop
-  switch(componentParams.activeTabName) {
-    case 'videoDetails':
-      scrollTop = tabPageScrollTopValue.videoDetails
-      break
-    case 'commentList':
-      scrollTop = tabPageScrollTopValue.commentList
-      break
-  }
-  tabAndContentWrapperComponent.value.getContentWrapperDom().scrollTo(0, scrollTop)
-  for(let i = 0; i <= 30; i += 10) {
-    setTimeout(() => {
-      tabAndContentWrapperComponent.value.getContentWrapperDom().scrollTo(0, scrollTop)
-    }, i)
-  }
 }
 
 function getLoadCommentListRequest(sortBy, page) {
@@ -413,12 +374,12 @@ function getLoadCommentReplyListRequest(commentId, page) {
   })
 }
 
-function getTabAndContentWrapperScrollTop() {
-  return tabAndContentWrapperComponent.value.getScrollTopValue()
+function getContentComponentScrollTop(tabPageName) {
+  return tabPageComponent[tabPageName].value.getScrollTopValue()
 }
 
-function getTabAndContentWrapperMaxScrollTop() {
-  return tabAndContentWrapperComponent.value.getMaxScrollTopValue()
+function getContentComponentMaxScrollTop(tabPageName) {
+  return tabPageComponent[tabPageName].value.getMaxScrollTopValue()
 }
 
 function beforePlayerControlBarShowStatusChange(show) {
@@ -432,25 +393,17 @@ function onCommentItemReplyClick() {
 }
 
 function onCommentReplyListClose(cachedScrollTopValue) {
-  tabAndContentWrapperComponent.value.getContentWrapperDom().scrollTo(0, cachedScrollTopValue)
+  commentListTabPageContentComponent.value.getContentWrapperDom().scrollTo(0, cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
   componentParams.commentReplyListShowing = false
 }
 
 function onTabChange() {
-  componentParams.lastTimeTabChangeTime = Date.now()
-  try {
-    restoreTabPageScrollTopValue()
-    calcIsKeepMaxTabPageHeight()
-    commentListContainerComponent.value.closeCommentReplyList()
-  } catch(e) {
-    //ignore
-  }
+  commentListContainerComponent.value?.closeCommentReplyList()
 }
 
 function onVideoPlayingStatusChanged(playing) {
   componentParams.videoPlaying = playing
-  calcIsKeepMaxTabPageHeight()
   calcPlayerTopBarBackgroundOpacity()
   calcIsTopBarPlayBtnShouldBeShown()
 }
@@ -477,16 +430,30 @@ function onAndroidActivityResume() {
 }
 
 function calcPlayerWrapperDomPosition() {
-  let scrollTop = tabAndContentWrapperComponent.value.getScrollTopValue().toFixed(2)
-  let playerWrapperDomTopPosition = -scrollTop
+  let scrollTop = getContentComponentScrollTop(componentParams.activeTabName)
+  let distance = scrollTop - tabPageScrollTopValue[componentParams.activeTabName]
+  tabPageScrollTopValue[componentParams.activeTabName] = scrollTop
+  let playerWrapperDomTopPosition = componentParams.playerWrapperTopPosition
+  let tabBarOffsetTop = componentParams.tabBarOffsetTop
+  if(componentParams.videoPlaying) {
+    playerWrapperDomTopPosition = 0
+    tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
+  } else {
+    playerWrapperDomTopPosition -= distance
+    tabBarOffsetTop -= distance
+  }
+  if(playerWrapperDomTopPosition > 0) playerWrapperDomTopPosition = 0
   if(playerWrapperDomTopPosition < domHeightValues.minPlayerWrapperTopPosition) {
     playerWrapperDomTopPosition = domHeightValues.minPlayerWrapperTopPosition
   }
-  customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
-  let tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight - scrollTop
   if(tabBarOffsetTop < domHeightValues.playerTopBarHeight) {
     tabBarOffsetTop = domHeightValues.playerTopBarHeight
   }
+  if(tabBarOffsetTop > domHeightValues.defaultPlayerWrapperHeight) {
+    tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
+  }
+  customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
+  componentParams.playerWrapperTopPosition = playerWrapperDomTopPosition
   componentParams.tabBarOffsetTop = tabBarOffsetTop
 }
 
@@ -504,17 +471,6 @@ function calcPlayerTopBarBackgroundOpacity() {
   let iconColor = topBarOpacity > 0.5 ? 'black' : 'white'
   componentParams.backIconColor = iconColor
   topBarPlayBtnDom.value.style.color = iconColor
-}
-
-function calcIsKeepMaxTabPageHeight() {
-  if(componentParams.videoPlaying) {
-    componentParams.keepMaxTabPageHeight = false
-    return
-  }
-  componentParams.keepMaxTabPageHeight = (
-      codeUtils.getDomHeight(customPlayerWrapperDom.value) <= domHeightValues.playerTopBarHeight &&
-      tabAndContentWrapperComponent.value.getScrollTopValue() > 0
-  )
 }
 
 function setPlayerTopBarHide(hide) {
@@ -628,10 +584,6 @@ function unregisterAndroidEventListeners() {
 .tab-and-content-wrapper {
   width: 100%;
   height: 100vh;
-
-  .blank {
-    height: var(--player-wrapper-height);
-  }
 }
 
 .tab-and-content {
@@ -660,6 +612,12 @@ function unregisterAndroidEventListeners() {
 }
 
 .content {
+  height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
+
+  .blank {
+    height: var(--player-wrapper-height);
+  }
+
   .video-detail {
     padding: 13px 13px 12px;
     border-bottom: 1.09px solid var(--van-border-color);
