@@ -33,69 +33,71 @@
             <scroll-block class="content" ref="videoDetailsTabPageContentComponent"
                           @scroll="onContentWrapperScroll">
               <div class="blank"></div>
-              <div class="video-detail">
-                <div class="uploader">
-                  <van-image round fit="cover" :src="videoDetails.uploader.avatar"
-                             :width="componentParams.uploaderAvatarSize"
-                             :height="componentParams.uploaderAvatarSize" />
-                  <div class="name-container">
-                    <div>{{ videoDetails.uploader.name }}</div>
-                    <div class="fans">
-                      <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
-                      <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
+              <div class="main-part">
+                <div class="video-detail">
+                  <div class="uploader">
+                    <van-image round fit="cover" :src="videoDetails.uploader.avatar"
+                               :width="componentParams.uploaderAvatarSize"
+                               :height="componentParams.uploaderAvatarSize" />
+                    <div class="name-container">
+                      <div>{{ videoDetails.uploader.name }}</div>
+                      <div class="fans">
+                        <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
+                        <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="title-bar">
-                  <expand-block class="title" ref="videoTitleBlockComponent"
+                  <div class="title-bar">
+                    <expand-block class="title" ref="videoTitleBlockComponent"
+                                  :expand="componentParams.videoDetailExpanded"
+                                  :before-expand-change="beforeTitleBlockExpandChange"
+                                  :after-expand-change="afterTitleBlockExpandChange"
+                                  @click="onTitleArrowClick">
+                      {{ videoDetails.title }}
+                    </expand-block>
+                    <div class="arrow" @click="onTitleArrowClick">
+                      <van-icon :name="componentParams.titleArrowIconName" />
+                    </div>
+                  </div>
+                  <div class="counts">
+                    <play-count-icon class="icon" :color="componentParams.countIconColor" />
+                    <span>{{ videoDetails.playCount }}</span>
+                    <danmaku-icon class="icon" :color="componentParams.countIconColor" />
+                    <span>{{ videoDetails.danmakuCount }}</span>
+                    <span>{{ videoDetails.publishTime }}</span>
+                  </div>
+                  <expand-block class="description" ref="videoDescriptionBlockComponent"
                                 :expand="componentParams.videoDetailExpanded"
-                                :before-expand-change="beforeTitleBlockExpandChange"
-                                :after-expand-change="afterTitleBlockExpandChange"
-                                @click="onTitleArrowClick">
-                    {{ videoDetails.title }}
+                                :before-expand-change="beforeDescriptionBlockExpandChange">
+                    <div class="video-id">{{ videoDetails.id }}</div>
+                    <div class="description-content">{{ videoDetails.description }}</div>
+                    <div class="tags">
+                      <div class="tag" v-for="item in videoDetails.tagList">
+                        <div>{{ item }}</div>
+                      </div>
+                    </div>
                   </expand-block>
-                  <div class="arrow" @click="onTitleArrowClick">
-                    <van-icon :name="componentParams.titleArrowIconName" />
-                  </div>
-                </div>
-                <div class="counts">
-                  <play-count-icon class="icon" :color="componentParams.countIconColor" />
-                  <span>{{ videoDetails.playCount }}</span>
-                  <danmaku-icon class="icon" :color="componentParams.countIconColor" />
-                  <span>{{ videoDetails.danmakuCount }}</span>
-                  <span>{{ videoDetails.publishTime }}</span>
-                </div>
-                <expand-block class="description" ref="videoDescriptionBlockComponent"
-                              :expand="componentParams.videoDetailExpanded"
-                              :before-expand-change="beforeDescriptionBlockExpandChange">
-                  <div class="video-id">{{ videoDetails.id }}</div>
-                  <div class="description-content">{{ videoDetails.description }}</div>
-                  <div class="tags">
-                    <div class="tag" v-for="item in videoDetails.tagList">
-                      <div>{{ item }}</div>
+                  <div class="heat-degree">
+                    <div class="item">
+                      <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.likeCount }}</div>
+                    </div>
+                    <div class="item">
+                      <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.coinCount }}</div>
+                    </div>
+                    <div class="item">
+                      <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.collectCount }}</div>
+                    </div>
+                    <div class="item">
+                      <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.shareCount }}</div>
                     </div>
                   </div>
-                </expand-block>
-                <div class="heat-degree">
-                  <div class="item">
-                    <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                    <div class="count">{{ videoDetails.likeCount }}</div>
-                  </div>
-                  <div class="item">
-                    <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                    <div class="count">{{ videoDetails.coinCount }}</div>
-                  </div>
-                  <div class="item">
-                    <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                    <div class="count">{{ videoDetails.collectCount }}</div>
-                  </div>
-                  <div class="item">
-                    <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                    <div class="count">{{ videoDetails.shareCount }}</div>
-                  </div>
                 </div>
+                <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
               </div>
-              <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
             </scroll-block>
           </van-tab>
           <van-tab name="commentList">
@@ -108,14 +110,16 @@
             <scroll-block class="content" ref="commentListTabPageContentComponent"
                           @scroll="onContentWrapperScroll">
               <div class="blank"></div>
-              <comment-list-container ref="commentListContainerComponent"
-                                      :get-scroll-top="() => getContentComponentScrollTop('commentList')"
-                                      :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
-                                      :get-load-comment-list-request="getLoadCommentListRequest"
-                                      :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
-                                      :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
-                                      @comment-item-reply-click="onCommentItemReplyClick"
-                                      @comment-reply-list-close="onCommentReplyListClose" />
+              <div class="main-part">
+                <comment-list-container ref="commentListContainerComponent"
+                                        :get-scroll-top="() => getContentComponentScrollTop('commentList')"
+                                        :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
+                                        :get-load-comment-list-request="getLoadCommentListRequest"
+                                        :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
+                                        :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
+                                        @comment-item-reply-click="onCommentItemReplyClick"
+                                        @comment-reply-list-close="onCommentReplyListClose" />
+              </div>
             </scroll-block>
           </van-tab>
         </van-tabs>
@@ -399,7 +403,12 @@ function onCommentReplyListClose(cachedScrollTopValue) {
 }
 
 function onTabChange() {
-  commentListContainerComponent.value?.closeCommentReplyList()
+  try {
+    commentListContainerComponent.value?.closeCommentReplyList()
+    calcPlayerWrapperDomPosition()
+  } catch(e) {
+    //ignore
+  }
 }
 
 function onVideoPlayingStatusChanged(playing) {
@@ -616,6 +625,10 @@ function unregisterAndroidEventListeners() {
 
   .blank {
     height: var(--player-wrapper-height);
+  }
+
+  .main-part {
+    min-height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
   }
 
   .video-detail {
