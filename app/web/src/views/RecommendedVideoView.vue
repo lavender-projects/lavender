@@ -6,7 +6,7 @@
         <van-icon name="search" @click="search()" />
       </div>
     </div>
-    <div class="content">
+    <div class="content" ref="contentDom" @touchmove="onTouchMove">
       <!--
         ref的名称不可以和组件名称同名！即使它们的命名法不同。
         如：scroll-block的ref名不可以为scrollBlock
@@ -45,9 +45,28 @@ const status = reactive({
   loading: false
 })
 
+const contentDom = ref()
+
 const scrollBlockComponent = ref()
 
 const loadOnEndBlockDom = ref()
+
+let pullRefreshTrackDom
+
+let pullRefreshHeadDom
+
+onMounted(() => {
+  loadDomAndCssValues()
+  scrollBlockComponent.value.contentWrapperScrollBy(recommendedVideoListStore.nowPosition)
+})
+
+async function loadDomAndCssValues() {
+  pullRefreshTrackDom = await codeUtils.tryForResult(() => {
+    return contentDom.value.querySelector('.van-pull-refresh__track')
+  })
+  pullRefreshHeadDom = pullRefreshTrackDom.querySelector('.van-pull-refresh__head')
+  console.log(pullRefreshHeadDom)
+}
 
 function search() {
   showToast('search')
@@ -87,6 +106,17 @@ async function onLoad() {
     status.scrolledToBottom = false
     status.loading = false
   })
+}
+
+/**
+ * 当内容块的滚动动作结束时回调（并非滚动到底部时回调）
+ */
+function onContentBlockScollEnd() {
+  recommendedVideoListStore.nowPosition = scrollBlockComponent.value.getScrollTopValue()
+}
+
+function onTouchMove() {
+  appendBlankDomToPullRefreshTrackDom()
 }
 
 async function waitForScrollToLoadingText() {
@@ -132,16 +162,15 @@ function showLoadingTextBar(show) {
   }
 }
 
-/**
- * 当内容块的滚动动作结束时回调（并非滚动到底部时回调）
- */
-function onContentBlockScollEnd() {
-  recommendedVideoListStore.nowPosition = scrollBlockComponent.value.getScrollTopValue()
+//防止在进行下拉刷新动作时，下拉刷新的提示文字显示为空白
+function appendBlankDomToPullRefreshTrackDom() {
+  if(scrollBlockComponent.value.getScrollTopValue() > 0) return
+  let blankDom = document.createElement('div')
+  pullRefreshHeadDom.appendChild(blankDom)
+  setTimeout(() => {
+    pullRefreshHeadDom.removeChild(blankDom)
+  }, 50)
 }
-
-onMounted(() => {
-  scrollBlockComponent.value.contentWrapperScrollBy(recommendedVideoListStore.nowPosition)
-})
 </script>
 
 <style scoped lang="scss">

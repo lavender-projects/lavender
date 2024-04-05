@@ -89,7 +89,7 @@ async function showFloatLoadingBlockDom(show) {
 }
 
 function onTouchMove() {
-  appendBlankDomToCommentListPullRefreshTrackDom()
+  appendBlankDomToPullRefreshTrackDom()
 }
 
 async function onCommentItemReplyClick(commentData) {
@@ -115,7 +115,7 @@ function closeCommentReplyList() {
   return true
 }
 
-function appendBlankDomToCommentListPullRefreshTrackDom() {
+function appendBlankDomToPullRefreshTrackDom() {
   if(props.getScrollTop() > 0) return
   let blankDom = document.createElement('div')
   commentListPullRefreshHeadDom.appendChild(blankDom)
