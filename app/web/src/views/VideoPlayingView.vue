@@ -185,6 +185,7 @@ const componentParams = reactive({
   heatDegreeIconColor: 'rgb(97, 102, 109)',
   titleArrowIconName: 'arrow-down',
   playerWrapperTopPosition: 0,
+  keepPlayerWrapperTopPosition: false,
   tabBarOffsetTop: 0,
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
@@ -196,7 +197,7 @@ const componentParams = reactive({
   cachedVideoPlayingStatus: false,
   commentListPullRefreshPhysicalActionDoing: false,
   playerControlBarShowing: true,
-  commentReplyListShowing: false
+  commentReplyListShowing: false,
 })
 
 const videoPlayingViewDom = ref()
@@ -416,6 +417,7 @@ function onTabChange() {
 
 function onVideoPlayingStatusChanged(playing) {
   componentParams.videoPlaying = playing
+  calcPlayerWrapperDomPosition()
   calcPlayerTopBarBackgroundOpacity()
   calcIsTopBarPlayBtnShouldBeShown()
 }
@@ -465,6 +467,11 @@ function calcPlayerWrapperDomPosition() {
     tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
   }
   customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
+  if(componentParams.videoPlaying) {
+    let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
+    if(newScrollTop < 0) newScrollTop = 0
+    getCurrentTabPageContentComponent().contentWrapperScrollTo(newScrollTop)
+  }
   componentParams.playerWrapperTopPosition = playerWrapperDomTopPosition
   componentParams.tabBarOffsetTop = tabBarOffsetTop
 }
