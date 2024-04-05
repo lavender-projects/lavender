@@ -185,7 +185,6 @@ const componentParams = reactive({
   heatDegreeIconColor: 'rgb(97, 102, 109)',
   titleArrowIconName: 'arrow-down',
   playerWrapperTopPosition: 0,
-  keepPlayerWrapperTopPosition: false,
   tabBarOffsetTop: 0,
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
@@ -198,6 +197,7 @@ const componentParams = reactive({
   commentListPullRefreshPhysicalActionDoing: false,
   playerControlBarShowing: true,
   commentReplyListShowing: false,
+  disableScrollEventOnce: false
 })
 
 const videoPlayingViewDom = ref()
@@ -358,6 +358,10 @@ function onTopBarPlayBtnClick() {
 }
 
 function onContentWrapperScroll() {
+  if(componentParams.disableScrollEventOnce) {
+    componentParams.disableScrollEventOnce = false
+    return
+  }
   calcPlayerWrapperDomPosition()
   calcPlayerTopBarBackgroundOpacity()
   calcIsTopBarPlayBtnShouldBeShown()
@@ -408,7 +412,6 @@ function onCommentReplyListClose(cachedScrollTopValue) {
 function onTabChange() {
   try {
     commentListContainerComponent.value?.closeCommentReplyList()
-    calcPlayerWrapperDomPosition()
     fixTabPageScrollTopValue()
   } catch(e) {
     //ignore
@@ -449,15 +452,31 @@ function calcPlayerWrapperDomPosition() {
   tabPageScrollTopValue[componentParams.activeTabName] = scrollTop
   let playerWrapperDomTopPosition = componentParams.playerWrapperTopPosition
   let tabBarOffsetTop = componentParams.tabBarOffsetTop
+  let keepPlayerWrapperTopPosition = scrollTop >= domHeightValues.defaultPlayerWrapperHeight -
+      domHeightValues.playerTopBarHeight
+  let setValues = always => {
+    let condition = always || !keepPlayerWrapperTopPosition || playerWrapperDomTopPosition <
+        componentParams.playerWrapperTopPosition
+    if(!condition) return
+    customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
+    componentParams.playerWrapperTopPosition = playerWrapperDomTopPosition
+    componentParams.tabBarOffsetTop = tabBarOffsetTop
+  }
   if(componentParams.videoPlaying) {
     playerWrapperDomTopPosition = 0
     tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
-  } else {
-    playerWrapperDomTopPosition -= distance
-    tabBarOffsetTop -= distance
+    let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
+    if(newScrollTop < 0) newScrollTop = 0
+    componentParams.disableScrollEventOnce = true
+    getCurrentTabPageContentComponent().contentWrapperScrollTo(newScrollTop)
+    tabPageScrollTopValue[componentParams.activeTabName] = newScrollTop
+    setValues(true)
+    return
   }
+  playerWrapperDomTopPosition -= distance
+  tabBarOffsetTop -= distance
   if(playerWrapperDomTopPosition > 0) playerWrapperDomTopPosition = 0
-  if(playerWrapperDomTopPosition < domHeightValues.minPlayerWrapperTopPosition) {
+  if(playerWrapperDomTopPosition <= domHeightValues.minPlayerWrapperTopPosition) {
     playerWrapperDomTopPosition = domHeightValues.minPlayerWrapperTopPosition
   }
   if(tabBarOffsetTop < domHeightValues.playerTopBarHeight) {
@@ -466,14 +485,7 @@ function calcPlayerWrapperDomPosition() {
   if(tabBarOffsetTop > domHeightValues.defaultPlayerWrapperHeight) {
     tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
   }
-  customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
-  if(componentParams.videoPlaying) {
-    let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
-    if(newScrollTop < 0) newScrollTop = 0
-    getCurrentTabPageContentComponent().contentWrapperScrollTo(newScrollTop)
-  }
-  componentParams.playerWrapperTopPosition = playerWrapperDomTopPosition
-  componentParams.tabBarOffsetTop = tabBarOffsetTop
+  setValues(false)
 }
 
 function calcPlayerTopBarBackgroundOpacity() {
@@ -514,7 +526,9 @@ function fixTabPageScrollTopValue() {
   let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
   let tabBarMoveDistance = domHeightValues.defaultPlayerWrapperHeight - componentParams.tabBarOffsetTop
   if(scrollTop >= tabBarMoveDistance) return
+  componentParams.disableScrollEventOnce = true
   getCurrentTabPageContentComponent().contentWrapperScrollTo(tabBarMoveDistance)
+  tabPageScrollTopValue[componentParams.activeTabName] = tabBarMoveDistance
 }
 
 function registerAndroidEventListeners() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="comment-list-container">
+  <div class="comment-list-container" @touchmove="onTouchMove">
     <div ref="commentListComponentWrapperDom">
       <comment-list :get-scroll-top="getScrollTop"
                     :get-max-scroll-top="getMaxScrollTop"
@@ -88,6 +88,10 @@ async function showFloatLoadingBlockDom(show) {
   }
 }
 
+function onTouchMove() {
+  appendBlankDomToCommentListPullRefreshTrackDom()
+}
+
 async function onCommentItemReplyClick(commentData) {
   componentParams.cachedScrollTopValue = props.getScrollTop()
   commentListComponentWrapperDom.value.style.display = 'none'
@@ -112,6 +116,7 @@ function closeCommentReplyList() {
 }
 
 function appendBlankDomToCommentListPullRefreshTrackDom() {
+  if(props.getScrollTop() > 0) return
   let blankDom = document.createElement('div')
   commentListPullRefreshHeadDom.appendChild(blankDom)
   setTimeout(() => {
@@ -120,8 +125,7 @@ function appendBlankDomToCommentListPullRefreshTrackDom() {
 }
 
 defineExpose({
-  closeCommentReplyList,
-  appendBlankDomToCommentListPullRefreshTrackDom
+  closeCommentReplyList
 })
 </script>
 
