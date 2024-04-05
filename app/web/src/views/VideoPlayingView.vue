@@ -31,6 +31,7 @@
               <div class="tab-title">简介</div>
             </template>
             <scroll-block class="content" ref="videoDetailsTabPageContentComponent"
+                          :hide-scroll-bar="true"
                           @scroll="onContentWrapperScroll">
               <div class="blank"></div>
               <div class="main-part">
@@ -108,11 +109,12 @@
               </div>
             </template>
             <scroll-block class="content" ref="commentListTabPageContentComponent"
+                          :hide-scroll-bar="true"
                           @scroll="onContentWrapperScroll">
               <div class="blank"></div>
               <div class="main-part">
                 <comment-list-container ref="commentListContainerComponent"
-                                        :get-scroll-top="() => getContentComponentScrollTop('commentList')"
+                                        :get-scroll-top="() => getCurrentTabPageContentComponent().getScrollTopValue()"
                                         :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
                                         :get-load-comment-list-request="getLoadCommentListRequest"
                                         :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
@@ -378,8 +380,8 @@ function getLoadCommentReplyListRequest(commentId, page) {
   })
 }
 
-function getContentComponentScrollTop(tabPageName) {
-  return tabPageComponent[tabPageName].value.getScrollTopValue()
+function getCurrentTabPageContentComponent() {
+  return tabPageComponent[componentParams.activeTabName].value
 }
 
 function getContentComponentMaxScrollTop(tabPageName) {
@@ -406,6 +408,7 @@ function onTabChange() {
   try {
     commentListContainerComponent.value?.closeCommentReplyList()
     calcPlayerWrapperDomPosition()
+    fixTabPageScrollTopValue()
   } catch(e) {
     //ignore
   }
@@ -439,7 +442,7 @@ function onAndroidActivityResume() {
 }
 
 function calcPlayerWrapperDomPosition() {
-  let scrollTop = getContentComponentScrollTop(componentParams.activeTabName)
+  let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
   let distance = scrollTop - tabPageScrollTopValue[componentParams.activeTabName]
   tabPageScrollTopValue[componentParams.activeTabName] = scrollTop
   let playerWrapperDomTopPosition = componentParams.playerWrapperTopPosition
@@ -498,6 +501,13 @@ function calcIsTopBarPlayBtnShouldBeShown() {
     return
   }
   topBarPlayBtnDom.value.style.display = 'none'
+}
+
+function fixTabPageScrollTopValue() {
+  let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
+  let tabBarMoveDistance = domHeightValues.defaultPlayerWrapperHeight - componentParams.tabBarOffsetTop
+  if(scrollTop >= tabBarMoveDistance) return
+  getCurrentTabPageContentComponent().contentWrapperScrollTo(tabBarMoveDistance)
 }
 
 function registerAndroidEventListeners() {

@@ -17,6 +17,10 @@ const props = defineProps({
   scrollable: {
     type: Boolean,
     default: true
+  },
+  hideScrollBar: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -84,11 +88,13 @@ function applyScrollableValue() {
 }
 
 function onContentWrapperScroll() {
-  if(hideScrollBarTask != null) clearTimeout(hideScrollBarTask)
-  if(!thumbFiller.classList.contains('show')) thumbFiller.classList.add('show')
-  hideScrollBarTask = setTimeout(() => {
-    thumbFiller.classList.remove('show')
-  }, 2000)
+  if(!props.hideScrollBar) {
+    if(hideScrollBarTask != null) clearTimeout(hideScrollBarTask)
+    if(!thumbFiller.classList.contains('show')) thumbFiller.classList.add('show')
+    hideScrollBarTask = setTimeout(() => {
+      thumbFiller.classList.remove('show')
+    }, 2000)
+  }
   scrollTop.value = contentWrapperDom.value.scrollTop
   emits('scroll')
 }
@@ -118,6 +124,10 @@ function isAtMaxScrollTopValue() {
   return Math.abs(getScrollTopValue() - getMaxScrollTopValue()) < 1
 }
 
+function contentWrapperScrollTo(position) {
+  contentWrapperDom.value.scrollTo(0, position)
+}
+
 function contentWrapperScrollBy(distance) {
   contentWrapperDom.value.scrollBy(0, distance)
 }
@@ -131,6 +141,7 @@ defineExpose({
   getMaxScrollTopValue,
   isAtMinScrollTopValue,
   isAtMaxScrollTopValue,
+  contentWrapperScrollTo,
   contentWrapperScrollBy,
   getContentWrapperDom
 })
