@@ -119,7 +119,7 @@
                                         :get-load-comment-list-request="getLoadCommentListRequest"
                                         :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
                                         :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
-                                        @comment-item-reply-click="onCommentItemReplyClick"
+                                        @comment-reply-list-show="onCommentReplyListShow"
                                         @comment-reply-list-close="onCommentReplyListClose" />
               </div>
             </scroll-block>
@@ -393,18 +393,25 @@ function getContentComponentMaxScrollTop(tabPageName) {
   return tabPageComponent[tabPageName].value.getMaxScrollTopValue()
 }
 
+function scrollCurrentTabPageTo(position, disableEventOnce = true) {
+  if(disableEventOnce) componentParams.disableScrollEventOnce = true
+  getCurrentTabPageContentComponent().contentWrapperScrollTo(position)
+  tabPageScrollTopValue[componentParams.activeTabName] = position
+}
+
 function beforePlayerControlBarShowStatusChange(show) {
   componentParams.playerControlBarShowing = show
   setPlayerTopBarHide(!show)
 }
 
-function onCommentItemReplyClick() {
+function onCommentReplyListShow() {
   componentParams.tabPageSwipeable = false
   componentParams.commentReplyListShowing = true
+  scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
 }
 
 function onCommentReplyListClose(cachedScrollTopValue) {
-  commentListTabPageContentComponent.value.getContentWrapperDom().scrollTo(0, cachedScrollTopValue)
+  scrollCurrentTabPageTo(cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
   componentParams.commentReplyListShowing = false
 }
@@ -467,9 +474,7 @@ function calcPlayerWrapperDomPosition() {
     tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
     let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
     if(newScrollTop < 0) newScrollTop = 0
-    componentParams.disableScrollEventOnce = true
-    getCurrentTabPageContentComponent().contentWrapperScrollTo(newScrollTop)
-    tabPageScrollTopValue[componentParams.activeTabName] = newScrollTop
+    scrollCurrentTabPageTo(newScrollTop)
     setValues(true)
     return
   }
@@ -526,9 +531,7 @@ function fixTabPageScrollTopValue() {
   let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
   let tabBarMoveDistance = domHeightValues.defaultPlayerWrapperHeight - componentParams.tabBarOffsetTop
   if(scrollTop >= tabBarMoveDistance) return
-  componentParams.disableScrollEventOnce = true
-  getCurrentTabPageContentComponent().contentWrapperScrollTo(tabBarMoveDistance)
-  tabPageScrollTopValue[componentParams.activeTabName] = tabBarMoveDistance
+  scrollCurrentTabPageTo(tabBarMoveDistance)
 }
 
 function registerAndroidEventListeners() {

@@ -62,7 +62,7 @@ let commentListPullRefreshHeadDom
 
 const rootCommentDataOfReplyList = ref({})
 
-const emits = defineEmits([ 'commentItemReplyClick', 'commentReplyListClose' ])
+const emits = defineEmits([ 'commentReplyListShow', 'commentReplyListClose' ])
 
 onMounted(() => {
   loadDomAndCssValues()
@@ -99,7 +99,7 @@ async function onCommentItemReplyClick(commentData) {
   await commentReplyListComponent.value.refresh()
   commentReplyListComponentWrapperDom.value.style.display = 'block'
   status.commentReplyListDisplaying = true
-  emits('commentItemReplyClick')
+  emits('commentReplyListShow')
 }
 
 function onCommentReplyListClose() {
@@ -124,8 +124,13 @@ function appendBlankDomToPullRefreshTrackDom() {
   }, 50)
 }
 
+function getCachedScrollTopValue() {
+  return componentParams.cachedScrollTopValue
+}
+
 defineExpose({
-  closeCommentReplyList
+  closeCommentReplyList,
+  getCachedScrollTopValue
 })
 </script>
 
