@@ -30,9 +30,10 @@
             <template #title>
               <div class="tab-title">简介</div>
             </template>
-            <scroll-block class="content" ref="videoDetailsTabPageContentComponent"
+            <scroll-block class="tab-page-content" ref="videoDetailsTabPageContentComponent"
                           :hide-scroll-bar="true"
-                          @scroll="onContentWrapperScroll">
+                          @scroll="onContentWrapperScroll"
+                          @scroll-end="onContentWrapperScrollEnd">
               <div class="blank"></div>
               <div class="main-part">
                 <div class="video-detail">
@@ -108,9 +109,10 @@
                 <div class="comment-count">{{ videoDetails.replyCount }}</div>
               </div>
             </template>
-            <scroll-block class="content" ref="commentListTabPageContentComponent"
+            <scroll-block class="tab-page-content" ref="commentListTabPageContentComponent"
                           :hide-scroll-bar="true"
-                          @scroll="onContentWrapperScroll">
+                          @scroll="onContentWrapperScroll"
+                          @scroll-end="onContentWrapperScrollEnd">
               <div class="blank"></div>
               <div class="main-part">
                 <comment-list-container ref="commentListContainerComponent"
@@ -121,11 +123,22 @@
                                         :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
                                         @before-comment-reply-list-show="beforeCommentReplyListShow"
                                         @comment-reply-list-show="onCommentReplyListShow"
+                                        @comment-reply-list-loaded="onCommentReplyListLoaded"
                                         @comment-reply-list-close="onCommentReplyListClose" />
               </div>
             </scroll-block>
           </van-tab>
         </van-tabs>
+      </div>
+    </div>
+    <div class="title-on-tab-bar" style="display: none;" ref="titleOnTabBarDom">
+      <div class="content">
+        <div class="title-1">{{ componentParams.titleOnTabBarText }}</div>
+        <div class="close-icon-container">
+          <div class="close-icon" @click="onCloseIconOfTitleOnTabBarClick">
+            <van-icon name="cross" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -191,6 +204,7 @@ const componentParams = reactive({
   canVideoDetailExpand: false,
   activeTabName: '',
   commentListPullRefreshDisabled: false,
+  titleOnTabBarText: '',
   tabPageScrollable: false,
   tabPageSwipeable: true,
   videoPlaying: false,
@@ -208,6 +222,8 @@ const playerTopBarDom = ref()
 const topBarPlayBtnDom = ref()
 
 const customPlayerWrapperDom = ref()
+
+const titleOnTabBarDom = ref()
 
 const videoDetailsTabPageContentComponent = ref()
 
@@ -246,13 +262,19 @@ const tabPageScrollTopValue = {
 
 let tabPageSwipeBlockDom
 
+let vanTabsNavDom
+
 let topBarOpacity = 0
 
-onMounted(() => {
-  loadDomAndCssValues()
-  loadVideoDetails()
-  initVideoTitleBlock()
-  startVideoPlay()
+onMounted(async () => {
+  await moveDoms()
+  //避免IDE警告
+  setTimeout(() => {
+    loadDomAndCssValues()
+    loadVideoDetails()
+    initVideoTitleBlock()
+    startVideoPlay()
+  })
   registerAndroidEventListeners()
 })
 
@@ -260,11 +282,21 @@ onUnmounted(() => {
   unregisterAndroidEventListeners()
 })
 
+async function moveDoms() {
+  let vanTabsWrapDom = await codeUtils.tryForResult(() => {
+    return videoPlayingViewDom.value.querySelector('.van-tabs__wrap')
+  })
+  vanTabsWrapDom.appendChild(titleOnTabBarDom.value)
+}
+
 async function loadDomAndCssValues() {
   tabPageComponent.videoDetails = videoDetailsTabPageContentComponent
   tabPageComponent.commentList = commentListTabPageContentComponent
   tabPageSwipeBlockDom = await codeUtils.tryForResult(() => {
     return videoPlayingViewDom.value.querySelector('.van-swipe__track')
+  })
+  vanTabsNavDom = await codeUtils.tryForResult(() => {
+    return videoPlayingViewDom.value.querySelector('.van-tabs__nav')
   })
   domHeightValues.playerTopBarHeight = await codeUtils.tryForResult(() => {
     return codeUtils.getDomHeight(playerTopBarDom.value)
@@ -358,7 +390,12 @@ function onTopBarPlayBtnClick() {
   videoPlayerComponent.value.getOriginalPlayer().control.showTransient()
 }
 
+function onCloseIconOfTitleOnTabBarClick() {
+  commentListContainerComponent.value.closeCommentReplyList()
+}
+
 function onContentWrapperScroll() {
+  componentParams.tabPageSwipeable = false
   if(componentParams.disableScrollEventOnce) {
     componentParams.disableScrollEventOnce = false
     return
@@ -366,6 +403,12 @@ function onContentWrapperScroll() {
   calcPlayerWrapperDomPosition()
   calcPlayerTopBarBackgroundOpacity()
   calcIsTopBarPlayBtnShouldBeShown()
+}
+
+function onContentWrapperScrollEnd() {
+  if(!componentParams.commentReplyListShowing) {
+    componentParams.tabPageSwipeable = true
+  }
 }
 
 function getLoadCommentListRequest(sortBy, page) {
@@ -413,15 +456,28 @@ function beforeCommentReplyListShow(resolve) {
 function onCommentReplyListShow() {
   componentParams.tabPageSwipeable = false
   componentParams.commentReplyListShowing = true
+  componentParams.titleOnTabBarText = '评论详情'
+  vanTabsNavDom.style.display = 'none'
+  titleOnTabBarDom.value.style.display = 'flex'
+  scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
+}
+
+function onCommentReplyListLoaded() {
   scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
 }
 
 function onCommentReplyListClose(cachedScrollTopValue) {
+  titleOnTabBarDom.value.style.display = 'none'
+  vanTabsNavDom.style.display = 'flex'
   scrollCurrentTabPageTo(cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
   componentParams.commentReplyListShowing = false
 }
 
+/*
+ * 该方法在页面初始化时就会被调用，其中的一些方法在初始化阶段被调用时可能会执行失败，若可以
+ * 忽略这些方法，则可将这些方法放在try块中
+ */
 function onTabChange() {
   try {
     commentListContainerComponent.value?.closeCommentReplyList()
@@ -641,7 +697,43 @@ function unregisterAndroidEventListeners() {
   }
 
   ::v-deep(.van-tabs__wrap) {
+    position: relative;
     border-bottom: 1px solid var(--van-border-color);
+
+    .title-on-tab-bar {
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+
+      .content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 12.3px;
+
+        .title-1 {
+          font-size: 13.6px;
+        }
+
+        .close-icon-container {
+          position: relative;
+          height: 18.4px;
+
+          .close-icon {
+            position: absolute;
+            top: -1px;
+            right: 0;
+            font-size: 20.3px;
+            color: var(--van-gray-6);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -660,7 +752,7 @@ function unregisterAndroidEventListeners() {
   }
 }
 
-.content {
+.tab-page-content {
   height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
 
   .blank {
@@ -668,7 +760,7 @@ function unregisterAndroidEventListeners() {
   }
 
   .main-part {
-    min-height: calc(100vh - var(--van-tabs-line-height) * 2 - 1.6px);
+    min-height: calc(100vh - var(--van-tabs-line-height) * 2 - 0.8px);
   }
 
   .video-detail {

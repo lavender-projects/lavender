@@ -15,6 +15,7 @@
                           :get-scroll-top="getScrollTop"
                           :get-max-scroll-top="getMaxScrollTop"
                           :get-load-reply-list-request="props.getLoadCommentReplyListRequest"
+                          @loaded="emits('commentReplyListLoaded')"
                           @close="onCommentReplyListClose" />
     </div>
     <div class="float-loading-block" ref="floatLoadingBlockDom">
@@ -67,6 +68,7 @@ let beforeCommentReplyListShowEventListenerWaiter
 const emits = defineEmits([
   'beforeCommentReplyListShow',
   'commentReplyListShow',
+  'commentReplyListLoaded',
   'commentReplyListClose'
 ])
 
@@ -139,13 +141,9 @@ function appendBlankDomToPullRefreshTrackDom() {
   }, 50)
 }
 
-function getCachedScrollTopValue() {
-  return componentParams.cachedScrollTopValue
-}
-
 defineExpose({
   closeCommentReplyList,
-  getCachedScrollTopValue
+  getCachedScrollTopValue: () => componentParams.cachedScrollTopValue
 })
 </script>
 

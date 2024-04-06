@@ -1,6 +1,6 @@
 <template>
   <div class="comment-list-load-on-end-block" ref="commentListLoadOnEndBlockDom">
-    <div class="comment-list-header">
+    <div class="comment-list-header" v-if="props.showTitle">
       <div class="title-1">评论详情</div>
       <div class="close-icon-container">
         <div class="close-icon" @click="emits('close')">
@@ -35,7 +35,11 @@ const props = defineProps({
   rootCommentData: Object,
   getScrollTop: Function,
   getMaxScrollTop: Function,
-  getLoadReplyListRequest: Function
+  getLoadReplyListRequest: Function,
+  showTitle: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const status = reactive({
@@ -50,7 +54,7 @@ let commentPage = 0
 
 const commentListLoadOnEndBlockDom = ref()
 
-const emits = defineEmits([ 'loaded', 'close' ])
+const emits = defineEmits(['loaded', 'close'])
 
 function loadCommentList() {
   if(status.commentLoading) return
