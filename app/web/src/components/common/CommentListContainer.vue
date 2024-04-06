@@ -62,7 +62,13 @@ let commentListPullRefreshHeadDom
 
 const rootCommentDataOfReplyList = ref({})
 
-const emits = defineEmits([ 'commentReplyListShow', 'commentReplyListClose' ])
+let beforeCommentReplyListShowEventListenerWaiter
+
+const emits = defineEmits([
+  'beforeCommentReplyListShow',
+  'commentReplyListShow',
+  'commentReplyListClose'
+])
 
 onMounted(() => {
   loadDomAndCssValues()
@@ -93,6 +99,15 @@ function onTouchMove() {
 }
 
 async function onCommentItemReplyClick(commentData) {
+  if(beforeCommentReplyListShowEventListenerWaiter != null) return
+  let waiterResolveTask
+  beforeCommentReplyListShowEventListenerWaiter = new Promise(resolve => {
+    waiterResolveTask = setTimeout(() => resolve(), 2000)
+    emits('beforeCommentReplyListShow', resolve)
+  })
+  await beforeCommentReplyListShowEventListenerWaiter
+  clearTimeout(waiterResolveTask)
+  beforeCommentReplyListShowEventListenerWaiter = null
   componentParams.cachedScrollTopValue = props.getScrollTop()
   commentListComponentWrapperDom.value.style.display = 'none'
   rootCommentDataOfReplyList.value = commentData

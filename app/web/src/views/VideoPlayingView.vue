@@ -119,6 +119,7 @@
                                         :get-load-comment-list-request="getLoadCommentListRequest"
                                         :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
                                         :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
+                                        @before-comment-reply-list-show="beforeCommentReplyListShow"
                                         @comment-reply-list-show="onCommentReplyListShow"
                                         @comment-reply-list-close="onCommentReplyListClose" />
               </div>
@@ -404,6 +405,11 @@ function beforePlayerControlBarShowStatusChange(show) {
   setPlayerTopBarHide(!show)
 }
 
+function beforeCommentReplyListShow(resolve) {
+  componentParams.disableScrollEventOnce = true
+  resolve()
+}
+
 function onCommentReplyListShow() {
   componentParams.tabPageSwipeable = false
   componentParams.commentReplyListShowing = true
@@ -662,7 +668,7 @@ function unregisterAndroidEventListeners() {
   }
 
   .main-part {
-    min-height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
+    min-height: calc(100vh - var(--van-tabs-line-height) * 2 - 1.6px);
   }
 
   .video-detail {
