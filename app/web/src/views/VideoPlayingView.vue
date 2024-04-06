@@ -1,136 +1,143 @@
 <template>
   <div class="video-playing-view" ref="videoPlayingViewDom">
-    <div class="player-top-bar" ref="playerTopBarDom">
-      <div class="left">
-        <back-icon :color="componentParams.backIconColor" @click="onBackIconClick" />
-      </div>
-      <div class="play-button-container">
-        <div class="play-button" ref="topBarPlayBtnDom" @click="onTopBarPlayBtnClick">
-          <play-icon class="icon" :color="componentParams.backIconColor" />
-          <div class="text">立即播放</div>
+    <scroll-block ref="mainScrollBlockComponent"
+                  :hide-scroll-bar="true"
+                  @scroll="onMainScrollBlockScroll"
+                  @scroll-end="onMainScrollBlockScrollEnd">
+      <div class="player-top-bar" ref="playerTopBarDom">
+        <div class="left">
+          <back-icon :color="componentParams.backIconColor" @click="onBackIconClick" />
+        </div>
+        <div class="play-button-container">
+          <div class="play-button" ref="topBarPlayBtnDom" @click="onTopBarPlayBtnClick">
+            <play-icon class="icon" :color="componentParams.backIconColor" />
+            <div class="text">立即播放</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="custom-player-wrapper" ref="customPlayerWrapperDom">
-      <custom-video-player ref="videoPlayerComponent"
-                           :lavsource-id="props.lavsourceId"
-                           :video-id="props.videoId"
-                           :episode-id="nowEpisodeId"
-                           @playing-status-changed="onVideoPlayingStatusChanged"
-                           @playing-finished="onVideoPlayingFinished"
-                           @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
-    </div>
-    <div class="tab-and-content-wrapper">
-      <div class="tab-and-content">
-        <van-tabs shrink sticky animated :swipeable="componentParams.tabPageSwipeable"
-                  v-model:active="componentParams.activeTabName"
-                  :offset-top="componentParams.tabBarOffsetTop"
-                  @change="onTabChange">
-          <van-tab name="videoDetails">
-            <template #title>
-              <div class="tab-title">简介</div>
-            </template>
-            <scroll-block class="tab-page-content" ref="videoDetailsTabPageContentComponent"
-                          :hide-scroll-bar="true"
-                          @scroll="onContentWrapperScroll"
-                          @scroll-end="onContentWrapperScrollEnd">
-              <div class="blank"></div>
-              <div class="main-part">
-                <div class="video-detail">
-                  <div class="uploader">
-                    <van-image round fit="cover" :src="videoDetails.uploader.avatar"
-                               :width="componentParams.uploaderAvatarSize"
-                               :height="componentParams.uploaderAvatarSize" />
-                    <div class="name-container">
-                      <div>{{ videoDetails.uploader.name }}</div>
-                      <div class="fans">
-                        <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
-                        <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="title-bar">
-                    <expand-block class="title" ref="videoTitleBlockComponent"
-                                  :expand="componentParams.videoDetailExpanded"
-                                  :before-expand-change="beforeTitleBlockExpandChange"
-                                  :after-expand-change="afterTitleBlockExpandChange"
-                                  @click="onTitleArrowClick">
-                      {{ videoDetails.title }}
-                    </expand-block>
-                    <div class="arrow" @click="onTitleArrowClick">
-                      <van-icon :name="componentParams.titleArrowIconName" />
-                    </div>
-                  </div>
-                  <div class="counts">
-                    <play-count-icon class="icon" :color="componentParams.countIconColor" />
-                    <span>{{ videoDetails.playCount }}</span>
-                    <danmaku-icon class="icon" :color="componentParams.countIconColor" />
-                    <span>{{ videoDetails.danmakuCount }}</span>
-                    <span>{{ videoDetails.publishTime }}</span>
-                  </div>
-                  <expand-block class="description" ref="videoDescriptionBlockComponent"
-                                :expand="componentParams.videoDetailExpanded"
-                                :before-expand-change="beforeDescriptionBlockExpandChange">
-                    <div class="video-id">{{ videoDetails.id }}</div>
-                    <div class="description-content">{{ videoDetails.description }}</div>
-                    <div class="tags">
-                      <div class="tag" v-for="item in videoDetails.tagList">
-                        <div>{{ item }}</div>
-                      </div>
-                    </div>
-                  </expand-block>
-                  <div class="heat-degree">
-                    <div class="item">
-                      <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetails.likeCount }}</div>
-                    </div>
-                    <div class="item">
-                      <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetails.coinCount }}</div>
-                    </div>
-                    <div class="item">
-                      <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetails.collectCount }}</div>
-                    </div>
-                    <div class="item">
-                      <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                      <div class="count">{{ videoDetails.shareCount }}</div>
-                    </div>
-                  </div>
-                </div>
-                <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
-              </div>
-            </scroll-block>
-          </van-tab>
-          <van-tab name="commentList">
-            <template #title>
-              <div class="tab-title">
-                <div>评论</div>
-                <div class="comment-count">{{ videoDetails.replyCount }}</div>
-              </div>
-            </template>
-            <scroll-block class="tab-page-content" ref="commentListTabPageContentComponent"
-                          :hide-scroll-bar="true"
-                          @scroll="onContentWrapperScroll"
-                          @scroll-end="onContentWrapperScrollEnd">
-              <div class="blank"></div>
-              <div class="main-part">
-                <comment-list-container ref="commentListContainerComponent"
-                                        :get-scroll-top="() => getCurrentTabPageContentComponent().getScrollTopValue()"
-                                        :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
-                                        :get-load-comment-list-request="getLoadCommentListRequest"
-                                        :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
-                                        :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
-                                        @before-comment-reply-list-show="beforeCommentReplyListShow"
-                                        @comment-reply-list-show="onCommentReplyListShow"
-                                        @comment-reply-list-loaded="onCommentReplyListLoaded"
-                                        @comment-reply-list-close="onCommentReplyListClose" />
-              </div>
-            </scroll-block>
-          </van-tab>
-        </van-tabs>
+      <div class="custom-player-wrapper" ref="customPlayerWrapperDom">
+        <custom-video-player ref="videoPlayerComponent"
+                             :lavsource-id="props.lavsourceId"
+                             :video-id="props.videoId"
+                             :episode-id="nowEpisodeId"
+                             @playing-status-changed="onVideoPlayingStatusChanged"
+                             @playing-finished="onVideoPlayingFinished"
+                             @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
       </div>
-    </div>
+      <div class="tab-and-content-wrapper">
+        <div class="tab-and-content">
+          <div class="blank"></div>
+          <van-tabs shrink animated :sticky="componentParams.tabBarSticky"
+                    :swipeable="componentParams.tabPageSwipeable"
+                    v-model:active="componentParams.activeTabName"
+                    :offset-top="componentParams.tabBarOffsetTop"
+                    @change="onTabChange">
+            <van-tab name="videoDetails">
+              <template #title>
+                <div class="tab-title">简介</div>
+              </template>
+              <scroll-block class="tab-page-content" ref="videoDetailsTabPageContentComponent"
+                            :scrollable="false"
+                            :hide-scroll-bar="true"
+                            @scroll="onContentWrapperScroll"
+                            @scroll-end="onContentWrapperScrollEnd">
+                <div class="main-part">
+                  <div class="video-detail">
+                    <div class="uploader">
+                      <van-image round fit="cover" :src="videoDetails.uploader.avatar"
+                                 :width="componentParams.uploaderAvatarSize"
+                                 :height="componentParams.uploaderAvatarSize" />
+                      <div class="name-container">
+                        <div>{{ videoDetails.uploader.name }}</div>
+                        <div class="fans">
+                          <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
+                          <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="title-bar">
+                      <expand-block class="title" ref="videoTitleBlockComponent"
+                                    :expand="componentParams.videoDetailExpanded"
+                                    :before-expand-change="beforeTitleBlockExpandChange"
+                                    :after-expand-change="afterTitleBlockExpandChange"
+                                    @click="onTitleArrowClick">
+                        {{ videoDetails.title }}
+                      </expand-block>
+                      <div class="arrow" @click="onTitleArrowClick">
+                        <van-icon :name="componentParams.titleArrowIconName" />
+                      </div>
+                    </div>
+                    <div class="counts">
+                      <play-count-icon class="icon" :color="componentParams.countIconColor" />
+                      <span>{{ videoDetails.playCount }}</span>
+                      <danmaku-icon class="icon" :color="componentParams.countIconColor" />
+                      <span>{{ videoDetails.danmakuCount }}</span>
+                      <span>{{ videoDetails.publishTime }}</span>
+                    </div>
+                    <expand-block class="description" ref="videoDescriptionBlockComponent"
+                                  :expand="componentParams.videoDetailExpanded"
+                                  :before-expand-change="beforeDescriptionBlockExpandChange">
+                      <div class="video-id">{{ videoDetails.id }}</div>
+                      <div class="description-content">{{ videoDetails.description }}</div>
+                      <div class="tags">
+                        <div class="tag" v-for="item in videoDetails.tagList">
+                          <div>{{ item }}</div>
+                        </div>
+                      </div>
+                    </expand-block>
+                    <div class="heat-degree">
+                      <div class="item">
+                        <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                        <div class="count">{{ videoDetails.likeCount }}</div>
+                      </div>
+                      <div class="item">
+                        <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                        <div class="count">{{ videoDetails.coinCount }}</div>
+                      </div>
+                      <div class="item">
+                        <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                        <div class="count">{{ videoDetails.collectCount }}</div>
+                      </div>
+                      <div class="item">
+                        <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                        <div class="count">{{ videoDetails.shareCount }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
+                </div>
+              </scroll-block>
+            </van-tab>
+            <van-tab name="commentList">
+              <template #title>
+                <div class="tab-title">
+                  <div>评论</div>
+                  <div class="comment-count">{{ videoDetails.replyCount }}</div>
+                </div>
+              </template>
+              <scroll-block class="tab-page-content" ref="commentListTabPageContentComponent"
+                            :scrollable="false"
+                            :hide-scroll-bar="true"
+                            @scroll="onContentWrapperScroll"
+                            @scroll-end="onContentWrapperScrollEnd">
+                <div class="main-part">
+                  <comment-list-container ref="commentListContainerComponent"
+                                          :get-scroll-top="() => getCurrentTabPageContentComponent().getScrollTopValue()"
+                                          :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
+                                          :get-load-comment-list-request="getLoadCommentListRequest"
+                                          :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
+                                          :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
+                                          @before-comment-reply-list-show="beforeCommentReplyListShow"
+                                          @comment-reply-list-show="onCommentReplyListShow"
+                                          @comment-reply-list-loaded="onCommentReplyListLoaded"
+                                          @comment-reply-list-close="onCommentReplyListClose" />
+                </div>
+              </scroll-block>
+            </van-tab>
+          </van-tabs>
+        </div>
+      </div>
+    </scroll-block>
     <div class="title-on-tab-bar" style="display: none;" ref="titleOnTabBarDom">
       <div class="content">
         <div class="title-1">{{ componentParams.titleOnTabBarText }}</div>
@@ -199,6 +206,7 @@ const componentParams = reactive({
   heatDegreeIconColor: 'rgb(97, 102, 109)',
   titleArrowIconName: 'arrow-down',
   playerWrapperTopPosition: 0,
+  tabBarSticky: false,
   tabBarOffsetTop: 0,
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
@@ -224,6 +232,8 @@ const topBarPlayBtnDom = ref()
 const customPlayerWrapperDom = ref()
 
 const titleOnTabBarDom = ref()
+
+const mainScrollBlockComponent = ref()
 
 const videoDetailsTabPageContentComponent = ref()
 
@@ -314,7 +324,7 @@ async function loadDomAndCssValues() {
       domHeightValues.defaultPlayerWrapperHeight * 0.1
   domHeightValues.minPlayerWrapperTopPosition = -domHeightValues.defaultPlayerWrapperHeight +
       domHeightValues.playerTopBarHeight
-  componentParams.tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
+  componentParams.tabBarOffsetTop = domHeightValues.playerTopBarHeight
 }
 
 async function loadVideoDetails() {
@@ -370,6 +380,18 @@ async function beforeDescriptionBlockExpandChange() {
   if(videoTitleBlockComponent.value.getCachedAccurateContentHeight() != null) return
   //等待titleBlock高度计算完成
   await codeUtils.sleep(100)
+}
+
+function onMainScrollBlockScroll() {
+  componentParams.tabPageSwipeable = false
+  let scrollTop = mainScrollBlockComponent.value.getScrollTopValue()
+  componentParams.commentListPullRefreshDisabled = scrollTop > 0
+}
+
+function onMainScrollBlockScrollEnd() {
+  if(!componentParams.commentReplyListShowing) {
+    componentParams.tabPageSwipeable = true
+  }
 }
 
 function onBackIconClick() {
@@ -520,7 +542,6 @@ function calcPlayerWrapperDomPosition() {
   let distance = scrollTop - tabPageScrollTopValue[componentParams.activeTabName]
   tabPageScrollTopValue[componentParams.activeTabName] = scrollTop
   let playerWrapperDomTopPosition = componentParams.playerWrapperTopPosition
-  let tabBarOffsetTop = componentParams.tabBarOffsetTop
   let keepPlayerWrapperTopPosition = scrollTop >= domHeightValues.defaultPlayerWrapperHeight -
       domHeightValues.playerTopBarHeight
   let setValues = always => {
@@ -529,11 +550,9 @@ function calcPlayerWrapperDomPosition() {
     if(!condition) return
     customPlayerWrapperDom.value.style.top = `${playerWrapperDomTopPosition}px`
     componentParams.playerWrapperTopPosition = playerWrapperDomTopPosition
-    componentParams.tabBarOffsetTop = tabBarOffsetTop
   }
   if(componentParams.videoPlaying) {
     playerWrapperDomTopPosition = 0
-    tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
     let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
     if(newScrollTop < 0) newScrollTop = 0
     scrollCurrentTabPageTo(newScrollTop)
@@ -541,16 +560,9 @@ function calcPlayerWrapperDomPosition() {
     return
   }
   playerWrapperDomTopPosition -= distance
-  tabBarOffsetTop -= distance
   if(playerWrapperDomTopPosition > 0) playerWrapperDomTopPosition = 0
   if(playerWrapperDomTopPosition <= domHeightValues.minPlayerWrapperTopPosition) {
     playerWrapperDomTopPosition = domHeightValues.minPlayerWrapperTopPosition
-  }
-  if(tabBarOffsetTop < domHeightValues.playerTopBarHeight) {
-    tabBarOffsetTop = domHeightValues.playerTopBarHeight
-  }
-  if(tabBarOffsetTop > domHeightValues.defaultPlayerWrapperHeight) {
-    tabBarOffsetTop = domHeightValues.defaultPlayerWrapperHeight
   }
   setValues(false)
 }
@@ -692,6 +704,10 @@ function unregisterAndroidEventListeners() {
 }
 
 .tab-and-content {
+  .blank {
+    height: var(--player-wrapper-height);
+  }
+
   ::v-deep(.van-tabs__nav--line) {
     height: 85%;
   }
@@ -753,12 +769,6 @@ function unregisterAndroidEventListeners() {
 }
 
 .tab-page-content {
-  height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
-
-  .blank {
-    height: var(--player-wrapper-height);
-  }
-
   .main-part {
     min-height: calc(100vh - var(--van-tabs-line-height) * 2 - 0.8px);
   }
