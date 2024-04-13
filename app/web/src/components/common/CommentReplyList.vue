@@ -94,7 +94,7 @@ async function waitForScrollToCommentListLoadingText() {
   let maxScrollTop = props.getMaxScrollTop(commentListLoadOnEndBlockDom.value)
   for(; ; ) {
     let distanceToBottom = maxScrollTop - props.getScrollTop()
-    if(maxScrollTop > 0 && (distanceToBottom <= 5 || status.commentLoading)) break
+    if(distanceToBottom <= 5 || status.commentLoading) break
     await codeUtils.sleep(100)
   }
   showCommentListLoadingTextBar(true)

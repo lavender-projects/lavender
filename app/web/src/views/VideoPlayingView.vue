@@ -1,143 +1,128 @@
 <template>
   <div class="video-playing-view" ref="videoPlayingViewDom">
-    <scroll-block ref="mainScrollBlockComponent"
-                  :hide-scroll-bar="true"
-                  @scroll="onMainScrollBlockScroll"
-                  @scroll-end="onMainScrollBlockScrollEnd">
-      <div class="player-top-bar" ref="playerTopBarDom">
-        <div class="left">
-          <back-icon :color="componentParams.backIconColor" @click="onBackIconClick" />
-        </div>
-        <div class="play-button-container">
-          <div class="play-button" ref="topBarPlayBtnDom" @click="onTopBarPlayBtnClick">
-            <play-icon class="icon" :color="componentParams.backIconColor" />
-            <div class="text">立即播放</div>
-          </div>
+    <div class="player-top-bar" ref="playerTopBarDom">
+      <div class="left">
+        <back-icon :color="componentParams.backIconColor" @click="onBackIconClick" />
+      </div>
+      <div class="play-button-container">
+        <div class="play-button" ref="topBarPlayBtnDom" @click="onTopBarPlayBtnClick">
+          <play-icon class="icon" :color="componentParams.backIconColor" />
+          <div class="text">立即播放</div>
         </div>
       </div>
-      <div class="custom-player-wrapper" ref="customPlayerWrapperDom">
-        <custom-video-player ref="videoPlayerComponent"
-                             :lavsource-id="props.lavsourceId"
-                             :video-id="props.videoId"
-                             :episode-id="nowEpisodeId"
-                             @playing-status-changed="onVideoPlayingStatusChanged"
-                             @playing-finished="onVideoPlayingFinished"
-                             @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
-      </div>
-      <div class="tab-and-content-wrapper">
-        <div class="tab-and-content">
+    </div>
+    <div class="custom-player-wrapper" ref="customPlayerWrapperDom">
+      <custom-video-player ref="videoPlayerComponent"
+                           :lavsource-id="props.lavsourceId"
+                           :video-id="props.videoId"
+                           :episode-id="nowEpisodeId"
+                           @playing-status-changed="onVideoPlayingStatusChanged"
+                           @playing-finished="onVideoPlayingFinished"
+                           @before-control-bar-show-status-change="beforePlayerControlBarShowStatusChange" />
+    </div>
+    <div class="tab-and-content-wrapper">
+      <div class="tab-and-content">
+        <scroll-block ref="tabPageContentScrollComponent"
+                      :hide-scroll-bar="true"
+                      @scroll="onTabPageContentScroll"
+                      @scroll-end="onTabPageContentScrollEnd">
           <div class="blank"></div>
-          <van-tabs shrink animated :sticky="componentParams.tabBarSticky"
-                    :swipeable="componentParams.tabPageSwipeable"
-                    v-model:active="componentParams.activeTabName"
-                    :offset-top="componentParams.tabBarOffsetTop"
-                    @change="onTabChange">
-            <van-tab name="videoDetails">
-              <template #title>
-                <div class="tab-title">简介</div>
-              </template>
-              <scroll-block class="tab-page-content" ref="videoDetailsTabPageContentComponent"
-                            :scrollable="false"
-                            :hide-scroll-bar="true"
-                            @scroll="onContentWrapperScroll"
-                            @scroll-end="onContentWrapperScrollEnd">
-                <div class="main-part">
-                  <div class="video-detail">
-                    <div class="uploader">
-                      <van-image round fit="cover" :src="videoDetails.uploader.avatar"
-                                 :width="componentParams.uploaderAvatarSize"
-                                 :height="componentParams.uploaderAvatarSize" />
-                      <div class="name-container">
-                        <div>{{ videoDetails.uploader.name }}</div>
-                        <div class="fans">
-                          <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
-                          <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="title-bar">
-                      <expand-block class="title" ref="videoTitleBlockComponent"
-                                    :expand="componentParams.videoDetailExpanded"
-                                    :before-expand-change="beforeTitleBlockExpandChange"
-                                    :after-expand-change="afterTitleBlockExpandChange"
-                                    @click="onTitleArrowClick">
-                        {{ videoDetails.title }}
-                      </expand-block>
-                      <div class="arrow" @click="onTitleArrowClick">
-                        <van-icon :name="componentParams.titleArrowIconName" />
-                      </div>
-                    </div>
-                    <div class="counts">
-                      <play-count-icon class="icon" :color="componentParams.countIconColor" />
-                      <span>{{ videoDetails.playCount }}</span>
-                      <danmaku-icon class="icon" :color="componentParams.countIconColor" />
-                      <span>{{ videoDetails.danmakuCount }}</span>
-                      <span>{{ videoDetails.publishTime }}</span>
-                    </div>
-                    <expand-block class="description" ref="videoDescriptionBlockComponent"
-                                  :expand="componentParams.videoDetailExpanded"
-                                  :before-expand-change="beforeDescriptionBlockExpandChange">
-                      <div class="video-id">{{ videoDetails.id }}</div>
-                      <div class="description-content">{{ videoDetails.description }}</div>
-                      <div class="tags">
-                        <div class="tag" v-for="item in videoDetails.tagList">
-                          <div>{{ item }}</div>
-                        </div>
-                      </div>
-                    </expand-block>
-                    <div class="heat-degree">
-                      <div class="item">
-                        <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                        <div class="count">{{ videoDetails.likeCount }}</div>
-                      </div>
-                      <div class="item">
-                        <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                        <div class="count">{{ videoDetails.coinCount }}</div>
-                      </div>
-                      <div class="item">
-                        <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                        <div class="count">{{ videoDetails.collectCount }}</div>
-                      </div>
-                      <div class="item">
-                        <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
-                        <div class="count">{{ videoDetails.shareCount }}</div>
+          <div class="main-part">
+            <van-tabs shrink sticky animated :swipeable="componentParams.tabPageSwipeable"
+                      v-model:active="componentParams.activeTabName"
+                      :offset-top="componentParams.tabBarOffsetTop"
+                      @change="onTabChange">
+              <van-tab name="videoDetails">
+                <template #title>
+                  <div class="tab-title">简介</div>
+                </template>
+                <div class="video-detail">
+                  <div class="uploader">
+                    <van-image round fit="cover" :src="videoDetails.uploader.avatar"
+                               :width="componentParams.uploaderAvatarSize"
+                               :height="componentParams.uploaderAvatarSize" />
+                    <div class="name-container">
+                      <div>{{ videoDetails.uploader.name }}</div>
+                      <div class="fans">
+                        <span>{{ videoDetails.uploader.followerCount }}粉丝</span>
+                        <span style="margin-left: 0.9em;">{{ videoDetails.uploader.publishedVideosCount }}视频</span>
                       </div>
                     </div>
                   </div>
-                  <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
+                  <div class="title-bar">
+                    <expand-block class="title" ref="videoTitleBlockComponent"
+                                  :expand="componentParams.videoDetailExpanded"
+                                  :before-expand-change="beforeTitleBlockExpandChange"
+                                  :after-expand-change="afterTitleBlockExpandChange"
+                                  @click="onTitleArrowClick">
+                      {{ videoDetails.title }}
+                    </expand-block>
+                    <div class="arrow" @click="onTitleArrowClick">
+                      <van-icon :name="componentParams.titleArrowIconName" />
+                    </div>
+                  </div>
+                  <div class="counts">
+                    <play-count-icon class="icon" :color="componentParams.countIconColor" />
+                    <span>{{ videoDetails.playCount }}</span>
+                    <danmaku-icon class="icon" :color="componentParams.countIconColor" />
+                    <span>{{ videoDetails.danmakuCount }}</span>
+                    <span>{{ videoDetails.publishTime }}</span>
+                  </div>
+                  <expand-block class="description" ref="videoDescriptionBlockComponent"
+                                :expand="componentParams.videoDetailExpanded"
+                                :before-expand-change="beforeDescriptionBlockExpandChange">
+                    <div class="video-id">{{ videoDetails.id }}</div>
+                    <div class="description-content">{{ videoDetails.description }}</div>
+                    <div class="tags">
+                      <div class="tag" v-for="item in videoDetails.tagList">
+                        <div>{{ item }}</div>
+                      </div>
+                    </div>
+                  </expand-block>
+                  <div class="heat-degree">
+                    <div class="item">
+                      <like-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.likeCount }}</div>
+                    </div>
+                    <div class="item">
+                      <coin-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.coinCount }}</div>
+                    </div>
+                    <div class="item">
+                      <collect-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.collectCount }}</div>
+                    </div>
+                    <div class="item">
+                      <share-icon class="icon" :color="componentParams.heatDegreeIconColor" />
+                      <div class="count">{{ videoDetails.shareCount }}</div>
+                    </div>
+                  </div>
                 </div>
-              </scroll-block>
-            </van-tab>
-            <van-tab name="commentList">
-              <template #title>
-                <div class="tab-title">
-                  <div>评论</div>
-                  <div class="comment-count">{{ videoDetails.replyCount }}</div>
-                </div>
-              </template>
-              <scroll-block class="tab-page-content" ref="commentListTabPageContentComponent"
-                            :scrollable="false"
-                            :hide-scroll-bar="true"
-                            @scroll="onContentWrapperScroll"
-                            @scroll-end="onContentWrapperScrollEnd">
-                <div class="main-part">
-                  <comment-list-container ref="commentListContainerComponent"
-                                          :get-scroll-top="() => getCurrentTabPageContentComponent().getScrollTopValue()"
-                                          :get-max-scroll-top="() => getContentComponentMaxScrollTop('commentList')"
-                                          :get-load-comment-list-request="getLoadCommentListRequest"
-                                          :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
-                                          :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
-                                          @before-comment-reply-list-show="beforeCommentReplyListShow"
-                                          @comment-reply-list-show="onCommentReplyListShow"
-                                          @comment-reply-list-loaded="onCommentReplyListLoaded"
-                                          @comment-reply-list-close="onCommentReplyListClose" />
-                </div>
-              </scroll-block>
-            </van-tab>
-          </van-tabs>
-        </div>
+                <video-info-list class="related-video-list" :video-info-list="videoDetails.relatedVideoList" />
+              </van-tab>
+              <van-tab name="commentList">
+                <template #title>
+                  <div class="tab-title">
+                    <div>评论</div>
+                    <div class="comment-count">{{ videoDetails.replyCount }}</div>
+                  </div>
+                </template>
+                <comment-list-container ref="commentListContainerComponent"
+                                        :get-scroll-top="() => tabPageContentScrollComponent.getScrollTopValue()"
+                                        :get-max-scroll-top="() => tabPageContentScrollComponent.getMaxScrollTopValue()"
+                                        :get-load-comment-list-request="getLoadCommentListRequest"
+                                        :get-load-comment-reply-list-request="getLoadCommentReplyListRequest"
+                                        :pull-refresh-disabled="componentParams.commentListPullRefreshDisabled"
+                                        @before-comment-reply-list-show="beforeCommentReplyListShow"
+                                        @comment-reply-list-show="onCommentReplyListShow"
+                                        @comment-reply-list-loaded="onCommentReplyListLoaded"
+                                        @comment-reply-list-close="onCommentReplyListClose" />
+              </van-tab>
+            </van-tabs>
+          </div>
+        </scroll-block>
       </div>
-    </scroll-block>
+    </div>
     <div class="title-on-tab-bar" style="display: none;" ref="titleOnTabBarDom">
       <div class="content">
         <div class="title-1">{{ componentParams.titleOnTabBarText }}</div>
@@ -206,7 +191,6 @@ const componentParams = reactive({
   heatDegreeIconColor: 'rgb(97, 102, 109)',
   titleArrowIconName: 'arrow-down',
   playerWrapperTopPosition: 0,
-  tabBarSticky: false,
   tabBarOffsetTop: 0,
   videoDetailExpanded: false,
   canVideoDetailExpand: false,
@@ -233,12 +217,6 @@ const customPlayerWrapperDom = ref()
 
 const titleOnTabBarDom = ref()
 
-const mainScrollBlockComponent = ref()
-
-const videoDetailsTabPageContentComponent = ref()
-
-const commentListTabPageContentComponent = ref()
-
 const videoPlayerComponent = ref()
 
 const commentListContainerComponent = ref()
@@ -260,10 +238,7 @@ const domHeightValues = reactive({
   minPlayerWrapperTopPosition: 0
 })
 
-const tabPageComponent = {
-  videoDetails: null,
-  commentList: null
-}
+const tabPageContentScrollComponent = ref()
 
 const tabPageScrollTopValue = {
   videoDetails: 0,
@@ -300,8 +275,6 @@ async function moveDoms() {
 }
 
 async function loadDomAndCssValues() {
-  tabPageComponent.videoDetails = videoDetailsTabPageContentComponent
-  tabPageComponent.commentList = commentListTabPageContentComponent
   tabPageSwipeBlockDom = await codeUtils.tryForResult(() => {
     return videoPlayingViewDom.value.querySelector('.van-swipe__track')
   })
@@ -382,18 +355,6 @@ async function beforeDescriptionBlockExpandChange() {
   await codeUtils.sleep(100)
 }
 
-function onMainScrollBlockScroll() {
-  componentParams.tabPageSwipeable = false
-  let scrollTop = mainScrollBlockComponent.value.getScrollTopValue()
-  componentParams.commentListPullRefreshDisabled = scrollTop > 0
-}
-
-function onMainScrollBlockScrollEnd() {
-  if(!componentParams.commentReplyListShowing) {
-    componentParams.tabPageSwipeable = true
-  }
-}
-
 function onBackIconClick() {
   basicJsInterface.finishCurrentWebActivity()
 }
@@ -416,7 +377,7 @@ function onCloseIconOfTitleOnTabBarClick() {
   commentListContainerComponent.value.closeCommentReplyList()
 }
 
-function onContentWrapperScroll() {
+function onTabPageContentScroll() {
   componentParams.tabPageSwipeable = false
   if(componentParams.disableScrollEventOnce) {
     componentParams.disableScrollEventOnce = false
@@ -427,7 +388,7 @@ function onContentWrapperScroll() {
   calcIsTopBarPlayBtnShouldBeShown()
 }
 
-function onContentWrapperScrollEnd() {
+function onTabPageContentScrollEnd() {
   if(!componentParams.commentReplyListShowing) {
     componentParams.tabPageSwipeable = true
   }
@@ -451,17 +412,9 @@ function getLoadCommentReplyListRequest(commentId, page) {
   })
 }
 
-function getCurrentTabPageContentComponent() {
-  return tabPageComponent[componentParams.activeTabName].value
-}
-
-function getContentComponentMaxScrollTop(tabPageName) {
-  return tabPageComponent[tabPageName].value.getMaxScrollTopValue()
-}
-
-function scrollCurrentTabPageTo(position, disableEventOnce = true) {
+function scrollTabPageTo(position, disableEventOnce = true) {
   if(disableEventOnce) componentParams.disableScrollEventOnce = true
-  getCurrentTabPageContentComponent().contentWrapperScrollTo(position)
+  tabPageContentScrollComponent.value.contentWrapperScrollTo(position)
   tabPageScrollTopValue[componentParams.activeTabName] = position
 }
 
@@ -481,17 +434,17 @@ function onCommentReplyListShow() {
   componentParams.titleOnTabBarText = '评论详情'
   vanTabsNavDom.style.display = 'none'
   titleOnTabBarDom.value.style.display = 'flex'
-  scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
+  scrollTabPageTo(-componentParams.playerWrapperTopPosition)
 }
 
 function onCommentReplyListLoaded() {
-  scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
+  scrollTabPageTo(-componentParams.playerWrapperTopPosition)
 }
 
 function onCommentReplyListClose(cachedScrollTopValue) {
   titleOnTabBarDom.value.style.display = 'none'
   vanTabsNavDom.style.display = 'flex'
-  scrollCurrentTabPageTo(cachedScrollTopValue)
+  scrollTabPageTo(cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
   componentParams.commentReplyListShowing = false
 }
@@ -503,7 +456,7 @@ function onCommentReplyListClose(cachedScrollTopValue) {
 function onTabChange() {
   try {
     commentListContainerComponent.value?.closeCommentReplyList()
-    fixTabPageScrollTopValue()
+    //fixTabPageScrollTopValue()
   } catch(e) {
     //ignore
   }
@@ -538,7 +491,7 @@ function onAndroidActivityResume() {
 }
 
 function calcPlayerWrapperDomPosition() {
-  let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
+  let scrollTop = tabPageContentScrollComponent.value.getScrollTopValue()
   let distance = scrollTop - tabPageScrollTopValue[componentParams.activeTabName]
   tabPageScrollTopValue[componentParams.activeTabName] = scrollTop
   let playerWrapperDomTopPosition = componentParams.playerWrapperTopPosition
@@ -555,7 +508,7 @@ function calcPlayerWrapperDomPosition() {
     playerWrapperDomTopPosition = 0
     let newScrollTop = scrollTop + componentParams.playerWrapperTopPosition
     if(newScrollTop < 0) newScrollTop = 0
-    scrollCurrentTabPageTo(newScrollTop)
+    scrollTabPageTo(newScrollTop)
     setValues(true)
     return
   }
@@ -568,9 +521,8 @@ function calcPlayerWrapperDomPosition() {
 }
 
 function calcPlayerTopBarBackgroundOpacity() {
-  topBarOpacity = 1.0 - (
-      (componentParams.tabBarOffsetTop - domHeightValues.playerTopBarHeight) /
-      (domHeightValues.defaultPlayerWrapperHeight - domHeightValues.playerTopBarHeight)
+  topBarOpacity = -componentParams.playerWrapperTopPosition / (
+      domHeightValues.defaultPlayerWrapperHeight - domHeightValues.playerTopBarHeight
   )
   if(topBarOpacity > 1.0) topBarOpacity = 1.0
   setPlayerTopBarHide(topBarOpacity <= 0.4)
@@ -602,10 +554,10 @@ function calcIsTopBarPlayBtnShouldBeShown() {
 }
 
 function fixTabPageScrollTopValue() {
-  let scrollTop = getCurrentTabPageContentComponent().getScrollTopValue()
+  let scrollTop = tabPageContentScrollComponent.value.getScrollTopValue()
   let tabBarMoveDistance = domHeightValues.defaultPlayerWrapperHeight - componentParams.tabBarOffsetTop
   if(scrollTop >= tabBarMoveDistance) return
-  scrollCurrentTabPageTo(tabBarMoveDistance)
+  scrollTabPageTo(tabBarMoveDistance)
 }
 
 function registerAndroidEventListeners() {
@@ -704,51 +656,59 @@ function unregisterAndroidEventListeners() {
 }
 
 .tab-and-content {
-  .blank {
-    height: var(--player-wrapper-height);
-  }
+  height: 100%;
 
-  ::v-deep(.van-tabs__nav--line) {
-    height: 85%;
-  }
+  ::v-deep(.scroll-block) {
+    .van-tabs__nav--line {
+      height: 85%;
+    }
 
-  ::v-deep(.van-tabs__wrap) {
-    position: relative;
-    border-bottom: 1px solid var(--van-border-color);
+    .van-tabs__wrap {
+      position: relative;
+      border-bottom: 1px solid var(--van-border-color);
 
-    .title-on-tab-bar {
-      display: flex;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: white;
-
-      .content {
+      .title-on-tab-bar {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 0 12.3px;
+        height: 100%;
+        background-color: white;
 
-        .title-1 {
-          font-size: 13.6px;
-        }
+        .content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 0 12.3px;
 
-        .close-icon-container {
-          position: relative;
-          height: 18.4px;
+          .title-1 {
+            font-size: 13.6px;
+          }
 
-          .close-icon {
-            position: absolute;
-            top: -1px;
-            right: 0;
-            font-size: 20.3px;
-            color: var(--van-gray-6);
+          .close-icon-container {
+            position: relative;
+            height: 18.4px;
+
+            .close-icon {
+              position: absolute;
+              top: -1px;
+              right: 0;
+              font-size: 20.3px;
+              color: var(--van-gray-6);
+            }
           }
         }
       }
+    }
+
+    .blank {
+      height: var(--player-wrapper-height);
+    }
+
+    .main-part {
+      min-height: calc(100vh - var(--van-tabs-line-height) - 0.8px);
     }
   }
 }
@@ -768,125 +728,119 @@ function unregisterAndroidEventListeners() {
   }
 }
 
-.tab-page-content {
-  .main-part {
-    min-height: calc(100vh - var(--van-tabs-line-height) * 2 - 0.8px);
+.video-detail {
+  padding: 13px 13px 12px;
+  border-bottom: 1.09px solid var(--van-border-color);
+
+  .uploader {
+    display: flex;
+    align-items: center;
+    padding-bottom: 18px;
+
+    .name-container {
+      margin-left: 11px;
+      font-size: 14px;
+
+      .fans {
+        margin-top: 0.75px;
+        color: var(--van-gray-6);
+        font-size: 10.3px;
+      }
+    }
   }
 
-  .video-detail {
-    padding: 13px 13px 12px;
-    border-bottom: 1.09px solid var(--van-border-color);
+  .title-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 8px;
 
-    .uploader {
-      display: flex;
-      align-items: center;
-      padding-bottom: 18px;
-
-      .name-container {
-        margin-left: 11px;
-        font-size: 14px;
-
-        .fans {
-          margin-top: 0.75px;
-          color: var(--van-gray-6);
-          font-size: 10.3px;
-        }
-      }
+    .title {
+      width: 90%;
+      font-size: 16px;
+      height: 20.8px;
     }
 
-    .title-bar {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding-bottom: 8px;
-
-      .title {
-        width: 90%;
-        font-size: 16px;
-        height: 20.8px;
-      }
-
-      .arrow {
-        color: var(--van-gray-6);
-      }
-    }
-
-    .counts {
-      display: flex;
-      align-items: center;
-      height: 16px;
+    .arrow {
       color: var(--van-gray-6);
+    }
+  }
 
-      .icon {
-        width: 16px;
-        height: 100%;
-        margin-right: 3px;
-        position: relative;
-        bottom: 0.8px;
-      }
+  .counts {
+    display: flex;
+    align-items: center;
+    height: 16px;
+    color: var(--van-gray-6);
 
-      span {
-        height: 100%;
-        font-size: 12px;
-        line-height: 16px;
-        margin-right: 6px;
-      }
+    .icon {
+      width: 16px;
+      height: 100%;
+      margin-right: 3px;
+      position: relative;
+      bottom: 0.8px;
     }
 
-    .description {
-      height: 0;
+    span {
+      height: 100%;
       font-size: 12px;
       line-height: 16px;
-      color: var(--van-gray-6);
+      margin-right: 6px;
+    }
+  }
 
-      .video-id {
-        padding-top: 4px;
-      }
+  .description {
+    height: 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--van-gray-6);
 
-      .description-content {
-        padding-top: 9px;
-        white-space: pre-wrap;
-      }
-
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 13px 0 6px;
-
-        .tag {
-          display: flex;
-          align-items: center;
-          padding: 6px 10px 4px;
-          margin-right: 8.5px;
-          margin-bottom: 8.5px;
-          background-color: #F4F5F6;
-          color: #61666D;
-          border-radius: 15px;
-        }
-      }
+    .video-id {
+      padding-top: 4px;
     }
 
-    .heat-degree {
+    .description-content {
+      padding-top: 9px;
+      white-space: pre-wrap;
+    }
+
+    .tags {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 17px 30px 0;
+      flex-wrap: wrap;
+      padding: 13px 0 6px;
 
-      .item {
+      .tag {
         display: flex;
-        flex-direction: column;
         align-items: center;
+        padding: 6px 10px 4px;
+        margin-right: 8.5px;
+        margin-bottom: 8.5px;
+        background-color: #F4F5F6;
+        color: #61666D;
+        border-radius: 15px;
+      }
+    }
+  }
 
-        .icon {
-          width: 24.5px;
-          height: 24.5px;
-        }
+  .heat-degree {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 30px 0;
 
-        .count {
-          color: var(--van-gray-6);
-          font-size: 10.5px;
-          margin-top: 5px;
-        }
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .icon {
+        width: 24.5px;
+        height: 24.5px;
+      }
+
+      .count {
+        color: var(--van-gray-6);
+        font-size: 10.5px;
+        margin-top: 5px;
       }
     }
   }
