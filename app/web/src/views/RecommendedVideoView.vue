@@ -65,7 +65,6 @@ async function loadDomAndCssValues() {
     return contentDom.value.querySelector('.van-pull-refresh__track')
   })
   pullRefreshHeadDom = pullRefreshTrackDom.querySelector('.van-pull-refresh__head')
-  console.log(pullRefreshHeadDom)
 }
 
 function search() {

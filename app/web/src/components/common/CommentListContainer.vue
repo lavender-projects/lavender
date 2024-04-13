@@ -69,7 +69,7 @@ const emits = defineEmits([
   'beforeCommentReplyListShow',
   'commentReplyListShow',
   'commentReplyListLoaded',
-  'commentReplyListClose'
+  'commentReplyListClosed'
 ])
 
 onMounted(() => {
@@ -123,7 +123,7 @@ function onCommentReplyListClose() {
   commentListComponentWrapperDom.value.style.display = 'block'
   commentReplyListComponentWrapperDom.value.style.display = 'none'
   status.commentReplyListDisplaying = false
-  emits('commentReplyListClose', componentParams.cachedScrollTopValue)
+  emits('commentReplyListClosed', componentParams.cachedScrollTopValue)
 }
 
 function closeCommentReplyList() {

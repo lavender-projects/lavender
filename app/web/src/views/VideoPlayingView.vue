@@ -124,7 +124,7 @@
                                         @before-comment-reply-list-show="beforeCommentReplyListShow"
                                         @comment-reply-list-show="onCommentReplyListShow"
                                         @comment-reply-list-loaded="onCommentReplyListLoaded"
-                                        @comment-reply-list-close="onCommentReplyListClose" />
+                                        @comment-reply-list-closed="onCommentReplyListClosed" />
               </div>
             </scroll-block>
           </van-tab>
@@ -212,6 +212,7 @@ const componentParams = reactive({
   commentListPullRefreshPhysicalActionDoing: false,
   playerControlBarShowing: true,
   commentReplyListShowing: false,
+  commentReplyListLoadedWhenOpen: false,
   disableScrollEventOnce: false
 })
 
@@ -463,15 +464,21 @@ function onCommentReplyListShow() {
 }
 
 function onCommentReplyListLoaded() {
+  if(componentParams.commentReplyListLoadedWhenOpen) return
   scrollCurrentTabPageTo(-componentParams.playerWrapperTopPosition)
+  componentParams.commentReplyListLoadedWhenOpen = true
 }
 
-function onCommentReplyListClose(cachedScrollTopValue) {
+function onCommentReplyListClosed(cachedScrollTopValue) {
   titleOnTabBarDom.value.style.display = 'none'
   vanTabsNavDom.style.display = 'flex'
+  if(cachedScrollTopValue < -componentParams.playerWrapperTopPosition) {
+    cachedScrollTopValue = -componentParams.playerWrapperTopPosition
+  }
   scrollCurrentTabPageTo(cachedScrollTopValue)
   componentParams.tabPageSwipeable = true
   componentParams.commentReplyListShowing = false
+  componentParams.commentReplyListLoadedWhenOpen = false
 }
 
 /*
