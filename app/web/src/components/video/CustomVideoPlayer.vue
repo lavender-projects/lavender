@@ -36,8 +36,10 @@ const componentParams = reactive({
   backIconColor: 'rgb(255, 255, 255)',
   //视频播放状态标记量，仅在手动暂停视频时会被置为false，用于确保视频仅能被手动暂停
   videoPlaying: false,
+  //视频是否至少成功开始播放过一次
+  videoFirstPlayed: false,
   fullScreen: false,
-  videoControlBarShowStatus: true
+  videoControlBarShowing: true
 })
 
 const customVideoPlayerDom = ref()
@@ -305,6 +307,10 @@ function onVideoCanplay() {
 function onVideoPlay() {
   newVideoStartPlayMonitorTask()
   componentParams.videoPlaying = true
+  if(!componentParams.videoFirstPlayed) {
+    player.control.hide()
+    componentParams.videoFirstPlayed = true
+  }
   emits('playingStatusChanged', true)
 }
 
@@ -359,7 +365,7 @@ function beforeControlBarShowStatusChange(show) {
 }
 
 function onControlBarShowStatusChanged(show) {
-  componentParams.videoControlBarShowStatus = show
+  componentParams.videoControlBarShowing = show
   calcIsFullScreenTopBarShow()
   if(!show) playerClickFrameDom.value.style.display = 'block'
 }
@@ -495,7 +501,7 @@ function calcIsFullScreenTopBarShow() {
     fullScreenTopBarDom.value.style.display = 'none'
     return
   }
-  fullScreenTopBarDom.value.style.display = componentParams.videoControlBarShowStatus ? 'flex' : 'none'
+  fullScreenTopBarDom.value.style.display = componentParams.videoControlBarShowing ? 'flex' : 'none'
 }
 
 function calcIsDanmakuExtendSettingsShow() {
@@ -540,7 +546,7 @@ function movePlayerClickFrame() {
 }
 
 function hideOrShowPlayerControl() {
-  if(componentParams.videoControlBarShowStatus) {
+  if(componentParams.videoControlBarShowing) {
     player.control.hide()
   } else {
     if(componentParams.videoPlaying) {
