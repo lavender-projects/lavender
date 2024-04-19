@@ -1,0 +1,202 @@
+[
+  {
+    "videoId": "BV1GY4y1c7nB",
+    "lavsourceId": null,
+    "title": "IntelliJ IDEA 快捷键锦囊【导航篇】—— 查找用法（Find Usages）",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2F0dbf8099179adc1a78f02b836af9fff44e4c4f17.jpg",
+    "playCount": "2501",
+    "danmakuCount": "0",
+    "duration": "00:16"
+  },
+  {
+    "videoId": "BV13g411k7jq",
+    "lavsourceId": null,
+    "title": "IntelliJ IDEA 快捷键锦囊【导航篇】—— 最近的文件（Recent Files）",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2Fc1467b2dec03611e73f1d285aca1550c1d5ebade.jpg",
+    "playCount": "1245",
+    "danmakuCount": "0",
+    "duration": "00:19"
+  },
+  {
+    "videoId": "BV1pd4y1K7VP",
+    "lavsourceId": null,
+    "title": "IntelliJ IDEA 快捷键锦囊【导航篇】—— 最近的位置（Recent Locations）",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2Fe99c5fb7d39d3854c910db21fa8c655a3e7d1c37.jpg",
+    "playCount": "1291",
+    "danmakuCount": "0",
+    "duration": "00:15"
+  },
+  {
+    "videoId": "BV1gV4y1479R",
+    "lavsourceId": null,
+    "title": "IntelliJ IDEA 快捷键锦囊【导航篇】—— 导航到实现（Navigate to implementation）",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2Fce1e0579b632ab8b713c070639d97683bba47a84.jpg",
+    "playCount": "1008",
+    "danmakuCount": "0",
+    "duration": "00:12"
+  },
+  {
+    "videoId": "BV1eN4y1G7EH",
+    "lavsourceId": null,
+    "title": "IntelliJ IDEA 快捷键锦囊【导航篇】—— 前进（Forward）/后退（Back）",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fc1e9067a74fc2b4ba9f5e1e627f04dfd5444acd6.jpg",
+    "playCount": "1032",
+    "danmakuCount": "0",
+    "duration": "00:21"
+  },
+  {
+    "videoId": "BV1td4y1r7By",
+    "lavsourceId": null,
+    "title": "在 JetBrains IDE 中撤销提交（Undo commit）| 1 分钟 IDE 小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2F5de9718957bac0426176d2c362f8c45047c5aaab.jpg",
+    "playCount": "4211",
+    "danmakuCount": "1",
+    "duration": "00:26"
+  },
+  {
+    "videoId": "BV1Gi4y1d74d",
+    "lavsourceId": null,
+    "title": "DataSpell：为使用 Python 和 R 的数据科学家打造的全新 IDE | JetBrains 产品概览",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2F0caf2ce25bde4ff23671cd29b7172435d98fd465.jpg",
+    "playCount": "3.2万",
+    "danmakuCount": "15",
+    "duration": "04:52"
+  },
+  {
+    "videoId": "BV1v14y117AD",
+    "lavsourceId": null,
+    "title": "JetBrains 新 UI：减少干扰，提高效率，保持专注",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2F6af8f754-18a215508c6.jpeg",
+    "playCount": "7.7万",
+    "danmakuCount": "63",
+    "duration": "01:08"
+  },
+  {
+    "videoId": "BV1134y1h75y",
+    "lavsourceId": null,
+    "title": "【佑Talk】全面盘点：JetBrains IDE 2022.1 重点更新",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2Fcdb7fd9e0af306decec8960e35dea079c033a67a.jpg",
+    "playCount": "2.3万",
+    "danmakuCount": "101",
+    "duration": "17:54"
+  },
+  {
+    "videoId": "BV1wA4y1X7sm",
+    "lavsourceId": null,
+    "title": "PhpStorm 2022.1 新特性一览 | PHP IDE",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fa522d3f86134a833fe22fbd3c5b02fbc2ad74d94.jpg",
+    "playCount": "1391",
+    "danmakuCount": "2",
+    "duration": "04:41"
+  },
+  {
+    "videoId": "BV1e44y1h71L",
+    "lavsourceId": null,
+    "title": "[中文字幕] 使用 Space 云开发环境进行远程开发",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2F9586a22e79900ec0ec4e8dfd5c84edff19eed712.jpg",
+    "playCount": "4437",
+    "danmakuCount": "2",
+    "duration": "02:39"
+  },
+  {
+    "videoId": "BV1MP4y1G7v9",
+    "lavsourceId": null,
+    "title": "[中文字幕]使用 JetBrains Gateway 进行远程开发",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2F33da751b4004e93538406a0e2d82b4926baec1b1.jpg",
+    "playCount": "8886",
+    "danmakuCount": "0",
+    "duration": "02:16"
+  },
+  {
+    "videoId": "BV1TN4y1Z7En",
+    "lavsourceId": null,
+    "title": "玩转测试自动化！JetBrains Aqua 中的 Cypress 支持",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2F1be21b0b6a30d5e2414077da88e48a8bb0f92fa3.jpg",
+    "playCount": "4880",
+    "danmakuCount": "2",
+    "duration": "01:41"
+  },
+  {
+    "videoId": "BV1FY411j7LR",
+    "lavsourceId": null,
+    "title": "代码格式快捷键 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2F106e4814cf93342dd922a56729e22fb04ce3e2a9.jpg",
+    "playCount": "2632",
+    "danmakuCount": "0",
+    "duration": "00:21"
+  },
+  {
+    "videoId": "BV1Dq4y1a774",
+    "lavsourceId": null,
+    "title": "拖拽固定选项卡 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2F83904b5d9c2e8eec728c2a05545b4f854f3b0438.jpg",
+    "playCount": "9152",
+    "danmakuCount": "0",
+    "duration": "00:14"
+  },
+  {
+    "videoId": "BV1Ma411q7aH",
+    "lavsourceId": null,
+    "title": "运行和终止程序快捷键 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Faa74d77a579050978206d474ad8132470318d467.jpg",
+    "playCount": "3565",
+    "danmakuCount": "2",
+    "duration": "00:16"
+  },
+  {
+    "videoId": "BV1mi4y1D7up",
+    "lavsourceId": null,
+    "title": "在任意对话框内输入即搜索 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2Fc12ae329fb804797a586798e7b0fff09ff984dff.jpg",
+    "playCount": "1571",
+    "danmakuCount": "0",
+    "duration": "00:19"
+  },
+  {
+    "videoId": "BV1Ca41187Zq",
+    "lavsourceId": null,
+    "title": "在 IntelliJ IDEA 中使用 AWS？如此丝滑的体验不允许有人不知道！| 官方教程",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi1.hdslb.com%2Fbfs%2Farchive%2Fe15099eb27faa47c497bb29f6ea6cc4ebd7e5481.jpg",
+    "playCount": "1.4万",
+    "danmakuCount": "2",
+    "duration": "10:40"
+  },
+  {
+    "videoId": "BV1xT4y1Y7jD",
+    "lavsourceId": null,
+    "title": "语句补全快捷键 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farchive%2F649d51721cfecce338fd0d05393d54c8cc9560d7.jpg",
+    "playCount": "3.7万",
+    "danmakuCount": "7",
+    "duration": "00:17"
+  },
+  {
+    "videoId": "BV1TF411G7nW",
+    "lavsourceId": null,
+    "title": "“运行一切”快捷键 | 你可能不知道的 IntelliJ IDEA 使用小技巧",
+    "author": "JetBrains中国",
+    "coverImg": "http://localhost:8080/platform/bilibili/image/proxy?url=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2Fcc35b3032d74b0c84a3eb3c3fadbf971bd0d8bb3.jpg",
+    "playCount": "4618",
+    "danmakuCount": "0",
+    "duration": "00:22"
+  }
+]

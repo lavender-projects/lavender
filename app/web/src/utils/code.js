@@ -25,7 +25,7 @@ const codeUtils = {
     }
     return clonedObject
   },
-  mockRequestAndGetData: async axiosParams => (await remoteMockRequest(axiosParams)).data
+  remoteMockRequestAndGetData: async axiosParams => (await remoteMockRequest(axiosParams)).data
 }
 
 export default codeUtils
