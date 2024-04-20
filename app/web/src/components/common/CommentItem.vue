@@ -25,7 +25,7 @@
     </div>
     <div class="comment-expand-btn" v-if="showExpandBtn" @click="expand()">展开</div>
     <div class="heat-degree">
-      <comment-like-icon class="icon" color="rgb(101, 101, 101)" />
+      <img class="icon" src="/img/comment_like.png" alt="" />
       <div>{{ props.commentData.likeCount }}</div>
     </div>
     <!--suppress JSUnresolvedReference -->
@@ -47,7 +47,6 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import codeUtils from '@/utils/code'
-import CommentLikeIcon from '@/components/icon/CommentLikeIcon.vue'
 
 const props = defineProps({
   commentData: {
@@ -232,8 +231,8 @@ function willShowPreviewReplies() {
     font-size: 12px;
 
     .icon {
-      width: 17px;
-      height: 17px;
+      width: 16.5px;
+      height: 16.5px;
       margin-right: 4.3px;
     }
   }
