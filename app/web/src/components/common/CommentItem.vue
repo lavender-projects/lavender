@@ -10,7 +10,7 @@
           <div class="name van-ellipsis">
             <span @click="onUserNameClick($event, props.commentData.sender.name)">{{ props.commentData.sender.name }}</span>
           </div>
-          <div class="level" ref="senderLevelBlock">Lv.{{ props.commentData.sender.level }}</div>
+          <img class="level" :src="componentParams.senderLevelImgUrl" alt="" />
         </div>
         <div class="time-and-ip-location">
           <span>{{ props.commentData.sendDate }}</span>
@@ -68,27 +68,17 @@ const props = defineProps({
 })
 
 const componentParams = reactive({
-  commentSenderAvatarSize: '29.5px'
+  commentSenderAvatarSize: '29.5px',
+  senderLevelImgUrl: ''
 })
 
 const commentItemDom = ref()
 
 const showExpandBtn = ref(false)
 
-const senderLevelBlock = ref()
-
 const emits = defineEmits([ 'replyItemClick' ])
 
 let expanded = false
-
-const levelColor = {
-  lv1: '#C0C0C0',
-  lv2: '#8BD29B',
-  lv3: '#7BCDEF',
-  lv4: '#FEBB8B',
-  lv5: '#EE672A',
-  lv6: '#F04C49'
-}
 
 function expand() {
   let contentDom = commentItemDom.value.querySelector('.comment-content')
@@ -111,16 +101,16 @@ async function calcShowExpandBtn() {
   showExpandBtn.value = contentDom.scrollHeight > contentDom.clientHeight
 }
 
-function calcLevelBlockStyle() {
+function calcLevelImageUrl() {
   let level = props.commentData.sender.level
-  if(level < 1) level = 1
-  if(level > 6) level = 6
-  senderLevelBlock.value.style.backgroundColor = levelColor[`lv${level}`]
+  if(level < 0) level = 0
+  if(level > 9) level = 9
+  componentParams.senderLevelImgUrl = `/img/level/lv${level}.png`
 }
 
 onMounted(() => {
   calcShowExpandBtn()
-  calcLevelBlockStyle()
+  calcLevelImageUrl()
 })
 
 function onReplyItemClick() {
@@ -166,12 +156,10 @@ function willShowPreviewReplies() {
         }
 
         .level {
-          font-size: 10px;
-          color: white;
-          padding: 1px 4px;
-          border-radius: 4px;
+          width: 20px;
+          height: auto;
           position: relative;
-          top: -0.5px;
+          bottom: 0.7px;
         }
       }
 

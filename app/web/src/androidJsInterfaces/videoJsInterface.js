@@ -19,7 +19,7 @@ const fallbackDefinitions = {
 const methodDefinitions = {
   recommendedVideoList: {
     isAsync: true,
-    fallback: fallbackDefinitions.recommendedVideoList.localMock,
+    fallback: fallbackDefinitions.recommendedVideoList.remoteMock,
   },
   videoDetails: {
     isAsync: true,
