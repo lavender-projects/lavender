@@ -15,7 +15,7 @@ Lavender的定位为**信息浏览应用**，因此不提供任何互动功能�
 - 需在修改的文件中附有明确的说明，并包含所修改的部分及具体的修改日期。
 - 通过任何形式发布衍生项目的可执行程序时，或对衍生项目进行部署，并通过网络提供服务时，**必须**同时附带或公布衍生项目的源代码。
 
-**请严格遵守开源许可证中规定的相关要求，任何开发者在利用本项目或本项目中的任何一部分代码进行开发时，产生的任何形式和性质的影响，均由具体的开发者承担，与Lavender的原作者无关。**
+**请严格遵守开源许可证中规定的相关要求，任何开发者在利用本项目或本项目中的任何一部分代码进行开发时，产生的任何形式和性质的影响，均由具体的开发者承担，与本项目的原作者无关。**
 
 **本项目仅供学习、研究等非商业用途，切勿将本项目或本项目中的任何一部分代码用于商业用途。**
 
@@ -24,7 +24,8 @@ Lavender的定位为**信息浏览应用**，因此不提供任何互动功能�
 
 <!--suppress ALL -->
 <img src="./docs/image/presentation/1.jpg" width="350" alt="" />&emsp;
-<img src="./docs/image/presentation/2.jpg" width="350" alt="" />&emsp;
+<img src="./docs/image/presentation/2.jpg" width="350" alt="" /><br />
+
 <img src="./docs/image/presentation/3.jpg" width="350" alt="" />&emsp;
 <img src="./docs/image/presentation/4.jpg" width="350" alt="" />
 
@@ -46,7 +47,8 @@ Lavender在安装后被直接打开时，首页是看不到任何视频的，需
 将本地信源设置为自启动后，返回Lavender应用，在设置页→信源设置→添加本地信源中找到LavSource bilibili应用。
 
 <img src="./docs/image/usage/3.jpg" width="350" alt="" />&emsp;
-<img src="./docs/image/usage/4.jpg" width="350" alt="" />&emsp;
+<img src="./docs/image/usage/4.jpg" width="350" alt="" /><br />
+
 <img src="./docs/image/usage/5.jpg" width="350" alt="" />
 
 点击LavSource bilibili应用，并确认添加。添加成功后，返回信源设置页即可看到LavSource bilibili应用。
@@ -115,7 +117,6 @@ Lavender在安装后被直接打开时，首页是看不到任何视频的，需
 
 ## 鸣谢
 ### 开源项目
-- bilibili-API-collect: [https://github.com/SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 - nplayer: [https://github.com/oyuyue/nplayer](https://github.com/oyuyue/nplayer)
 - vant: [https://vant-ui.github.io/vant/#/zh-CN](https://vant-ui.github.io/vant/#/zh-CN)
 - dash.js: [https://github.com/Dash-Industry-Forum/dash.js](https://github.com/Dash-Industry-Forum/dash.js)
