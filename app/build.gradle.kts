@@ -1,25 +1,21 @@
 import android.annotation.SuppressLint
-import de.honoka.gradle.buildsrc.Versions
 
 plugins {
-    @Suppress("RemoveRedundantQualifierName")
-    val versions = de.honoka.gradle.buildsrc.Versions
-    //plugins
-    id("com.android.application") version versions.android
-    kotlin("android") version versions.kotlin
+    id("com.android.application")
+    kotlin("android")
 }
 
 android {
     namespace = "de.honoka.lavender.android"
-    compileSdk = 33
+    compileSdk = libs.versions.android.sdk.compile.get().toInt()
 
     defaultConfig {
         applicationId = "de.honoka.lavender.android"
-        minSdk = 26
+        minSdk = libs.versions.android.sdk.min.get().toInt()
         @SuppressLint("OldTargetApi")
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0.0-dev"
+        targetSdk = libs.versions.android.sdk.compile.get().toInt()
+        versionCode = libs.versions.app.version.code.get().toInt()
+        versionName = libs.versions.app.version.name.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -48,12 +44,14 @@ android {
     }
 }
 
+@Suppress("GradleDependency")
+//noinspection UseTomlInstead
 dependencies {
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("de.honoka.lavender:lavsource-app-sdk:${Versions.lavenderAppSdk}")
+    //implementation("de.honoka.lavender:lavsource-app-sdk:${Versions.lavenderAppSdk}")
     implementation("cn.hutool:hutool-all:5.8.18")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

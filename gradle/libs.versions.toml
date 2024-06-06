@@ -1,0 +1,18 @@
+[versions]
+# project modules version
+app-version-name = "1.0.0-dev"
+app-version-code = "1"
+
+# dependencies version
+android-gradle-plugin = "8.0.0"
+android-sdk-compile = "33"
+android-sdk-min = "26"
+kotlin = "1.8.0"
+lavsource-app-sdk = "1.0.0-dev"
+
+[plugins]
+android-gradle-plugin = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+[libraries]
+lavsource-app-sdk = { module = "de.honoka.lavender:lavsource-app-sdk", version.ref = "lavsource-app-sdk" }
