@@ -14,7 +14,7 @@ if [ ! -d './node_modules' ]; then
   npm install
 fi
 rm -rf ./dist
-npm run build
+npm run build-release
 
 mkdir "$TARGET_PATH"
 touch "$TARGET_PATH/.gitkeep"

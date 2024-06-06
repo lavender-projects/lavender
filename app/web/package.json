@@ -6,6 +6,7 @@
     "dev": "vite --host",
     "local-dev": "vite --host --mode localDev",
     "build": "vite --mode localDev build",
+    "build-release": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
