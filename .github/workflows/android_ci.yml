@@ -29,15 +29,15 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Retrieve version
         run: |
-          echo VERSION=$(echo ${{ github.event.head_commit.id }} | head -c 8) >> $GITHUB_ENV
+          echo VERSION=$(echo ${{ github.event.head_commit.id }} | head -c 7) >> $GITHUB_ENV
       - name: Build with Gradle
         run: |
           chmod +x ./scripts/*.sh
-          ./scripts/build.sh
+          ./scripts/build.sh ${{ env.VERSION }}
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
         with:
           # 指定要上传的目录在上传到当前Actions运行实例的Artifacts当中时要使用的名字
           name: lavender-apk-${{ env.VERSION }}
           # 要上传的目录路径（以项目根目录为相对路径起始点）
-          path: app/build/outputs/apk
+          path: app/build/outputs/apk/release

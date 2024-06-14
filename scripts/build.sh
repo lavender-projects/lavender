@@ -12,3 +12,7 @@ chmod +x ./app/scripts/*.sh
 # Gradle打包
 chmod +x gradlew
 ./gradlew build
+
+# 重命名APK
+cd ./app/build/outputs/apk/release
+mv app-release-unsigned.apk "lavender-$1.apk"

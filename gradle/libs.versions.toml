@@ -11,7 +11,7 @@ kotlin = "1.8.0"
 lavsource-app-sdk = "1.0.0-dev"
 
 [plugins]
-android-gradle-plugin = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+android-gradle-plugin = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [libraries]
